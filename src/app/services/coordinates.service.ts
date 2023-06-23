@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, of, Subject, tap, throwError } from 'rxjs';
 
-const apiUrlSend = 'http://localhost:4000/sendinitials'
-const apiUrlInitials = 'http://localhost:4000/initials'
+const apiUrlSend = 'http://localhost:4000/api/sendinitials'
+const apiUrlInitials = 'http://localhost:4000/api/initials'
 
 @Injectable({
   providedIn: 'root'

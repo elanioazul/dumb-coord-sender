@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
 
   onSubmit(): void {
     const payload: any = {
-      notes: this.form.value.coords,
+      pairOfCoords: this.form.value.coords,
     };
     console.log(payload);
     
