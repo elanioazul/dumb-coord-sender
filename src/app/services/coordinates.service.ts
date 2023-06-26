@@ -4,6 +4,8 @@ import { catchError, map, Observable, of, Subject, tap, throwError } from 'rxjs'
 
 const apiUrlSend = 'http://localhost:4000/api/sendinitials'
 const apiUrlInitials = 'http://localhost:4000/api/initials'
+const apiUrlTransformed = 'http://localhost:4000/api/transformed'
+const apiUrlTransform = 'http://localhost:4000/api/transform'
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +21,29 @@ export class CoordinatesService {
     catchError(this.handleError)
   );
 
-  sendCoordToTransform(payload: any): Observable<any> {
+  getTransformedCoordList$ = this.http.get<any[]>(apiUrlTransformed)
+  .pipe(
+    tap(data => console.log('initials coord are :', JSON.stringify(data))),
+    catchError(this.handleError)
+  );
+
+  sendButNoTransform(payload: any): Observable<any> {
     return this.http.post((apiUrlSend), payload)
+    .pipe(
+      catchError((error) => of(error)),
+      map((res: any) => {
+        if (!res) {
+          throw new Error(
+            'Error enviando coordenadas que grabar'
+          );
+        } else {
+          return res;
+        }
+      })
+    );
+  }
+  sendCoordToTransform(payload: any): Observable<any> {
+    return this.http.post((apiUrlTransform), payload)
     .pipe(
       catchError((error) => of(error)),
       map((res: any) => {

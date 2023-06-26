@@ -23,6 +23,13 @@ export class AppComponent implements OnInit {
       return EMPTY;
     })
   )
+  transformedlCoordsTable$ = this.coordService.getTransformedCoordList$
+  .pipe(
+    catchError(err => {
+      this.errorMessage = err;
+      return EMPTY;
+    })
+  )
 
   constructor(private coordService: CoordinatesService, private builder: FormBuilder,){}
 
@@ -38,7 +45,7 @@ export class AppComponent implements OnInit {
     };
     console.log(payload);
     
-    this.coordService.sendCoordToTransform(payload).subscribe((data) => {
+    this.coordService.sendButNoTransform(payload).subscribe((data) => {
       console.log(data);
       
     })

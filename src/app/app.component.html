@@ -1,31 +1,66 @@
 
-<div style="display: flex;">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <input formControlName="coords" type="text" pInputText [(ngModel)]="myNumber" />
+<div class="container">
+  <div class="container__input">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <input formControlName="coords" type="text" pInputText [(ngModel)]="myNumber" />
+    
+        <button class="button" type="submit">Send</button>
+      </form>
+  </div>
 
-    <button class="button" type="submit">Send</button>
-  </form>
+  
+  
+  <div class="container__tables">
+    <div class="container__tables-initial">
+      <h1>Coordenadas enviadas por usuario</h1>
+      <table class="table mb-0"
+      *ngIf="initialCoordsTable$ | async as coordsPairs">
+      <thead>
+      <tr>
+      <th>id</th>
+      <th>longitude</th>
+      <th>latitude</th>
+      <th>srid</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let coordPair of coordsPairs">
+      <td>{{ coordPair[0] }}</td>
+      <td>{{ coordPair[1] }}</td>
+      <td>{{ coordPair[2] }}</td>
+      <td>{{ coordPair[3] }}</td>
+      </tr>
+      </tbody>
+      </table>
+    </div>
+    
+    
+    <div class="container__tables-transformed">
+      <h1>Coordenadas transformadas a ETRS89 UTM huso 31N (25831)</h1>
+      <table class="table mb-0"
+      *ngIf="transformedlCoordsTable$ | async as coordsPairs">
+      <thead>
+      <tr>
+      <th>id</th>
+      <th>initial_coordinates_id</th>
+      <th>longitude</th>
+      <th>latitude</th>
+      <th>srid</th>
+      <th>transformed_geometry</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let coordPair of coordsPairs">
+      <td>{{ coordPair[0] }}</td>
+      <td>{{ coordPair[1] }}</td>
+      <td>{{ coordPair[2] }}</td>
+      <td>{{ coordPair[3] }}</td>
+      <td>{{ coordPair[4] }}</td>
+      <td>{{ coordPair[5] }}</td>
+      </tr>
+      </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
-
-<br>
-
-
-<table class="table mb-0"
-*ngIf="initialCoordsTable$ | async as coordsPairs">
-<thead>
-<tr>
-<th>id</th>
-<th>longitude</th>
-<th>latitude</th>
-<th>srid</th>
-</tr>
-</thead>
-<tbody>
-<tr *ngFor="let coordPair of coordsPairs">
-<td>{{ coordPair[0] }}</td>
-<td>{{ coordPair[1] }}</td>
-<td>{{ coordPair[2] }}</td>
-<td>{{ coordPair[3] }}</td>
-</tr>
-</tbody>
-</table>

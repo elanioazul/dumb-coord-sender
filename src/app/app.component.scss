@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+
+    &__input {
+        display: flex;
+    }
+
+    &__tables {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        padding-top: 100px;
+
+        &-initial {
+            min-width: 250px;
+            padding-right: 100px;
+        }
+        &-transformed {
+            min-width: 250px;
+        }
+    }
+
+}
+
+table, th, td {
+    border: 1px solid;
+  }
