@@ -44,8 +44,13 @@ export class AppComponent implements OnInit {
       pairOfCoords: this.form.value.coords,
     };
     console.log(payload);
+
+    // this.coordService.sendButNoTransform(payload).subscribe((data) => {
+    //   console.log(data);
+      
+    // })
     
-    this.coordService.sendButNoTransform(payload).subscribe((data) => {
+    this.coordService.sendCoordToTransform(payload).subscribe((data) => {
       console.log(data);
       
     })
