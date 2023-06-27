@@ -2,8 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, of, Subject, tap, throwError } from 'rxjs';
 
+import { ICoordinateSystem } from '../interfaces/coord-system.interfaz';
+import { CoordinateSystem } from '../classes/coord-system';
+
+import { ICoordinateInitial } from '../interfaces/coord-initial.interfaz';
+import { CoordinateInitial } from '../classes/coord-initial';
+
+import { ICoordinateTransformed } from '../interfaces/coord-transformed.interfaz';
+import { CoordinateTransformed } from '../classes/coord-transformed';
+
+
 const apiUrlSend = 'http://localhost:4000/api/sendinitials'
 const apiUrlInitials = 'http://localhost:4000/api/initials'
+const apiUrlCoordSystems = 'http://localhost:4000/api/coordsystems'
 const apiUrlTransformed = 'http://localhost:4000/api/transformed'
 const apiUrlTransform = 'http://localhost:4000/api/transform'
 
@@ -15,16 +26,56 @@ export class CoordinatesService {
   constructor(private http: HttpClient) { }
 
 
-  getInitialCoordList$ = this.http.get<any[]>(apiUrlInitials)
+  getCoordSystems$ = this.http.get<ICoordinateSystem[]>(apiUrlCoordSystems)
   .pipe(
-    tap(data => console.log('initials coord are :', JSON.stringify(data))),
+    //tap(data => console.log('coord systems are :', JSON.stringify(data))),
     catchError(this.handleError)
+  )
+  .pipe(
+    map((data: ICoordinateSystem[]) => data.map((item: any) => {
+      return new CoordinateSystem(
+        item[0],
+        item[1],
+        item[2],
+        item[3],
+        item[4]
+      )
+    }))
+  );
+
+  getInitialCoordList$ = this.http.get<ICoordinateInitial[]>(apiUrlInitials)
+  .pipe(
+    //tap(data => console.log('initials coord are :', JSON.stringify(data))),
+    catchError(this.handleError)
+  )
+  .pipe(
+    map((data: ICoordinateInitial[]) => data.map((item: any) => {
+      return new CoordinateInitial(
+        item[0],
+        item[1],
+        item[2],
+        item[3],
+
+      )
+    }))
   );
 
   getTransformedCoordList$ = this.http.get<any[]>(apiUrlTransformed)
   .pipe(
-    tap(data => console.log('initials coord are :', JSON.stringify(data))),
+    //tap(data => console.log('transformed coord are :', JSON.stringify(data))),
     catchError(this.handleError)
+  )
+  .pipe(
+    map((data: ICoordinateTransformed[]) => data.map((item: any) => {
+      return new CoordinateTransformed(
+        item[0],
+        item[1],
+        item[2],
+        item[3],
+        item[4],
+        item[5]
+      )
+    }))
   );
 
   sendButNoTransform(payload: any): Observable<any> {

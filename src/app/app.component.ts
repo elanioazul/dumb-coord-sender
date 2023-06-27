@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CoordinatesService } from './services/coordinates.service';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { EMPTY, Observable, catchError } from 'rxjs';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { EMPTY, Observable, Subject, Subscription, catchError, takeUntil } from 'rxjs';
+import { CoordinateSystem } from './classes/coord-system';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'dumb-coord-sender';
-  myNumber = 8;
+
+  destroy$ = new Subject<void>();
+  subscriptions: Subscription[] = [];
+
+  coordSystemsOptions!: CoordinateSystem[];
 
   errorMessage = '';
 
@@ -34,13 +39,24 @@ export class AppComponent implements OnInit {
   constructor(private coordService: CoordinatesService, private builder: FormBuilder,){}
 
   ngOnInit(): void {
-    this.form = this.builder.group<any>({
-      ['coords']: this.builder.control(''),
+    this.coordService.getCoordSystems$.pipe(takeUntil(this.destroy$)).subscribe(data => {
+      this.coordSystemsOptions = data
     });
+    this.form = this.builder.group<any>({
+      ['epsg']: this.builder.control(0, Validators.required),
+      ['coords']: this.builder.control('', Validators.required),
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onSubmit(): void {
     const payload: any = {
+      epsgSelected: this.form.value.epsg,
       pairOfCoords: this.form.value.coords,
     };
     console.log(payload);

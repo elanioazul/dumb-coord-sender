@@ -1,10 +1,22 @@
 
 <div class="container">
-  <div class="container__input">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <input formControlName="coords" type="text" pInputText [(ngModel)]="myNumber" />
-    
-        <button class="button" type="submit">Send</button>
+  <div class="container__formbox">
+      <form class="container__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="container__form-controls">
+          <div class="container__form-control">
+            <p-dropdown formControlName="epsg" [options]="coordSystemsOptions" placeholder="Selecciona tipo de coord" optionLabel="label" optionValue="epsgVal"></p-dropdown>
+          </div>
+  
+          <div class="container__form-control">
+            <input formControlName="coords" type="text" pInputText/>
+          </div>
+        </div>
+
+        <div class="container__form-send">
+          <button type="submit">Enviar</button>
+        </div>
+        
       </form>
   </div>
 
@@ -14,7 +26,7 @@
     <div class="container__tables-initial">
       <h1>Coordenadas enviadas por usuario</h1>
       <table class="table mb-0"
-      *ngIf="initialCoordsTable$ | async as coordsPairs">
+      *ngIf="initialCoordsTable$ | async as initials">
       <thead>
       <tr>
       <th>id</th>
@@ -24,11 +36,11 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let coordPair of coordsPairs">
-      <td>{{ coordPair[0] }}</td>
-      <td>{{ coordPair[1] }}</td>
-      <td>{{ coordPair[2] }}</td>
-      <td>{{ coordPair[3] }}</td>
+      <tr *ngFor="let initial of initials">
+      <td>{{ initial.id }}</td>
+      <td>{{ initial.longitude }}</td>
+      <td>{{ initial.latitude }}</td>
+      <td>{{ initial.srid }}</td>
       </tr>
       </tbody>
       </table>
@@ -38,7 +50,7 @@
     <div class="container__tables-transformed">
       <h1>Coordenadas transformadas a ETRS89 UTM huso 31N (25831)</h1>
       <table class="table mb-0"
-      *ngIf="transformedlCoordsTable$ | async as coordsPairs">
+      *ngIf="transformedlCoordsTable$ | async as transformadas">
       <thead>
       <tr>
       <th>id</th>
@@ -50,13 +62,13 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let coordPair of coordsPairs">
-      <td>{{ coordPair[0] }}</td>
-      <td>{{ coordPair[1] }}</td>
-      <td>{{ coordPair[2] }}</td>
-      <td>{{ coordPair[3] }}</td>
-      <td>{{ coordPair[4] }}</td>
-      <td>{{ coordPair[5] }}</td>
+      <tr *ngFor="let transformada of transformadas">
+      <td>{{ transformada.id }}</td>
+      <td>{{ transformada.intialsCoordId }}</td>
+      <td>{{ transformada.longitude }}</td>
+      <td>{{ transformada.latitude }}</td>
+      <td>{{ transformada.srid }}</td>
+      <td>{{ transformada.geometry }}</td>
       </tr>
       </tbody>
       </table>
