@@ -3,6 +3,7 @@ import { CoordinatesService } from './services/coordinates.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { EMPTY, Observable, Subject, Subscription, catchError, takeUntil } from 'rxjs';
 import { CoordinateSystem } from './classes/coord-system';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -36,7 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
     })
   )
 
-  constructor(private coordService: CoordinatesService, private builder: FormBuilder,){}
+  constructor(private coordService: CoordinatesService, private builder: FormBuilder, private messageService: MessageService){}
 
   ngOnInit(): void {
     this.coordService.getCoordSystems$.pipe(takeUntil(this.destroy$)).subscribe(data => {
@@ -68,7 +69,20 @@ export class AppComponent implements OnInit, OnDestroy {
     
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
       console.log(data);
-      
+      if (data.body.trasformedCoors) {
+        this.messageService.add({
+          summary: 'Éxito',
+          detail: `Coordendadas ${data.body.initialCoords.lon} y ${data.body.initialCoords.lat} transformadas con exito. Recarge.`,
+          severity: 'success',
+        });
+      } else {
+        this.messageService.add({
+          summary: 'Error',
+          detail: `Ha habido un error transformando las coordendas`,
+          severity: 'error',
+        });
+      }
+
     })
   }
 }

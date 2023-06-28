@@ -8,6 +8,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { MessageService } from 'primeng/api';
+import { MessagesModule } from 'primeng/messages';
+
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -22,11 +25,12 @@ import { HttpClientModule } from '@angular/common/http';
     ButtonModule,
     DropdownModule,
     TooltipModule,
+    MessagesModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

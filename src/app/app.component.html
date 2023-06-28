@@ -1,5 +1,6 @@
 
 <div class="container">
+  <p-messages [showTransitionOptions]="'500ms'" [hideTransitionOptions]="'500ms'" [closable]="true"></p-messages>
   <div class="container__formbox">
       <form class="container__form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
@@ -9,7 +10,7 @@
           </div>
   
           <div class="container__form-control">
-            <input formControlName="coords" type="text" pTooltip="Introduce separado por un espacio, longitud (x) y latitud (y)" pInputText/>
+            <input formControlName="coords" type="text" pTooltip="Introduce separado por un espacio, longitud (x) y latitud (y), en este orden" pInputText/>
           </div>
         </div>
 
