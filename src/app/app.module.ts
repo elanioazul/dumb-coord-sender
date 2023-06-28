@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
+import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -20,6 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
     InputTextModule,
     ButtonModule,
     DropdownModule,
+    TooltipModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule
