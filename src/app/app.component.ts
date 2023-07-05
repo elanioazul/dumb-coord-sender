@@ -69,10 +69,11 @@ export class AppComponent implements OnInit, OnDestroy {
     
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
       console.log(data);
-      if (data.body.trasformedCoors) {
+      const res = JSON.parse(data.body); 
+      if (res.initial_point && res.transformed_point) {
         this.messageService.add({
           summary: 'Éxito',
-          detail: `Coordendadas ${data.body.initialCoords.lon} y ${data.body.initialCoords.lat} transformadas con exito. Recarge.`,
+          detail: `Coordendadas transformadas con exito. Recarge la página.`,
           severity: 'success',
         });
       } else {
