@@ -13,10 +13,15 @@ import { MessagesModule } from 'primeng/messages';
 
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
+import { AppRoutingModule } from './app-routing.module';
+import { MapComponent } from './components/map/map.component';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MapComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +33,8 @@ import { HttpClientModule } from '@angular/common/http';
     MessagesModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [MessageService],
   bootstrap: [AppComponent]
