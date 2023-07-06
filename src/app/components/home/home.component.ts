@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { EMPTY, Observable, Subject, Subscription, catchError, takeUntil } from 'rxjs';
 import { CoordinateSystem } from '../../classes/coord-system';
 import { MessageService } from 'primeng/api';
-
+import {IForm, IepsgForm, IcoordsForm, InoDmsForm, IdmsForm, ILongitudeForm, ILatitudeForm}  from '../../interfaces/form.interface';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -59,22 +59,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   )
 
   constructor(private coordService: CoordinatesService, private builder: FormBuilder, private messageService: MessageService){
-    this.form = this.builder.group<any>({
-      epsgForm: this.builder.group<any>({
+    this.form = this.builder.group<IForm>({
+      epsgForm: this.builder.group<IepsgForm>({
         epsg: this.builder.control(0, Validators.required)
       }),
-      coordsForm: this.builder.group<any>({
-        noDms: this.builder.group<any>({
+      coordsForm: this.builder.group<IcoordsForm>({
+        noDms: this.builder.group<InoDmsForm>({
           coords: this.builder.control('', Validators.required),
         }),
-        dms: this.builder.group<any>({
-          longitude: this.builder.group<any>({
+        dms: this.builder.group<IdmsForm>({
+          longitude: this.builder.group<ILongitudeForm>({
             degrees: this.builder.control(0, Validators.required),
             minutes: this.builder.control(0, Validators.required),
             seconds: this.builder.control(0, Validators.required),
             lon: this.builder.control(0, Validators.required)
           }),
-          latitude: this.builder.group<any>({
+          latitude: this.builder.group<ILatitudeForm>({
             degrees: this.builder.control(0, Validators.required),
             minutes: this.builder.control(0, Validators.required),
             seconds: this.builder.control(0, Validators.required),
@@ -84,8 +84,34 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
     });
     this.form.get("epsgForm.epsg")?.valueChanges.subscribe(data => {
-      this.selectedEpsg = data
+      this.selectedEpsg = data;
+      if (data !== null) {
+        if (data == 1 || data == 6) {
+          this.enableDmsPart();
+          this.disableNoDmsPart();
+        } else {
+          this.enableNoDmsPart();
+          this.disableDmsPart();
+        }
+        this.form.markAsUntouched();
+      }
     })
+  }
+
+  disableNoDmsPart(): void {
+    this.form.get("coordsForm.noDms")?.reset();
+    this.form.get("coordsForm.noDms")?.disable();
+  }
+  disableDmsPart(): void {
+    this.form.get("coordsForm.dms")?.reset();
+    this.form.get("coordsForm.dms")?.disable();
+  }
+
+  enableNoDmsPart(): void {
+    this.form.get("coordsForm.noDms")?.enable();
+  }
+  enableDmsPart(): void {
+    this.form.get("coordsForm.dms")?.enable();
   }
 
   ngOnInit(): void {
