@@ -5,6 +5,18 @@ import { EMPTY, Observable, Subject, Subscription, catchError, takeUntil } from 
 import { CoordinateSystem } from '../../classes/coord-system';
 import { MessageService } from 'primeng/api';
 import {IForm, IepsgForm, IcoordsForm, InoDmsForm, IdmsForm, ILongitudeForm, ILatitudeForm}  from '../../interfaces/form.interface';
+
+interface IDms {
+  degree: number,
+  minute: number,
+  second: number,
+  cardinalPoint: string
+}
+interface IPaylod {
+  epsgSelected: number;
+  pairOfCoords: Array<number> | Array<IDms>
+
+}
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -126,13 +138,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  checkDmsMode(): boolean {
+    return this.selectedEpsg == 1 || this.selectedEpsg == 6 ? true : false;
+  }
+
   onSubmit(): void {
-    const payload: any = {
-      epsgSelected: this.form.value.epsg,
-      pairOfCoords: this.form.value.coords,
-    };
-    payload.epsgSelected = this.coordSystemsOptions.find(system => system.id == payload.epsgSelected)?.epsgVal;
+    const formValue = this.form.getRawValue();
+    let payload: any;
+    if (this.checkDmsMode()) {
+      delete formValue.coordsForm.noDms
+    } else {
+      delete formValue.coordsForm.dms
+      payload = {
+        epsgSelected: this.coordSystemsOptions.find(system => system.id == formValue.epsgForm.epsg)?.epsgVal,
+        pairOfCoords: formValue.coordsForm.noDms.coords
+      }
+    }
     
+    console.log(payload);
+
+
+  
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
       console.log(data);
       const res = JSON.parse(data.body); 
