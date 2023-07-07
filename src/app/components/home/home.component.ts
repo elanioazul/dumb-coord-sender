@@ -12,9 +12,13 @@ interface IDms {
   second: number,
   cardinalPoint: string
 }
-interface IPaylod {
-  epsgSelected: number;
-  pairOfCoords: Array<number> | Array<IDms>
+interface INoDms {
+  x: string,
+  y: string
+}
+interface IPayload {
+  epsgSelected?: number;
+  coords: Array<INoDms> | Array<Array<IDms>>
 
 }
 @Component({
@@ -81,15 +85,15 @@ export class HomeComponent implements OnInit, OnDestroy {
         }),
         dms: this.builder.group<IdmsForm>({
           longitude: this.builder.group<ILongitudeForm>({
-            degrees: this.builder.control(0, Validators.required),
-            minutes: this.builder.control(0, Validators.required),
-            seconds: this.builder.control(0, Validators.required),
+            degrees: this.builder.control('0', Validators.required),
+            minutes: this.builder.control('0', Validators.required),
+            seconds: this.builder.control('0', Validators.required),
             lon: this.builder.control(0, Validators.required)
           }),
           latitude: this.builder.group<ILatitudeForm>({
-            degrees: this.builder.control(0, Validators.required),
-            minutes: this.builder.control(0, Validators.required),
-            seconds: this.builder.control(0, Validators.required),
+            degrees: this.builder.control('0', Validators.required),
+            minutes: this.builder.control('0', Validators.required),
+            seconds: this.builder.control('0', Validators.required),
             lat: this.builder.control(0, Validators.required)
           })
         })
@@ -142,40 +146,57 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.selectedEpsg == 1 || this.selectedEpsg == 6 ? true : false;
   }
 
+  adaptPayloadForNoDms(form: any): IPayload {
+    let payload: IPayload;
+    delete form.coordsForm.dms
+    return payload = {
+      epsgSelected: this.coordSystemsOptions.find(system => system.id == form.epsgForm.epsg)?.epsgVal,
+      coords: form.coordsForm.noDms.coords
+    } 
+  }
+
+  adaptPayloadForDms(form: any): IPayload {
+    let payload: IPayload;
+    delete form.coordsForm.noDms;
+    return payload = {
+      epsgSelected: this.coordSystemsOptions.find(system => system.id == form.epsgForm.epsg)?.epsgVal,
+      coords: [
+        [form.coordsForm.dms.longitude.degrees, form.coordsForm.dms.longitude.minutes, form.coordsForm.dms.longitude.seconds, form.coordsForm.dms.longitude.lon], 
+        [form.coordsForm.dms.latitude.degrees, form.coordsForm.dms.latitude.minutes, form.coordsForm.dms.latitude.seconds, form.coordsForm.dms.latitude.lat]
+      ]
+    }
+  }
+
+  handleResponse(data: any): void {
+    const res = JSON.parse(data.body); 
+    if (res.initial_point && res.transformed_point) {
+      this.messageService.add({
+        summary: 'Éxito',
+        detail: `Coordendadas transformadas con exito. Recarge la página.`,
+        severity: 'success',
+      });
+    } else {
+      this.messageService.add({
+        summary: 'Error',
+        detail: `Ha habido un error transformando las coordendas`,
+        severity: 'error',
+      });
+    }
+  }
+
   onSubmit(): void {
     const formValue = this.form.getRawValue();
-    let payload: any;
+    let payload: IPayload;
     if (this.checkDmsMode()) {
-      delete formValue.coordsForm.noDms
+      payload = this.adaptPayloadForDms(formValue);
     } else {
-      delete formValue.coordsForm.dms
-      payload = {
-        epsgSelected: this.coordSystemsOptions.find(system => system.id == formValue.epsgForm.epsg)?.epsgVal,
-        pairOfCoords: formValue.coordsForm.noDms.coords
-      }
+      payload = this.adaptPayloadForNoDms(formValue);
     }
     
     console.log(payload);
-
-
   
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
-      console.log(data);
-      const res = JSON.parse(data.body); 
-      if (res.initial_point && res.transformed_point) {
-        this.messageService.add({
-          summary: 'Éxito',
-          detail: `Coordendadas transformadas con exito. Recarge la página.`,
-          severity: 'success',
-        });
-      } else {
-        this.messageService.add({
-          summary: 'Error',
-          detail: `Ha habido un error transformando las coordendas`,
-          severity: 'error',
-        });
-      }
-
+      this.handleResponse(data);
     })
   }
 }

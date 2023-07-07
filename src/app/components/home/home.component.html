@@ -22,7 +22,7 @@
                     <span>Minutes (')<input formControlName="minutes" type="text" pInputText/></span><br>
                     <span>Seconds ('')<input formControlName="seconds" type="text" pInputText/></span>
                     <div *ngFor="let value of longitudeValues">
-                      <p-radioButton [inputId]="value.key" [value]="value" formControlName="lon"></p-radioButton>
+                      <p-radioButton [inputId]="value.key" [value]="value.key" formControlName="lon"></p-radioButton>
                       <label [for]="value.name">{{ value.name }}</label>
                     </div>
                   </div>
@@ -32,7 +32,7 @@
                     <span>Minutes (')<input formControlName="minutes" type="text" pInputText/></span><br>
                     <span>Seconds ('')<input formControlName="seconds" type="text" pInputText/></span>
                     <div *ngFor="let value of latitudeValues">
-                      <p-radioButton [inputId]="value.key" [value]="value" formControlName="lat"></p-radioButton>
+                      <p-radioButton [inputId]="value.key" [value]="value.key" formControlName="lat"></p-radioButton>
                       <label [for]="value.name">{{ value.name }}</label>
                     </div>
                   </div>

@@ -20,14 +20,14 @@ export interface IdmsForm {
     latitude: FormGroup<any | null | undefined>;
 }
 export interface ILongitudeForm {
-    degrees: FormControl<number | null | undefined>
-    minutes: FormControl<number | null | undefined>
-    seconds: FormControl<number | null | undefined>
+    degrees: FormControl<string | null | undefined>
+    minutes: FormControl<string | null | undefined>
+    seconds: FormControl<string | null | undefined>
     lon: FormControl<any | null | undefined>
 }
 export interface ILatitudeForm {
-    degrees: FormControl<number | null | undefined>
-    minutes: FormControl<number | null | undefined>
-    seconds: FormControl<number | null | undefined>
+    degrees: FormControl<string | null | undefined>
+    minutes: FormControl<string | null | undefined>
+    seconds: FormControl<string | null | undefined>
     lat: FormControl<any | null | undefined>
 }
