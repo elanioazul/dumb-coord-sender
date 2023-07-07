@@ -7,9 +7,9 @@ import { MessageService } from 'primeng/api';
 import {IForm, IepsgForm, IcoordsForm, InoDmsForm, IdmsForm, ILongitudeForm, ILatitudeForm}  from '../../interfaces/form.interface';
 
 interface IDms {
-  degree: number,
-  minute: number,
-  second: number,
+  degree: string,
+  minute: string,
+  second: string,
   cardinalPoint: string
 }
 interface INoDms {
