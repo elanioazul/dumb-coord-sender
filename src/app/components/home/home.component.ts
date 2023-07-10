@@ -57,6 +57,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   errorMessage = '';
 
+  paintFeature = false;
+
   form!: FormGroup<any>;
 
   initialCoordsTable$ = this.coordService.getInitialCoordList$
@@ -197,6 +199,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
+      this.paintFeature = true;
       this.handleResponse(data);
     })
   }

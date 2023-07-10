@@ -17,12 +17,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { MapComponent } from './components/map/map.component';
 import { HomeComponent } from './components/home/home.component';
+import { MapminiComponent } from './components/home/mapmini/mapmini.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
-    HomeComponent
+    HomeComponent,
+    MapminiComponent
   ],
   imports: [
     BrowserModule,
