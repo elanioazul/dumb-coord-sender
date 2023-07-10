@@ -6,7 +6,13 @@
   
           <div class="container__form-controls">
             <div class="container__form-control" formGroupName="epsgForm">
-              <p-dropdown formControlName="epsg" [options]="coordSystemsOptions" placeholder="Selecciona tipo de coord" optionLabel="label" optionValue="id"></p-dropdown>
+              <p-dropdown formControlName="epsg" [options]="coordSystemsOptions" placeholder="Selecciona tipo de coord" optionLabel="label" optionValue="id">
+                <ng-template let-epsg pTemplate="item">
+                  <div pTooltip="{{epsg.epsgVal}}" tooltipPosition="right">
+                      <span>{{epsg.label}}</span>
+                  </div>
+              </ng-template>
+              </p-dropdown>
             </div>
     
             <div *ngIf="selectedEpsg" formGroupName="coordsForm">
