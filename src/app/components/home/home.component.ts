@@ -169,6 +169,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   handleResponse(data: any): void {
     const res = JSON.parse(data.body); 
+    console.log(res);
+    console.log(JSON.parse(res.transformed_point.geojson));
+    
     if (res.initial_point && res.transformed_point) {
       this.messageService.add({
         summary: 'Éxito',
@@ -192,8 +195,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       payload = this.adaptPayloadForNoDms(formValue);
     }
-    
-    console.log(payload);
   
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
       this.handleResponse(data);
