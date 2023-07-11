@@ -17,10 +17,10 @@ import proj4 from 'proj4';
 export const createMap = (target: string, layers: Layer[]): Map => {
     const map = new Map({
       view: new View({
-        center: [431161.696445, 4581944.306753],
-        zoom: 14,
+        center: [242381.816692, 5070144.523184],
+        zoom: 7,
         maxZoom: 20,
-        projection: 'EPSG:25831'
+        projection: 'EPSG:3857'
       }),
       layers: [
         ...layers
@@ -48,13 +48,10 @@ export const createMap = (target: string, layers: Layer[]): Map => {
 
   export const createOSMBaseLayer = (): TileLayer<OSM> => {
     const OsmLayer = new TileLayer({
-        title: 'OSM',
-        visible: true,
         source: new OSM({
-            //'url': 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
+            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            maxZoom: 18
         }),
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18
     });
     return OsmLayer;
   }
@@ -87,12 +84,21 @@ export const createMap = (target: string, layers: Layer[]): Map => {
     return vectorLayer;
 };
 
-export const createFeaturesProjectionTransofmationNeeded = (elems: any[], sridOrigen: string): Feature[] => {
-  const source = new (proj4 as any).Proj(`EPSG:${sridOrigen}`);
-  const dest = new (proj4 as any).Proj('EPSG:25831');
+export const transformPointToFeature = (lon: any, lat: any): Feature => {
+  const source = new (proj4 as any).Proj('+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs');//https://epsg.io/25831 proj4 definition
+  const dest = new (proj4 as any).Proj('EPSG:3857');
+  const {x, y} = proj4.transform(source, dest, [lon, lat]);
+  const coords = [x, y];
+  const point = new Point(coords);
+  return new Feature(point);
+}
+
+export const createFeaturesProjectionTransofmationNeeded = (elems: any[]): Feature[] => {
+  const source = new (proj4 as any).Proj('+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs');
+  const dest = new (proj4 as any).Proj('EPSG:3857');
 
   const features = elems.map((elem) => {
-    const {x, y} = proj4.transform(source, dest, [elem.coordx, elem.coordy]);
+    const {x, y} = proj4.transform(source, dest, [elem.longitude, elem.latitude]);
     const coords = [x, y];
 
     const point = new Point(coords);
@@ -104,7 +110,7 @@ export const createFeaturesProjectionTransofmationNeeded = (elems: any[], sridOr
 
   return features;
 }
-export const createFeatures = (coords: Coordinate): Feature => {
+export const createFeature = (coords: Coordinate): Feature => {
     const point = new Point(coords);
     const feature = new Feature(point);
     return feature;

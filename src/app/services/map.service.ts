@@ -72,6 +72,13 @@ export class MapService {
       this.layers.next(layers)
     }
 
+    addFeature(layerId: string, feature: Feature) {
+      const layer = this.getLayerById(layerId);
+      if(!layer) return;
+      layer.getSource().clear();
+      layer.getSource().addFeature(feature);
+    }
+
     addMultipleFeaturesToLayer(layerId: string, features: Feature[]) {
       const layer = this.getLayerById(layerId);
       if(!layer) return;
@@ -125,4 +132,27 @@ export class MapService {
       if(!map) return;
       centerMap(map);
     }
+
+
+
+    // setVectorStyle() {
+    //   const vectorMapViewer = this.getLayerById('vectorMapViewer');
+    //   const vectorOverview = this.getLayerById('vectorOverview');
+
+    //   const setStyle = (feature: Feature) => {
+    //     const style = new Style({
+    //       image: new CircleStyle({
+    //         radius: 10,
+    //         stroke: new Stroke({
+    //           color: '#fff',
+    //         }),
+    //         fill: new Fill({
+    //           color: '#4caf50',
+    //         }),
+    //       }),
+    //     });
+
+    //     return style;
+    //   }
+    // }
 }
