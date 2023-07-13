@@ -154,11 +154,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   handleResponse(data: any): void {
     const res = JSON.parse(data.body); 
 
-    console.log(res);
-    const feature: Feature = JSON.parse(res.transformed_point.geojson);
-    console.log(feature);
+    //console.log(res);
+    const point: any = JSON.parse(res.transformed_point.geojson);
+    //console.log(feature);
     
-    this.initOverviewMap(feature);
+    this.initOverviewMap(point);
     
     if (res.initial_point && res.transformed_point) {
       this.messageService.add({
@@ -189,11 +189,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   }
 
-  initOverviewMap(something: any): void {
+  initOverviewMap(point: any): void {
     this.subscriptions.push(
       this.mapService.maps$.subscribe((maps) => {
         this.map = maps.overview!;
-        const feature = transformPointToFeature(something.coordinates[0], something.coordinates[1])
+        const feature = transformPointToFeature(point.coordinates[0], point.coordinates[1])
         this.mapService.addFeature('vectorOverview', feature);
       })
     );
