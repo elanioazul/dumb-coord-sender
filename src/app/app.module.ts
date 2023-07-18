@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MessageService } from 'primeng/api';
@@ -37,6 +38,7 @@ import { OverviewComponent } from './components/home/overview/overview.component
     DropdownModule,
     TooltipModule,
     MessagesModule,
+    DialogModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

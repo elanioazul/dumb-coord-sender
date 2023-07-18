@@ -1,6 +1,17 @@
 
 <div class="container">
     <p-messages [showTransitionOptions]="'500ms'" [hideTransitionOptions]="'500ms'" [closable]="true"></p-messages>
+    <p-dialog header="Header" [(visible)]="visible" [style]="{ width: '50vw' }">
+      <ng-template pTemplate="header">
+          <span class="text-xl font-bold">Detalles</span>
+      </ng-template>
+      <p>
+          aqui sería sacar el json respuesta
+      </p>
+      <ng-template pTemplate="footer">
+          <p-button icon="pi pi-check" (click)="visible = false" label="Ok" styleClass="p-button-text"></p-button>
+      </ng-template>
+  </p-dialog>
     <div class="container__formbox">
         <form class="container__form" [formGroup]="form" (ngSubmit)="onSubmit()">
   

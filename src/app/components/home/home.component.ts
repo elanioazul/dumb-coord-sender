@@ -33,6 +33,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   form!: FormGroup<any>;
 
+  visible = false;
+
   initialCoordsTable$ = this.coordService.getInitialCoordList$
   .pipe(
     catchError(err => {
@@ -201,12 +203,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   checkABS(coord: any): void {
     console.log(coord);
+    this.visible = true;
     
   }
 
   intersectCapas(coord: any): void {
     console.log(coord);
+    this.visible = true;
     
   }
+
 }
 
