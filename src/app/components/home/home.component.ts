@@ -5,11 +5,14 @@ import { EMPTY, Observable, Subject, Subscription, catchError, takeUntil } from 
 import { CoordinateSystem } from '../../classes/coord-system';
 import { MessageService } from 'primeng/api';
 import {IForm, IepsgForm, IcoordsForm, InoDmsForm, IdmsForm, ILongitudeForm, ILatitudeForm}  from '../../interfaces/form.interface';
-import { IPayload } from '../../interfaces/payload.interface';
+import {CoordinateInitial } from '../../classes/coord-initial';
+import {CoordinateTransformed } from '../../classes/coord-transformed';
+import { ICheckAbsPayload, ITransformPayload } from '../../interfaces/payload.interface';
 import { latitudeValues, longitudeValues } from '../../consts/lat-lon-vals';
 import { MapService } from 'src/app/services/map.service';
 import { Feature, Map } from 'ol';
 import { transformPointToFeature } from '../../utils/ol';
+import { AbsService } from 'src/app/services/abs.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -35,6 +38,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   visible = false;
 
+  abs!: any;
+
   initialCoordsTable$ = this.coordService.getInitialCoordList$
   .pipe(
     catchError(err => {
@@ -50,7 +55,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   )
 
-  constructor(private coordService: CoordinatesService, private builder: FormBuilder, private messageService: MessageService, private mapService: MapService){
+  constructor(
+    private coordService: CoordinatesService, 
+    private absService: AbsService, 
+    private builder: FormBuilder, 
+    private messageService: MessageService, 
+    private mapService: MapService
+  ){
     this.form = this.builder.group<IForm>({
       epsgForm: this.builder.group<IepsgForm>({
         epsg: this.builder.control(0, Validators.required)
@@ -122,8 +133,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.selectedEpsg == 1 || this.selectedEpsg == 6 ? true : false;
   }
 
-  adaptPayloadForNoDms(form: any): IPayload {
-    let payload: IPayload;
+  adaptPayloadForNoDms(form: any): ITransformPayload {
+    let payload: ITransformPayload;
     delete form.coordsForm.dms
     return payload = {
       epsgSelected: this.coordSystemsOptions.find(system => system.id == form.epsgForm.epsg)?.epsgVal,
@@ -131,8 +142,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     } 
   }
 
-  adaptPayloadForDms(form: any): IPayload {
-    let payload: IPayload;
+  adaptPayloadForDms(form: any): ITransformPayload {
+    let payload: ITransformPayload;
     delete form.coordsForm.noDms;
     return payload = {
       epsgSelected: this.coordSystemsOptions.find(system => system.id == form.epsgForm.epsg)?.epsgVal,
@@ -153,7 +164,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleResponse(data: any): void {
+  handleTransformResponse(data: any): void {
     const res = JSON.parse(data.body); 
 
     //console.log(res);
@@ -179,7 +190,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     const formValue = this.form.getRawValue();
-    let payload: IPayload;
+    let payload: ITransformPayload;
     if (this.checkDmsMode()) {
       payload = this.adaptPayloadForDms(formValue);
     } else {
@@ -187,7 +198,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
-      this.handleResponse(data);
+      this.handleTransformResponse(data);
     })
   }
 
@@ -201,13 +212,39 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  checkABS(coord: any): void {
-    console.log(coord);
-    this.visible = true;
+  handleAbsResponse(data: any): void {
+    const res = JSON.parse(data.body); 
+    if (res && res[0]) {
+      this.abs = res[0]
+      this.visible = true;
+    } else {
+      this.messageService.add({
+        summary: 'Error',
+        detail: `No se ha encontrado info de ABS`,
+        severity: 'error',
+      });
+    }
     
   }
 
-  intersectCapas(coord: any): void {
+  createAbsIntersectionPayload(coord: CoordinateInitial | CoordinateTransformed): ICheckAbsPayload {
+    let payload: ICheckAbsPayload;
+    return payload = {
+      epsg: coord.srid,
+      lon: coord.longitude,
+      lat: coord.latitude
+    }
+  }
+
+  checkABS(coord: CoordinateInitial | CoordinateTransformed): void {
+    let payload = this.createAbsIntersectionPayload(coord);
+    this.absService.intersectAbs(payload).subscribe((data) => {
+      this.handleAbsResponse(data)
+    })
+    
+  }
+
+  intersectCapas(coord: CoordinateInitial | CoordinateTransformed): void {
     console.log(coord);
     this.visible = true;
     

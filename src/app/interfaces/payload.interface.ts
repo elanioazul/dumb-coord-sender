@@ -9,7 +9,12 @@ interface IDms {
     y: string
   }
 
-export interface IPayload {
+export interface ITransformPayload {
     epsgSelected?: number;
     coords: Array<INoDms> | Array<Array<IDms>>
+}
+export interface ICheckAbsPayload {
+    epsg: number | string;
+    lon: number | string;
+    lat: number | string;
 }
