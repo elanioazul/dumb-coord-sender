@@ -68,6 +68,8 @@
         <th>longitude</th>
         <th>latitude</th>
         <th>srid</th>
+        <th style="width: 5rem">CheckABS</th>
+        <th style="width: 5rem">IntersectCapas</th>
         </tr>
         </thead>
         <tbody>
@@ -76,6 +78,12 @@
         <td>{{ initial.longitude }}</td>
         <td>{{ initial.latitude }}</td>
         <td>{{ initial.srid }}</td>
+        <td>
+          <p-button type="button" (click)="checkABS(initial)"></p-button>
+        </td>
+        <td>
+          <p-button type="button" (click)="intersectCapas(initial)"></p-button>
+        </td>
         </tr>
         </tbody>
         </table>
@@ -93,7 +101,8 @@
         <th>longitude</th>
         <th>latitude</th>
         <th>srid</th>
-        <th>transformed_geometry</th>
+        <th style="width: 5rem">CheckABS</th>
+        <th style="width: 5rem">IntersectCapas</th>
         </tr>
         </thead>
         <tbody>
@@ -103,7 +112,12 @@
         <td>{{ transformada.longitude }}</td>
         <td>{{ transformada.latitude }}</td>
         <td>{{ transformada.srid }}</td>
-        <td>{{ transformada.geometry }}</td>
+        <td>
+          <p-button type="button" (click)="checkABS(transformada)"></p-button>
+        </td>
+        <td>
+          <p-button type="button" (click)="intersectCapas(transformada)"></p-button>
+        </td>
         </tr>
         </tbody>
         </table>

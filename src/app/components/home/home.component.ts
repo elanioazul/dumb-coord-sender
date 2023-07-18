@@ -198,5 +198,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
     );
   }
+
+  checkABS(coord: any): void {
+    console.log(coord);
+    
+  }
+
+  intersectCapas(coord: any): void {
+    console.log(coord);
+    
+  }
 }
 
