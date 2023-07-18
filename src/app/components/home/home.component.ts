@@ -5,22 +5,11 @@ import { EMPTY, Observable, Subject, Subscription, catchError, takeUntil } from 
 import { CoordinateSystem } from '../../classes/coord-system';
 import { MessageService } from 'primeng/api';
 import {IForm, IepsgForm, IcoordsForm, InoDmsForm, IdmsForm, ILongitudeForm, ILatitudeForm}  from '../../interfaces/form.interface';
-
-interface IDms {
-  degree: string,
-  minute: string,
-  second: string,
-  cardinalPoint: string
-}
-interface INoDms {
-  x: string,
-  y: string
-}
-interface IPayload {
-  epsgSelected?: number;
-  coords: Array<INoDms> | Array<Array<IDms>>
-
-}
+import { IPayload } from '../../interfaces/payload.interface';
+import { latitudeValues, longitudeValues } from '../../consts/lat-lon-vals';
+import { MapService } from 'src/app/services/map.service';
+import { Feature, Map } from 'ol';
+import { transformPointToFeature } from '../../utils/ol';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -28,26 +17,9 @@ interface IPayload {
 })
 
 export class HomeComponent implements OnInit, OnDestroy {
-  latitudeValues = [
-    {
-      name: "Norte",
-      key: "N"
-    },
-    {
-      name: "Sur",
-      key: "S"
-    },
-  ];
-  longitudeValues = [
-    {
-      name: "Este",
-      key: "E"
-    },
-    {
-      name: "Oeste",
-      key: "O"
-    },
-  ];
+
+  latitudeValues = latitudeValues;
+  longitudeValues = longitudeValues;
 
   destroy$ = new Subject<void>();
   subscriptions: Subscription[] = [];
@@ -56,6 +28,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   selectedEpsg!: number;
 
   errorMessage = '';
+
+  map!: Map;
 
   form!: FormGroup<any>;
 
@@ -74,7 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   )
 
-  constructor(private coordService: CoordinatesService, private builder: FormBuilder, private messageService: MessageService){
+  constructor(private coordService: CoordinatesService, private builder: FormBuilder, private messageService: MessageService, private mapService: MapService){
     this.form = this.builder.group<IForm>({
       epsgForm: this.builder.group<IepsgForm>({
         epsg: this.builder.control(0, Validators.required)
@@ -161,14 +135,31 @@ export class HomeComponent implements OnInit, OnDestroy {
     return payload = {
       epsgSelected: this.coordSystemsOptions.find(system => system.id == form.epsgForm.epsg)?.epsgVal,
       coords: [
-        [form.coordsForm.dms.longitude.degrees, form.coordsForm.dms.longitude.minutes, form.coordsForm.dms.longitude.seconds, form.coordsForm.dms.longitude.lon], 
-        [form.coordsForm.dms.latitude.degrees, form.coordsForm.dms.latitude.minutes, form.coordsForm.dms.latitude.seconds, form.coordsForm.dms.latitude.lat]
+        [
+          form.coordsForm.dms.longitude.degrees, 
+          form.coordsForm.dms.longitude.minutes, 
+          form.coordsForm.dms.longitude.seconds, 
+          form.coordsForm.dms.longitude.lon
+        ], 
+        [
+          form.coordsForm.dms.latitude.degrees, 
+          form.coordsForm.dms.latitude.minutes, 
+          form.coordsForm.dms.latitude.seconds, 
+          form.coordsForm.dms.latitude.lat
+        ]
       ]
     }
   }
 
   handleResponse(data: any): void {
     const res = JSON.parse(data.body); 
+
+    //console.log(res);
+    const point: any = JSON.parse(res.transformed_point.geojson);
+    //console.log(feature);
+    
+    this.initOverviewMap(point);
+    
     if (res.initial_point && res.transformed_point) {
       this.messageService.add({
         summary: 'Éxito',
@@ -192,12 +183,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       payload = this.adaptPayloadForNoDms(formValue);
     }
-    
-    console.log(payload);
   
     this.coordService.sendCoordToTransform(payload).subscribe((data) => {
       this.handleResponse(data);
     })
+  }
+
+  initOverviewMap(point: any): void {
+    this.subscriptions.push(
+      this.mapService.maps$.subscribe((maps) => {
+        this.map = maps.overview!;
+        const feature = transformPointToFeature(point.coordinates[0], point.coordinates[1])
+        this.mapService.addFeature('vectorOverview', feature);
+      })
+    );
   }
 }
 
