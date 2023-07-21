@@ -3,5 +3,7 @@ export interface ICoordinateSystem {
     epsgVal: number,
     epsgDesc: string,
     label: string,
-    labelAdvance: string
+    labelAdvance: string,
+    ejemplo_coord: string,
+    is_dms: string
   }

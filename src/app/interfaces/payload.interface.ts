@@ -14,7 +14,7 @@ export interface ITransformPayload {
     coords: Array<INoDms> | Array<Array<IDms>>
 }
 export interface ICheckAbsPayload {
-    epsg: number | string;
+    epsg?: number | string;
     lon: number | string;
     lat: number | string;
 }

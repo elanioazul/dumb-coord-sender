@@ -230,7 +230,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   createAbsIntersectionPayload(coord: CoordinateInitial | CoordinateTransformed): ICheckAbsPayload {
     let payload: ICheckAbsPayload;
     return payload = {
-      epsg: coord.srid,
+      epsg: this.coordSystemsOptions.find(system => system.id == coord.id)?.epsgVal,
       lon: coord.longitude,
       lat: coord.latitude
     }
