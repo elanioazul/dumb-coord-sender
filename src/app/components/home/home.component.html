@@ -1,6 +1,20 @@
 
-<div class="container">
+<div #container class="container">
     <p-messages [showTransitionOptions]="'500ms'" [hideTransitionOptions]="'500ms'" [closable]="true"></p-messages>
+    <p-dialog header="Header" [(visible)]="visible" [style]="{ width: '50vw' }">
+      <ng-template pTemplate="header">
+          <span class="text-xl font-bold" [innerText]="abs  ? 'Detalles ABS' : 'AdminInfo intersected'"></span>
+      </ng-template>
+      <div *ngIf="abs">
+        {{ abs | json }}
+      </div>
+      <div *ngIf="adminInfo">
+        {{ adminInfo | json }}
+      </div>
+      <ng-template pTemplate="footer">
+          <p-button icon="pi pi-check" (click)="visible = false" label="Ok" styleClass="p-button-text"></p-button>
+      </ng-template>
+  </p-dialog>
     <div class="container__formbox">
         <form class="container__form" [formGroup]="form" (ngSubmit)="onSubmit()">
   
@@ -68,6 +82,8 @@
         <th>longitude</th>
         <th>latitude</th>
         <th>srid</th>
+        <th style="width: 5rem">ABS</th>
+        <th style="width: 5rem">IntersectCapas</th>
         </tr>
         </thead>
         <tbody>
@@ -76,6 +92,12 @@
         <td>{{ initial.longitude }}</td>
         <td>{{ initial.latitude }}</td>
         <td>{{ initial.srid }}</td>
+        <td>
+          <p-button type="button" (click)="checkABS(initial)" icon="pi pi-external-link" label="Show"></p-button>
+        </td>
+        <td>
+          <p-button type="button" (click)="checkAdminInfo(initial)" icon="pi pi-external-link" label="Show"></p-button>
+        </td>
         </tr>
         </tbody>
         </table>
@@ -93,7 +115,8 @@
         <th>longitude</th>
         <th>latitude</th>
         <th>srid</th>
-        <th>transformed_geometry</th>
+        <th style="width: 5rem">CheckABS</th>
+        <th style="width: 5rem">IntersectCapas</th>
         </tr>
         </thead>
         <tbody>
@@ -103,7 +126,12 @@
         <td>{{ transformada.longitude }}</td>
         <td>{{ transformada.latitude }}</td>
         <td>{{ transformada.srid }}</td>
-        <td>{{ transformada.geometry }}</td>
+        <td>
+          <p-button type="button" (click)="checkABS(transformada)" icon="pi pi-external-link" label="Show"></p-button>
+        </td>
+        <td>
+          <p-button type="button" (click)="checkAdminInfo(transformada)" icon="pi pi-external-link" label="Show"></p-button>
+        </td>
         </tr>
         </tbody>
         </table>

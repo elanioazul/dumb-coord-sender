@@ -3,6 +3,6 @@ export interface ICoordinateTransformed {
     intialsCoordId: number,
     longitude: number,
     latitude: number,
-    srid: string,
+    sridId: number,
     geometry: any
   }
