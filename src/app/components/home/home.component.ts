@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CoordinatesService } from '../../services/coordinates.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { EMPTY, Observable, Subject, Subscription, catchError, takeUntil } from 'rxjs';
@@ -21,6 +21,8 @@ import { AdmincapasService } from 'src/app/services/admincapas.service';
 })
 
 export class HomeComponent implements OnInit, OnDestroy {
+
+  @ViewChild('container') topScrollTarget!: ElementRef;
 
   latitudeValues = latitudeValues;
   longitudeValues = longitudeValues;
@@ -221,6 +223,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.abs = res[0]
       this.visible = true;
     } else {
+      this.topScrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
       this.messageService.add({
         summary: 'Error',
         detail: `No se ha encontrado info de ABS`,
@@ -235,9 +238,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.adminInfo = res
       this.visible = true;
     } else {
+      this.topScrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
       this.messageService.add({
         summary: 'Error',
-        detail: `No se ha encontrado info administrativa. Causas posibles: gap topológico o agua`,
+        detail: `No se ha encontrado info administrativa: gap topológico o agua`,
         severity: 'error',
       });
     }
