@@ -5,8 +5,11 @@
       <ng-template pTemplate="header">
           <span class="text-xl font-bold">Detalles ABS</span>
       </ng-template>
-      <div>
+      <div *ngIf="abs">
         {{ abs | json }}
+      </div>
+      <div *ngIf="adminInfo">
+        {{ adminInfo | json }}
       </div>
       <ng-template pTemplate="footer">
           <p-button icon="pi pi-check" (click)="visible = false" label="Ok" styleClass="p-button-text"></p-button>
@@ -93,7 +96,7 @@
           <p-button type="button" (click)="checkABS(initial)" icon="pi pi-external-link" label="Show"></p-button>
         </td>
         <td>
-          <p-button type="button" (click)="intersectCapas(initial)" icon="pi pi-external-link" label="Show"></p-button>
+          <p-button type="button" (click)="checkAdminInfo(initial)" icon="pi pi-external-link" label="Show"></p-button>
         </td>
         </tr>
         </tbody>
@@ -127,7 +130,7 @@
           <p-button type="button" (click)="checkABS(transformada)" icon="pi pi-external-link" label="Show"></p-button>
         </td>
         <td>
-          <p-button type="button" (click)="intersectCapas(transformada)" icon="pi pi-external-link" label="Show"></p-button>
+          <p-button type="button" (click)="checkAdminInfo(transformada)" icon="pi pi-external-link" label="Show"></p-button>
         </td>
         </tr>
         </tbody>

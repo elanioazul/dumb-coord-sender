@@ -13,6 +13,7 @@ import { MapService } from 'src/app/services/map.service';
 import { Feature, Map } from 'ol';
 import { transformPointToFeature } from '../../utils/ol';
 import { AbsService } from 'src/app/services/abs.service';
+import { AdmincapasService } from 'src/app/services/admincapas.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -39,6 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   visible = false;
 
   abs!: any;
+  adminInfo!: any;
 
   initialCoordsTable$ = this.coordService.getInitialCoordList$
   .pipe(
@@ -58,6 +60,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private coordService: CoordinatesService, 
     private absService: AbsService, 
+    private capasService: AdmincapasService, 
     private builder: FormBuilder, 
     private messageService: MessageService, 
     private mapService: MapService
@@ -226,8 +229,30 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     
   }
+  handleCapasResponse(data: any): void {
+    const res = JSON.parse(data.body); 
+    if (res && res.country) {
+      this.adminInfo = res
+      this.visible = true;
+    } else {
+      this.messageService.add({
+        summary: 'Error',
+        detail: `No se ha encontrado info administrativa. Causas posibles: gap topológico o agua`,
+        severity: 'error',
+      });
+    }
+    
+  }
 
   createAbsIntersectionPayload(coord: CoordinateInitial | CoordinateTransformed): ICheckAbsPayload {
+    let payload: ICheckAbsPayload;
+    return payload = {
+      epsg: this.coordSystemsOptions.find(system => system.id == parseInt(coord.srid))?.epsgVal,
+      lon: coord.longitude,
+      lat: coord.latitude
+    }
+  }
+  createCapasIntersectionPayload(coord: CoordinateInitial | CoordinateTransformed): ICheckAbsPayload {
     let payload: ICheckAbsPayload;
     return payload = {
       epsg: this.coordSystemsOptions.find(system => system.id == parseInt(coord.srid))?.epsgVal,
@@ -244,9 +269,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     
   }
 
-  intersectCapas(coord: CoordinateInitial | CoordinateTransformed): void {
-    console.log(coord);
-    this.visible = true;
+  checkAdminInfo(coord: CoordinateInitial | CoordinateTransformed): void {
+    let payload = this.createCapasIntersectionPayload(coord);
+    this.capasService.intersectCapas(payload).subscribe((data) => {
+      this.handleCapasResponse(data)
+    })
     
   }
 
