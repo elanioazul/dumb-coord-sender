@@ -23,6 +23,12 @@
       "ES2022",
       "dom"
     ],
+    "paths": {
+			"@features/*": ["src/app/features/*"],
+			"@core/*": ["src/app/core/*"],
+			"@pages/*": ["src/app/pages/*"],
+			"@shared/*": ["src/app/shared/*"],
+		},
     "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
