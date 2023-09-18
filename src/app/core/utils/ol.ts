@@ -84,8 +84,8 @@ export const createMap = (target: string, layers: Layer[]): Map => {
     return vectorLayer;
 };
 
-export const transformPointToFeature = (lon: any, lat: any): Feature => {
-  const source = new (proj4 as any).Proj('+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs');//https://epsg.io/25831 proj4 definition
+export const transformPointToFeature = (sirdId: number, lon: any, lat: any): Feature => {
+  const source = determineSourceSrid(sirdId);
   const dest = new (proj4 as any).Proj('EPSG:3857');
   const {x, y} = proj4.transform(source, dest, [lon, lat]);
   const coords = [x, y];
@@ -96,32 +96,9 @@ export const transformPointToFeature = (lon: any, lat: any): Feature => {
 export const createFeaturesProjectionTransofmationNeeded = (elems: any[]): Feature[] => {
   let source: any;
   const dest = new (proj4 as any).Proj('EPSG:3857');
-  const determineSourceSrid = (sridId: number): any => {
-    switch (sridId) {
-      case 1:
-      case 2:
-        source = new (proj4 as any).Proj('+proj=longlat +datum=WGS84 +no_defs +type=crs');
-        break;
-      case 3:
-        source = new (proj4 as any).Proj('EPSG:3857');
-        break;
-      case 4:
-        source = new (proj4 as any).Proj('+proj=utm +zone=31 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs +type=crs'); 
-        break;
-      case 5:
-      case 6:
-        source = new (proj4 as any).Proj('+proj=longlat +ellps=GRS80 +no_defs +type=crs');
-        break;
-      case 7:
-        source = new (proj4 as any).Proj('+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs');
-        break;
-      default:
-        alert( "I don't know such value" );
-    }
-  }
 
   const features = elems.map((elem) => {
-    determineSourceSrid(elem.srid)
+    source = determineSourceSrid(elem.srid)
     const {x, y} = proj4.transform(source, dest, [elem.longitude, elem.latitude]);
     const coords = [x, y];
 
@@ -138,4 +115,34 @@ export const createFeature = (coords: Coordinate): Feature => {
     const point = new Point(coords);
     const feature = new Feature(point);
     return feature;
+}
+
+const determineSourceSrid = (sridId: number): any => {
+  let source: any
+  switch (sridId) {
+    case 1:
+    case 2:
+      source = new (proj4 as any).Proj('+proj=longlat +datum=WGS84 +no_defs +type=crs');
+      return source;
+      break;
+    case 3:
+      source = new (proj4 as any).Proj('EPSG:3857');
+      return source;
+      break;
+    case 4:
+      source = new (proj4 as any).Proj('+proj=utm +zone=31 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs +type=crs'); 
+      return source;
+      break;
+    case 5:
+    case 6:
+      source = new (proj4 as any).Proj('+proj=longlat +ellps=GRS80 +no_defs +type=crs');
+      return source;
+      break;
+    case 7:
+      source = new (proj4 as any).Proj('+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs');
+      return source;
+      break;
+    default:
+      alert( "I don't know such value" );
+  }
 }

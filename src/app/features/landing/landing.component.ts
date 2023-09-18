@@ -207,13 +207,15 @@ export class LandingComponent {
   handleTransformResponse(data: any): void {
     const res = JSON.parse(data.body);
 
-    //console.log(res);
+
     const point: any = JSON.parse(res.transformed_point.geojson);
-    //console.log(feature);
 
-    this.initOverviewMap(point);
+    const cooidSystemId = this.coordSystemsOptions.find(
+      (system) => system.epsgVal == res.transformed_point.srid
+    )?.id;
 
-    if (res.initial_point && res.transformed_point) {
+    if (res.initial_point && res.transformed_point && cooidSystemId) {
+      this.initOverviewMap(point, cooidSystemId);
       this.messageService.add({
         summary: 'Éxito',
         detail: `Coordendadas transformadas con exito. Recarge la página.`,
@@ -242,11 +244,12 @@ export class LandingComponent {
     });
   }
 
-  initOverviewMap(point: any): void {
+  initOverviewMap(point: any, sridId: number): void {
     this.subscriptions.push(
       this.mapService.maps$.subscribe((maps) => {
         this.map = maps.overview!;
         const feature = transformPointToFeature(
+          sridId,
           point.coordinates[0],
           point.coordinates[1]
         );
