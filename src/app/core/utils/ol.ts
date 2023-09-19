@@ -19,18 +19,12 @@ import DragZoom from 'ol/interaction/DragZoom.js';
 import Interaction from 'ol/interaction/Interaction.js';
 import {defaults} from 'ol/interaction/defaults';
 import Select from 'ol/interaction/Select';
+import { ElementRef } from '@angular/core';
 
 //controls
 const dragZoom = new DragZoom();
 const zoom = new Zoom();
-const mouse = new MousePosition({
-  coordinateFormat: function (coordinates) {
-    var coord_x = coordinates?.[0].toFixed(3);
-    var coord_y = coordinates?.[1].toFixed(3);
-    return 'lon:' + coord_x + '  ' + 'lat:' + coord_y;
-  },
-  //target: 'coordinates'
-});
+
 const scale = new ScaleLine();
 const overviewMapControl = new OverviewMap({
   className: 'ol-overviewmap ol-custom-overviewmap',
@@ -55,6 +49,18 @@ const view = new View({
   projection: 'EPSG:3857'
 })
 
+export const addMouseControlToMap = (target: HTMLElement, map: Map) => {
+  const mouse = new MousePosition({
+    coordinateFormat: function (coordinates) {
+      var coord_x = coordinates?.[0].toFixed(3);
+      var coord_y = coordinates?.[1].toFixed(3);
+      return `${map.getView().getProjection().getCode()} ` + coord_x + ' , ' + coord_y;
+    },
+    target: target
+  });
+  map.addControl(mouse);
+}
+
 export const createMap = (target: string, layers: Layer[]): Map => {
   let  map;
   if (target === 'viewer') {
@@ -63,7 +69,7 @@ export const createMap = (target: string, layers: Layer[]): Map => {
         ...layers
       ],
       //interactions: [dragZoom],
-      controls: [overviewMapControl, zoom, mouse, scale],
+      controls: [overviewMapControl, zoom, scale],
     });
   } else {
     map = new Map({

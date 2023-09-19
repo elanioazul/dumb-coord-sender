@@ -3,6 +3,11 @@
 //mouseControl
 .ol-mouse-position {
   font-family: monospace;
+  position: static;
+  padding-left: 2em;
+  @media(min-width:767px) {
+    padding-left: 14em;
+  }
 }
 //scaleControl
 .ol-scale-line {

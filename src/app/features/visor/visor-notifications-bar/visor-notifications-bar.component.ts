@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MapService } from '@core/services/map.service';
 import { Subject, map, takeUntil } from 'rxjs';
-
+import {
+  addMouseControlToMap
+} from '@core/utils/ol';;
 @Component({
   selector: 'app-visor-notifications-bar',
   templateUrl: './visor-notifications-bar.component.html',
@@ -30,7 +32,8 @@ export class VisorNotificationsBarComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit(): void {
     //this.map.getControls().MousePosition.setTarget(this.coordinatesDiv.nativeElement);
-    this.map.getControls().getArray()[2].setTarget(this.coordinatesDiv);
+    //this.map.getControls().getArray()[2].setTarget(this.coordinatesDiv);
+    addMouseControlToMap(this.coordinatesDiv.nativeElement, this.map);
   }
 
 
