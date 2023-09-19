@@ -46,6 +46,7 @@ import { Feature, Map } from 'ol';
 import { transformPointToFeature } from '../../core/utils/ol';
 import { AbsService } from 'src/app/core/services/abs.service';
 import { AdmincapasService } from 'src/app/core/services/admincapas.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -94,7 +95,8 @@ export class LandingComponent {
     private capasService: AdmincapasService,
     private builder: FormBuilder,
     private messageService: MessageService,
-    private mapService: MapService
+    private mapService: MapService,
+    private router: Router
   ) {
     this.form = this.builder.group<IForm>({
       epsgForm: this.builder.group<IepsgForm>({
@@ -254,6 +256,8 @@ export class LandingComponent {
           point.coordinates[1]
         );
         this.mapService.addFeature('vectorOverview', feature);
+        this.mapService.addFeature('vectorMapViewer', feature);
+        this.router.navigate(['/', 'visor-page']);
       })
     );
   }
