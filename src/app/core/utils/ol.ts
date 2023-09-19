@@ -28,8 +28,8 @@ const mouse = new MousePosition({
     var coord_x = coordinates?.[0].toFixed(3);
     var coord_y = coordinates?.[1].toFixed(3);
     return 'lon:' + coord_x + '  ' + 'lat:' + coord_y;
-},
-target: 'coordinates'
+  },
+  //target: 'coordinates'
 });
 const scale = new ScaleLine();
 const overviewMapControl = new OverviewMap({
