@@ -14,74 +14,121 @@ import Style from 'ol/style/Style';
 import Text from 'ol/style/Text';
 import proj4 from 'proj4';
 
+import { Attribution, OverviewMap, Control, Zoom, ScaleLine, MousePosition } from 'ol/control';
+import DragZoom from 'ol/interaction/DragZoom.js';
+import Interaction from 'ol/interaction/Interaction.js';
+import {defaults} from 'ol/interaction/defaults';
+import Select from 'ol/interaction/Select';
+
+//controls
+const dragZoom = new DragZoom();
+const zoom = new Zoom();
+const mouse = new MousePosition({
+  coordinateFormat: function (coordinates) {
+    var coord_x = coordinates?.[0].toFixed(3);
+    var coord_y = coordinates?.[1].toFixed(3);
+    return 'lon:' + coord_x + '  ' + 'lat:' + coord_y;
+},
+target: 'coordinates'
+});
+const scale = new ScaleLine();
+const overviewMapControl = new OverviewMap({
+  className: 'ol-overviewmap ol-custom-overviewmap',
+  layers: [
+      new TileLayer({
+          source: new OSM({
+              'url': 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
+          })
+      })
+  ],
+  collapsed: true,
+  tipLabel: 'Mapa de referencia',
+  label: '«',
+  collapseLabel: '»'
+})
+
+//view
+const view = new View({
+  center: [242381.816692, 5070144.523184],
+  zoom: 7,
+  maxZoom: 20,
+  projection: 'EPSG:3857'
+})
+
 export const createMap = (target: string, layers: Layer[]): Map => {
-    const map = new Map({
-      view: new View({
-        center: [242381.816692, 5070144.523184],
-        zoom: 7,
-        maxZoom: 20,
-        projection: 'EPSG:3857'
-      }),
+  let  map;
+  if (target === 'viewer') {
+    map = new Map({
       layers: [
         ...layers
       ],
-      target: target,
+      //interactions: [dragZoom],
+      controls: [overviewMapControl, zoom, mouse, scale],
     });
-    return map;
+  } else {
+    map = new Map({
+      layers: [
+        ...layers
+      ]
+    });
+  }
+  map.setTarget(target);
+  map.setView(view)
+  return map;
 }
 
-  export const centerMap = (map: Map):void => {
-    map.setView(new View({
-      center: [431161.696445, 4581944.306753],
-      zoom: 12,
-      maxZoom: 20
-    }))
-  }
+export const centerMap = (map: Map):void => {
+  map.setView(new View({
+    center: [431161.696445, 4581944.306753],
+    zoom: 12,
+    maxZoom: 20
+  }))
+}
 
-  export const goToCoordinates = (map: Map, coords: Coordinate): void => {
-    map.setView(new View({
-      center: coords,
-      zoom: 20,
-      maxZoom: 20
-    }));
-  }
+export const goToCoordinates = (map: Map, coords: Coordinate): void => {
+  map.setView(new View({
+    center: coords,
+    zoom: 20,
+    maxZoom: 20
+  }));
+}
 
-  export const createOSMBaseLayer = (): TileLayer<OSM> => {
-    const OsmLayer = new TileLayer({
-        source: new OSM({
-            url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            maxZoom: 18
-        }),
-    });
-    return OsmLayer;
-  }
+export const createOSMBaseLayer = (): TileLayer<OSM> => {
+  const OsmLayer = new TileLayer({
+      source: new OSM({
+          url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          maxZoom: 18
+      }),
+  });
+  return OsmLayer;
+}
 
-  export const createVectorLayer = (features: Feature[]): VectorLayer<VectorSource<Geometry>> => {
+export const createVectorLayer = (features: Feature[]): VectorLayer<VectorSource<Geometry>> => {
 
-    const source = new VectorSource({
-      features: features,
-    });
+  const source = new VectorSource({
+    features: features,
+  });
 
-    const vectorLayer = new VectorLayer({
-      source: source,
-      style: function (feature) {
-        const style = new Style({
-          image: new CircleStyle({
-            radius: 10,
-            stroke: new Stroke({
-              color: '#fff',
-            }),
-            fill: new Fill({
-              color: '#4caf50',
-            }),
+  const vectorLayer = new VectorLayer({
+    source: source,
+    style: function (feature) {
+      const style = new Style({
+        image: new CircleStyle({
+          radius: 10,
+          stroke: new Stroke({
+            color: '#fff',
           }),
-        });
+          fill: new Fill({
+            color: '#4caf50',
+          }),
+        }),
+      });
 
-        return style;
-      },
-    });
+      return style;
+    },
+  });
 
-    return vectorLayer;
+  return vectorLayer;
 };
 
 export const transformPointToFeature = (sirdId: number, lon: any, lat: any): Feature => {

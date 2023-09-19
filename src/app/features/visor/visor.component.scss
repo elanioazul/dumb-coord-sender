@@ -1,4 +1,3 @@
-app-map {
-    width: 100vw;
-    height: 600px;
+.container {
+    height: calc(100% - 70px); //70 altura de visor-header
 }

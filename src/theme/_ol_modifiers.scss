@@ -1,0 +1,102 @@
+@import "./colors";
+
+//mouseControl
+.ol-mouse-position {
+  font-family: monospace;
+}
+//scaleControl
+.ol-scale-line {
+  background-color: $coorp;
+}
+
+//zoomControl
+.ol-zoom {
+  left: unset;
+  right: 8px;
+}
+
+.ol-zoom .ol-zoom-in {
+  background-color: $coorp;
+  width: 20px;
+  height: 20px;
+  @media(min-width:767px) {
+    width: 25px;
+    height: 25px;
+  }
+
+}
+.ol-zoom .ol-zoom-in:focus {
+  outline: none;
+}
+.ol-zoom .ol-zoom-out {
+  background-color: $coorp;
+  width: 20px;
+  height: 20px;
+  @media(min-width:767px) {
+    width: 25px;
+    height: 25px;
+  }
+}
+.ol-zoom .ol-zoom-out:focus {
+  outline: none;
+}
+  
+//overViewControl
+ .ol-custom-overviewmap,
+ .ol-custom-overviewmap.ol-uncollapsible {
+  bottom: auto;
+  left: auto;
+  right: 8px;
+  top: 60px;
+  @media(min-width:767px) {
+    top: 65px;
+  }
+}
+
+ .ol-custom-overviewmap:not(.ol-collapsed)  {
+  border: 2px solid $coorp;
+}
+ .ol-custom-overviewmap .ol-overviewmap-map {
+  border: none;
+  @media(min-width:767px) {
+    width: 400px;
+    height: 300px;
+  }
+}
+ .ol-custom-overviewmap .ol-overviewmap-box {
+  border: 1px solid red;
+}
+ .ol-custom-overviewmap:not(.ol-collapsed) button {
+  width: 20px;
+  height: 20px;
+  @media(min-width:767px) {
+    width: 25px;
+    height: 25px;
+  }
+  background-color: rgb(185, 100, 100);
+}
+ .ol-custom-overviewmap:not(.ol-collapsed) button:focus {
+  outline: none;
+}
+
+ .ol-custom-overviewmap button {
+  width: 20px;
+  height: 20px;
+  @media(min-width:767px) {
+    width: 25px;
+    height: 25px;
+  }
+  background-color: $coorp;
+}
+
+ .ol-custom-overviewmap button:focus {
+  outline: none;
+}
+
+
+//dragzoomControl
+.ol-dragzoom {
+  background-color: rgb(185, 100, 100);
+  border-width: 2px;
+  border-color: rgba(219,63,63,1);
+}
