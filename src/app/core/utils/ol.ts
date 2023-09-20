@@ -54,7 +54,7 @@ export const addMouseControlToMap = (target: HTMLElement, map: Map) => {
     coordinateFormat: function (coordinates) {
       var coord_x = coordinates?.[0].toFixed(3);
       var coord_y = coordinates?.[1].toFixed(3);
-      return `${map.getView().getProjection().getCode()} ` + coord_x + ' , ' + coord_y;
+      return `x:` + coord_x + ' | ' + `y:` + coord_y + ` (${map.getView().getProjection().getCode()})`;
     },
     target: target
   });
