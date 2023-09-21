@@ -7,12 +7,14 @@ import { MapModule } from '@shared/components';
 import { VisorHeaderComponent } from './visor-header/visor-header.component';
 import { PrimengModule } from '@shared/components/primeng/primeng.module';
 import { VisorNotificationsBarComponent } from './visor-notifications-bar/visor-notifications-bar.component';
+import { VisorSidebarComponent } from './visor-sidebar/visor-sidebar.component';
 
 @NgModule({
   declarations: [
     VisorComponent,
     VisorHeaderComponent,
-    VisorNotificationsBarComponent
+    VisorNotificationsBarComponent,
+    VisorSidebarComponent
   ],
   imports: [
     CommonModule,
