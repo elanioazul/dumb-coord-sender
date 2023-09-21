@@ -7,7 +7,7 @@
   width: 100%;
   overflow: hidden;
   z-index: 2000;
-  height: calc(100% - 9.25em);
+  height: calc(100% - 7.5em);
 }
 .sidebar.collapsed {
   width: 45px;
@@ -78,7 +78,7 @@
 .sidebar-tabs > ul > li {
   width: 100%;
   height: 40px;
-  color: #fff;
+  color: $black;
   font-size: 12pt;
   overflow: hidden;
   transition: all 80ms;
