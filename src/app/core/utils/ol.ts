@@ -170,19 +170,19 @@ export const createLayerGroup = (params: any[], layer?: any): LayerGroup => {
   let group: LayerGroup;
   if (params.length > 1) {
     group = new LayerGroup({
-      title: 'Divisiones administrativas',
+      title: 'Divisions administratives',
       layers: params.map(param => createWMSlayer(param)),
       fold: 'open'
     } as GroupLayerOptions)
   } else if (params.length == 1) {
     group = new LayerGroup({
-      title: 'Sanitarias',
+      title: 'Sanitàries',
       layers: params.map(param => createWMSlayer(param)),
       fold: 'open'
     } as GroupLayerOptions)
   } else {
     group = new LayerGroup({
-      title: 'Coordinates passed',
+      title: 'Coordenades',
       layers: [layer],
       fold: 'open'
     } as GroupLayerOptions)

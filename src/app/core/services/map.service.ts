@@ -31,7 +31,8 @@ interface IMaps {
 interface ILayers {
   sanitationlayers: LayerGroup | null;
   adminLayers: LayerGroup | null;
-  coordinates: VectorLayer<any> | null;
+  //coordinates: VectorLayer<any> | null;
+  coordinates: LayerGroup | null;
   coordinate: VectorLayer<any> | null;
 }
 
@@ -90,8 +91,8 @@ export class MapService {
   addFeature(layerId: string, feature: Feature) {
     //const layer = this.getLayerById(layerId);
     if (layerId === 'coordinates') {
-      this.layers.value['coordinates']?.getSource().clear();
-      this.layers.value['coordinates']?.getSource().addFeature(feature);
+      this.layers.value['coordinates']?.getLayers()[0].getSource().clear();
+      this.layers.value['coordinates']?.getLayers()[0].addFeature(feature);
     }
     if (layerId === 'coordinate') {
       this.layers.value['coordinate']?.getSource().clear();
@@ -112,9 +113,7 @@ export class MapService {
         createOSMBaseLayer(), 
         layers.coordinate!
       ], [createBaseLayersGroupForLayerSwitcher()]),
-      viewer: createMap('viewer', [
-        layers.coordinates!,
-      ],[createBaseLayersGroupForLayerSwitcher(), layers.adminLayers!, layers.sanitationlayers!]),
+      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.coordinates!, layers.adminLayers!, layers.sanitationlayers!]),
     };
     this.setMaps(initialMaps);
   }
@@ -128,7 +127,7 @@ export class MapService {
       sanitationlayers: createLayerGroup(sanitarialayersParams),
       adminLayers: createLayerGroup(adminlayersParams),
       coordinate: createVectorLayer([]),
-      coordinates: createVectorLayer(features),
+      coordinates: createLayerGroup([], createVectorLayer(features))
     };
     this.setLayers(initialLayers);
   }

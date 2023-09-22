@@ -79,7 +79,7 @@ export class VisorComponent implements OnInit, AfterViewInit {
 
   setSwitchLayers(): void {
     this.layerSwitcher = new LayerSwitcher({
-      reverse: false,
+      reverse: true,
       groupSelectStyle: 'none',
       activationMode: 'click',
       startActive: false,
