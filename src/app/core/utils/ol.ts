@@ -3,23 +3,33 @@ import { Coordinate } from 'ol/coordinate';
 import { Geometry, Point } from 'ol/geom';
 import Layer from 'ol/layer/Layer';
 import TileLayer from 'ol/layer/Tile';
+import LayerTile from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import XYZ from 'ol/source/XYZ';
 import OSM from 'ol/source/OSM';
 import { Circle as CircleStyle } from 'ol/style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
-import Text from 'ol/style/Text';
 import proj4 from 'proj4';
 
 import { Attribution, OverviewMap, Control, Zoom, ScaleLine, MousePosition } from 'ol/control';
 import DragZoom from 'ol/interaction/DragZoom.js';
-import Interaction from 'ol/interaction/Interaction.js';
-import {defaults} from 'ol/interaction/defaults';
-import Select from 'ol/interaction/Select';
-import { ElementRef } from '@angular/core';
+
+import {
+  BaseLayerOptions,
+  GroupLayerOptions
+ } from 'ol-layerswitcher';
+ import BingMaps from 'ol/source/BingMaps';
+ import SourceStamen from 'ol/source/Stamen';
+import LayerGroup from 'ol/layer/Group';
+
+import TileWMS from 'ol/source/TileWMS';
+import ImageWMS from 'ol/source/ImageWMS';
+import ImageLayer from 'ol/layer/Image';
+
+//geoserver url
+const geoserverUrl = 'http://localhost:8080/geoserver/ows?';
 
 //controls
 const dragZoom = new DragZoom();
@@ -49,6 +59,52 @@ const view = new View({
   projection: 'EPSG:3857'
 })
 
+//capasBase
+const osm = new LayerTile ({
+  visible: true,
+  opacity: 0.8,
+  source: new OSM(),
+  title: 'OpenStreetMap',
+  type: 'base',
+  maxZoom: 18
+} as BaseLayerOptions);
+const toner = new LayerTile({
+  title: 'Toner',
+  type: 'base',
+  visible: false,
+  source: new SourceStamen({
+    layer: 'toner'
+  })
+} as BaseLayerOptions);
+const google = new LayerTile({
+  visible: false,
+  opacity: 0.9,
+  source: new OSM({
+    'url': 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
+  }),
+  title: 'GoogleMaps',
+  type: 'base',
+  maxZoom: 18
+} as BaseLayerOptions);
+const bing = new TileLayer({
+  title: 'Aerial',
+  type: 'base',
+  visible: false,
+  preload: Infinity,
+  source: new BingMaps({
+    key: 'AuOnHkagHRMe9v1n1yJMNM0G4iyXee2OC_pWr4K9moD63ppuwCIsKAwKJUgEP9CR',
+    imagerySet: 'Aerial',
+    maxZoom: 18
+  }),
+} as BaseLayerOptions);
+const baseMaps = new LayerGroup({
+  title: 'Base maps',
+  layers: [osm, google, bing, toner]
+} as GroupLayerOptions);
+
+export const createBaseLayersGroupForLayerSwitcher = (): LayerGroup => {
+  return baseMaps;
+}
 export const addMouseControlToMap = (target: HTMLElement, map: Map) => {
   const mouse = new MousePosition({
     coordinateFormat: function (coordinates) {
@@ -61,12 +117,13 @@ export const addMouseControlToMap = (target: HTMLElement, map: Map) => {
   map.addControl(mouse);
 }
 
-export const createMap = (target: string, layers: Layer[]): Map => {
+export const createMap = (target: string, layers: Layer[], layerGroup: LayerGroup[]): Map => {
   let  map;
   if (target === 'viewer') {
     map = new Map({
       layers: [
-        ...layers
+        ...layers,
+        ...layerGroup
       ],
       //interactions: [dragZoom],
       controls: [overviewMapControl, zoom, scale],
@@ -109,6 +166,61 @@ export const createOSMBaseLayer = (): TileLayer<OSM> => {
   return OsmLayer;
 }
 
+export const createLayerGroup = (params: any[], layer?: any): LayerGroup => {
+  let group: LayerGroup;
+  if (params.length > 1) {
+    group = new LayerGroup({
+      title: 'Divisiones administrativas',
+      layers: params.map(param => createWMSlayer(param)),
+      fold: 'open'
+    } as GroupLayerOptions)
+  } else if (params.length == 1) {
+    group = new LayerGroup({
+      title: 'Sanitarias',
+      layers: params.map(param => createWMSlayer(param)),
+      fold: 'open'
+    } as GroupLayerOptions)
+  } else {
+    group = new LayerGroup({
+      title: 'Coordinates passed',
+      layers: [layer],
+      fold: 'open'
+    } as GroupLayerOptions)
+  }
+  return group;
+}
+
+export const createWMSlayer = (param: any): ImageLayer<ImageWMS> | TileLayer<TileWMS> => {
+  let layer: any;
+  if (param.TILED == true) {
+    const source = new TileWMS({
+      url: geoserverUrl,
+      params: param,
+      serverType: 'geoserver',
+    });
+    layer = new TileLayer({
+      source: source,
+      title: `${param.LAYERS}`
+
+    } as BaseLayerOptions)
+  }
+  if (param.TILED == false) {
+    const source = new ImageWMS({
+      url: geoserverUrl,
+      params: param,
+      ratio: 1,
+      serverType: 'geoserver',
+    });
+    layer = new ImageLayer({
+      source: source,
+      title: `${param.LAYERS}`
+
+    } as BaseLayerOptions)
+  }
+  return layer;
+
+}
+
 export const createVectorLayer = (features: Feature[]): VectorLayer<VectorSource<Geometry>> => {
 
   const source = new VectorSource({
@@ -132,7 +244,8 @@ export const createVectorLayer = (features: Feature[]): VectorLayer<VectorSource
 
       return style;
     },
-  });
+    title: features ? 'Coordenades passades' : 'Coordenade',
+  } as BaseLayerOptions);
 
   return vectorLayer;
 };

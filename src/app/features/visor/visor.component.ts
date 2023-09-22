@@ -4,6 +4,10 @@ import { Map } from 'ol';
 import { Subscription } from 'rxjs';
 import { MapService } from 'src/app/core/services/map.service';
 import Sidebar from "@core/js/ol5-sidebar.js";
+import LayerSwitcher from 'ol-layerswitcher';
+import {
+  RenderOptions,
+ } from 'ol-layerswitcher';
 
 @Component({
   selector: 'app-visor',
@@ -19,9 +23,13 @@ export class VisorComponent implements OnInit, AfterViewInit {
   templateArray: ElementRef<HTMLElement>[] = [];
 
   sidebarDiv?: ElementRef<HTMLElement>;
-  layerSwitcherDiv?: ElementRef<HTMLElement>;
-
   sidebar: Sidebar | null = null;
+
+  layerSwitcherDiv?: ElementRef<HTMLElement>;
+  layerSwitcher: LayerSwitcher | null = null;
+  optionsToRenderLayerSwitcher!: RenderOptions;
+
+  domElement: any;
 
   constructor(private mapService: MapService, private sidebarService: SidebarService) {
     this.templateSubscription = this.sidebarService.template$.subscribe( domNode => {
@@ -39,6 +47,7 @@ export class VisorComponent implements OnInit, AfterViewInit {
     this.initMap();
     this.setDivs();
     this.setSideBar();
+    this.setSwitchLayers();
   }
 
   initMap(): void {
@@ -66,6 +75,19 @@ export class VisorComponent implements OnInit, AfterViewInit {
     });
     this.sidebar.setMap(this.map);
     this.map.addControl(this.sidebar);
+  }
+
+  setSwitchLayers(): void {
+    this.layerSwitcher = new LayerSwitcher({
+      reverse: false,
+      groupSelectStyle: 'none',
+      activationMode: 'click',
+      startActive: false,
+      label: '',
+      collapseTipLabel: 'Collapse legend',
+    });
+    this.domElement = this.layerSwitcherDiv;
+    LayerSwitcher.renderPanel(this.map, this.domElement, { reverse: true})
   }
 
 }
