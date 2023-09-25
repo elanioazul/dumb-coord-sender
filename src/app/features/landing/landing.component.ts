@@ -255,8 +255,8 @@ export class LandingComponent {
           point.coordinates[0],
           point.coordinates[1]
         );
-        this.mapService.addFeature('vectorOverview', feature);
-        this.mapService.addFeature('vectorMapViewer', feature);
+        this.mapService.addFeature('coordinate', feature);
+        this.mapService.addFeature('coordinates', feature);
         this.router.navigate(['/', 'visor-page']);
       })
     );

@@ -90,9 +90,8 @@ export class MapService {
 
   addFeature(layerId: string, feature: Feature) {
     //const layer = this.getLayerById(layerId);
-    if (layerId === 'coordinates') {
-      this.layers.value['coordinates']?.getLayers()[0].getSource().clear();
-      this.layers.value['coordinates']?.getLayers()[0].addFeature(feature);
+    if (layerId === 'coordinates' && this.layers.value['coordinates']) {
+      (this.layers.value['coordinates'].getLayers() as any).getArray()[0].getSource().addFeature(feature);
     }
     if (layerId === 'coordinate') {
       this.layers.value['coordinate']?.getSource().clear();
