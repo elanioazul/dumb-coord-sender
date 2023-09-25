@@ -201,7 +201,8 @@ export const createWMSlayer = (param: any): ImageLayer<ImageWMS> | TileLayer<Til
     });
     layer = new TileLayer({
       source: source,
-      title: `${param.LAYERS}`
+      title: `${param.LAYERS}`,
+      visible: false
 
     } as BaseLayerOptions)
   }
@@ -214,7 +215,8 @@ export const createWMSlayer = (param: any): ImageLayer<ImageWMS> | TileLayer<Til
     });
     layer = new ImageLayer({
       source: source,
-      title: `${param.LAYERS}`
+      title: `${param.LAYERS}`,
+      visible: false
 
     } as BaseLayerOptions)
   }
