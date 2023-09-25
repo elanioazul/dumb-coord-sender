@@ -27,6 +27,7 @@ import LayerGroup from 'ol/layer/Group';
 import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import ImageLayer from 'ol/layer/Image';
+import { fromLonLat } from 'ol/proj';
 
 //geoserver url
 const geoserverUrl = 'http://localhost:8080/geoserver/ows?';
@@ -281,6 +282,43 @@ export const createFeature = (coords: Coordinate): Feature => {
     const point = new Point(coords);
     const feature = new Feature(point);
     return feature;
+}
+
+export const flyToPosition = (map: Map, lat: number, lon: number): void => {
+  map.getView();
+  const duration = 4000;
+  const zoom = map.getView().getZoom();
+  let parts = 2;
+  let called = false;
+  const callback = (complete) => {
+    --parts;
+    if (called) {
+      return;
+    }
+    if (parts === 0 || !complete) {
+      called = true;
+    }
+  };
+  if (zoom) {
+    map.getView().animate(
+      {
+        center: fromLonLat([lon, lat]),
+        duration: duration / 4,
+      },
+      callback
+    );
+    map.getView().animate(
+      {
+        zoom: zoom - 1,
+        duration: duration / 5,
+      },
+      {
+        zoom: 15,
+        duration: duration / 2,
+      },
+      callback
+    );
+  }
 }
 
 const determineSourceSrid = (sridId: number): any => {
