@@ -22,6 +22,13 @@ const appRoutes: Routes = [
 				(m) => m.VisorpageModule
 			),
 	},
+	{
+		path: "**",
+		loadChildren: () =>
+			import("./pages/landingpage/landingpage.module").then(
+				(m) => m.LandingpageModule
+			),
+	},
 ];
 
 @NgModule({

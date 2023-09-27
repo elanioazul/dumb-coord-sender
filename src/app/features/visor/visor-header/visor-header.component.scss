@@ -1,0 +1,43 @@
+@import "../../../../theme/theme";
+
+
+header {
+  background-color: $coorp;
+  min-height: 3.75;
+}
+  
+.box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  &__back {
+    padding-left: 2rem;
+    cursor: pointer;
+  }
+
+  &__back-text {
+    display: inline-block;
+    transition: transform 0.2s ease, color 0.2s ease;
+    font-family: $fontTwo;
+    font-size: 1rem;
+    color: $black;
+  }
+
+  &__back-text:hover {
+    transform: translateX(4px);
+    color: $green;
+  }
+
+  &__logo {
+    width: auto;
+    padding-right: 2rem;
+    padding-top: 0.1rem;
+  }
+
+  &__logo-img {
+    height: 4rem;
+  }
+
+}

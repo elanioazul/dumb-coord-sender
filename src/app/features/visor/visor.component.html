@@ -1,1 +1,7 @@
-<app-map *ngIf="map" [map]="map"></app-map>
+<div class="container">
+    <app-visor-header></app-visor-header>
+    <app-map *ngIf="map" [map]="map"></app-map>
+    <app-visor-notifications-bar></app-visor-notifications-bar>
+    <app-visor-sidebar></app-visor-sidebar>
+</div>
+

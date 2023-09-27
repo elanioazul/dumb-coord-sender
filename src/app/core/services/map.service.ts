@@ -7,14 +7,21 @@ import {
   createOSMBaseLayer,
   createVectorLayer,
   goToCoordinates,
+  createBaseLayersGroupForLayerSwitcher,
+  createLayerGroup
 } from '../utils/ol';
 import { Feature, Map } from 'ol';
-import { Geometry } from 'ol/geom';
-import OSM from 'ol/source/OSM';
-import TileLayer from 'ol/layer/Tile';
+// import { Geometry } from 'ol/geom';
+// import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
+// import VectorSource from 'ol/source/Vector';
 import { Extent, getCenter } from 'ol/extent';
+// import ImageWMS from 'ol/source/ImageWMS';
+// import TileWMS from 'ol/source/TileWMS';
+// import ImageLayer from 'ol/layer/Image';
+// import TileLayer from 'ol/layer/Tile';
+import { adminlayersParams, sanitarialayersParams } from '@core/consts/geoserver-layers'
+import LayerGroup from 'ol/layer/Group';
 
 interface IMaps {
   viewer: Map | null;
@@ -22,9 +29,11 @@ interface IMaps {
 }
 
 interface ILayers {
-  base: TileLayer<OSM> | null;
-  vectorMapViewer: VectorLayer<any> | null;
-  vectorOverview: VectorLayer<any> | null;
+  sanitationlayers: LayerGroup | null;
+  adminLayers: LayerGroup | null;
+  //coordinates: VectorLayer<any> | null;
+  coordinates: LayerGroup | null;
+  coordinate: VectorLayer<any> | null;
 }
 
 @Injectable({
@@ -39,9 +48,10 @@ export class MapService {
   public maps$ = this.maps.asObservable();
 
   private layers: BehaviorSubject<ILayers> = new BehaviorSubject<ILayers>({
-    base: null,
-    vectorMapViewer: null,
-    vectorOverview: null,
+    sanitationlayers: null,
+    adminLayers: null,
+    coordinates: null,
+    coordinate: null
   });
 
   public layers$ = this.layers.asObservable();
@@ -56,17 +66,17 @@ export class MapService {
     return this.maps.value;
   }
 
-  getLayerById(
-    layerId: string
-  ):
-    | VectorLayer<VectorSource<Geometry>>
-    | TileLayer<OSM>
-    | VectorLayer<any>
-    | void {
-    const layer = this.layers.value[layerId as keyof ILayers];
-    if (!layer) return;
-    return layer;
-  }
+  // getLayerById(
+  //   layerId: string
+  // ):
+  //   | VectorLayer<VectorSource<Geometry>>
+  //   | TileLayer<OSM>
+  //   | VectorLayer<any>
+  //   | void {
+  //   const layer = this.layers.value[layerId as keyof ILayers];
+  //   if (!layer) return;
+  //   return layer;
+  // }
 
   getMapById(mapId: string): Map | void {
     const map = this.maps.value[mapId as keyof IMaps];
@@ -79,29 +89,30 @@ export class MapService {
   }
 
   addFeature(layerId: string, feature: Feature) {
-    const layer = this.getLayerById(layerId);
-    if (!layer) return;
-    layer.getSource().clear();
-    layer.getSource().addFeature(feature);
+    //const layer = this.getLayerById(layerId);
+    if (layerId === 'coordinates' && this.layers.value['coordinates']) {
+      (this.layers.value['coordinates'].getLayers() as any).getArray()[0].getSource().addFeature(feature);
+    }
+    if (layerId === 'coordinate') {
+      this.layers.value['coordinate']?.getSource().clear();
+      this.layers.value['coordinate']?.getSource().addFeature(feature);
+    }
   }
 
-  addMultipleFeaturesToLayer(layerId: string, features: Feature[]) {
-    const layer = this.getLayerById(layerId);
-    if (!layer) return;
-    layer.getSource().clear();
-    layer.getSource().addFeatures(features);
-  }
+  // addMultipleFeaturesToLayer(layerId: string, features: Feature[]) {
+  //   const layer = this.getLayerById(layerId);
+  //   if (!layer) return;
+  //   layer.getSource().clear();
+  //   layer.getSource().addFeatures(features);
+  // }
 
   initMaps(layers: ILayers): void {
     const initialMaps = {
       overview: createMap('overview', [
-        createOSMBaseLayer(),
-        layers.vectorOverview!,
-      ]),
-      viewer: createMap('viewer', [
-        createOSMBaseLayer(),
-        layers.vectorMapViewer!,
-      ]),
+        createOSMBaseLayer(), 
+        layers.coordinate!
+      ], [createBaseLayersGroupForLayerSwitcher()]),
+      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.coordinates!, layers.adminLayers!, layers.sanitationlayers!]),
     };
     this.setMaps(initialMaps);
   }
@@ -112,9 +123,10 @@ export class MapService {
 
   initLayers(features: Feature[]): void {
     const initialLayers: ILayers = {
-      base: createOSMBaseLayer(),
-      vectorOverview: createVectorLayer([]),
-      vectorMapViewer: createVectorLayer(features),
+      sanitationlayers: createLayerGroup(sanitarialayersParams),
+      adminLayers: createLayerGroup(adminlayersParams),
+      coordinate: createVectorLayer([]),
+      coordinates: createLayerGroup([], createVectorLayer(features))
     };
     this.setLayers(initialLayers);
   }

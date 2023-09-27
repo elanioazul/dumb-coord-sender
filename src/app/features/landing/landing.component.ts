@@ -43,9 +43,10 @@ import {
 } from '../../core/consts/lat-lon-vals';
 import { MapService } from 'src/app/core/services/map.service';
 import { Feature, Map } from 'ol';
-import { transformPointToFeature } from '../../core/utils/ol';
+import { transformPointToFeature, flyToPosition } from '../../core/utils/ol';
 import { AbsService } from 'src/app/core/services/abs.service';
 import { AdmincapasService } from 'src/app/core/services/admincapas.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -94,7 +95,8 @@ export class LandingComponent {
     private capasService: AdmincapasService,
     private builder: FormBuilder,
     private messageService: MessageService,
-    private mapService: MapService
+    private mapService: MapService,
+    private router: Router
   ) {
     this.form = this.builder.group<IForm>({
       epsgForm: this.builder.group<IepsgForm>({
@@ -253,7 +255,10 @@ export class LandingComponent {
           point.coordinates[0],
           point.coordinates[1]
         );
-        this.mapService.addFeature('vectorOverview', feature);
+        this.mapService.addFeature('coordinate', feature);
+        this.mapService.addFeature('coordinates', feature);
+        this.router.navigate(['/', 'visor-page']);
+        flyToPosition(this.map, point.coordinates[1], point.coordinates[0])
       })
     );
   }
