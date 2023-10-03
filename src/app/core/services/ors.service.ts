@@ -77,10 +77,23 @@ export class OrsService {
   }
 
   setRecurso(coords: Coordinate):void {
-    coords ? this.origin.next(coords) : this.origin.next(null);
+    this.origin.next(coords);
   }
+  setRecursoToNull():void {
+    this.origin.next(null);
+  }
+  getRecurso(): Coordinate | null {
+    return this.origin.value;
+  }
+
   setIncidente(coords: Coordinate):void {
-    coords ? this.destination.next(coords) : this.destination.next(null);
+    this.destination.next(coords);
+  }
+  setIncidenteToNull():void {
+    this.destination.next(null);
+  }
+  getIncidente(): Coordinate | null {
+    return this.destination.value;
   }
 
   getOrsInfo(from: Coordinate, to: Coordinate): Observable<any> {
@@ -101,36 +114,39 @@ export class OrsService {
 
   setOrigin(coords: Coordinate): void {
     this.setRecurso(coords);
-    const feature = this.createMercatorFeature(coords);
+    const feature = this.createMercatorFeature(coords, 'origin');
     feature.setStyle(originStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
     //this.setGeomarker(feature);
 
   }
 
-  createMercatorFeature(coords: Coordinate): Feature {
+  createMercatorFeature(coords: Coordinate, type: string): Feature {
     const source = new (proj4 as any).Proj('+proj=longlat +datum=WGS84 +no_defs +type=crs');
     const dest = new (proj4 as any).Proj('EPSG:3857');
     const {x, y} = proj4.transform(source, dest, [coords[0], coords[1]]);
     const coordinatesMercator = [x, y];
     const point = new Point(coordinatesMercator);
-    const feature = new Feature(point);
+    const feature = new Feature({
+      geometry: point
+    });
+    feature.setId(type);
     return feature;
   }
 
   setGeomarker(feature: Feature): void {
     let position = feature.getGeometry()?.clone();
     let geoMarker = new Feature({
-      type: 'geoMarker',
       geometry: position,
     });
+    geoMarker.setId('geoMarker');
     geoMarker.setStyle(geoMarkerStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(geoMarker);
   }
 
   setDestination(coords: Coordinate): void {
     this.setIncidente(coords);
-    const feature = this.createMercatorFeature(coords);
+    const feature = this.createMercatorFeature(coords, 'destination');
     feature.setStyle(destinationStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
   }
@@ -142,14 +158,27 @@ export class OrsService {
       linestringOriginal.getCoordinates().map(coord => proj4("EPSG:4326", "EPSG:3857", coord))
     );
     const feature = new Feature({
-      type: 'route',
       geometry: transformedLineString,
     });
+    feature.setId('route');
     feature.setStyle(rutaStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
     setTimeout(() => {
       this.maps.viewer?.getView().fit((this.layers.route?.getLayers() as any).getArray()[0].getSource().getExtent()),
       { duration:1000 }
     }, 500);
+  }
+
+  getFeatureByType(type: string): Feature {
+    return (this.layers.route?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
+  }
+
+  deleteFeatureFromLayer(features: Feature[]): void {
+    features.forEach((feature: Feature) => (this.layers.route?.getLayers() as any).getArray()[0].getSource().removeFeature(feature));
+    
+  }
+
+  removeFeaturesFromLayer(): void {
+    (this.layers.route?.getLayers() as any).getArray()[0].getSource().clear();
   }
 }

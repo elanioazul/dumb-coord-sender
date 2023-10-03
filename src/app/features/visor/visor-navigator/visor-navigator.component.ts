@@ -24,7 +24,6 @@ export class VisorNavigatorComponent implements OnInit {
     this.orsService.getLatestRuteDetails$.subscribe(([origin, destination]) => {
       if ((origin && destination) && origin != null && destination != null) {
         this.orsService.getOrsInfo(origin, destination).subscribe((res: any) => {
-          console.log(res);
           this.orsService.setRuta(res.features[0].geometry);
         });
       }
@@ -32,6 +31,10 @@ export class VisorNavigatorComponent implements OnInit {
   }
 
   selectionChanged(option: any): void {
+    const originFeature = this.orsService.getFeatureByType('origin');
+    const routeFeature = this.orsService.getFeatureByType('route');
+    const features = new Array(originFeature, routeFeature)
+    if (originFeature) this.orsService.deleteFeatureFromLayer(features)
     this.orsService.setOrigin(option.value)
   }
 
