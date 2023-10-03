@@ -28,8 +28,6 @@ export class VisorNavigatorComponent implements OnInit {
       if ((origin && destination) && origin != null && destination != null) {
         this.orsService.getOrsInfo(origin, destination).subscribe((res: any) => {
           this.orsService.setRuta(res.features[0].geometry);
-          //this.distance =  '' + Math.round(res.features[0].properties.summary.distance /1000);
-          //this.time = '' + Math.round(res.features[0].properties.summary.duration / 60);
           this.distance = this.convertDistance(res.features[0].properties.summary.distance);
           this.time = this.convertTime(res.features[0].properties.summary.duration);
         });
