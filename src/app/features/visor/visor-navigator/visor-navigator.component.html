@@ -1,3 +1,18 @@
-<div>
-    <p-listbox [options]="recursos" [(ngModel)]="selectedRecurso" optionLabel="name" optionValue="coordinates" (onChange)="selectionChanged($event)" ></p-listbox>
+<div class="box">
+    <div class="box__listbox">
+        <p-listbox [options]="recursos" [(ngModel)]="selectedRecurso" optionLabel="name" optionValue="coordinates" (onChange)="selectionChanged($event)" ></p-listbox>
+    </div>
+    <div class="box__details" *ngIf="selectedRecurso && time && distance">
+        <div class="box__details-title"> 
+            <h1>Detalls</h1>
+        </div>
+        <div class="box__details-panels">
+            <p-panel header="Temps">
+                <p>{{time}}</p>
+            </p-panel>
+            <p-panel header="Distància">
+                <p>{{distance}}</p>
+            </p-panel>
+        </div>
+    </div>
 </div>
