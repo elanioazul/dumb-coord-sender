@@ -243,7 +243,7 @@ export class LandingComponent {
       payload = this.adaptPayloadForNoDms(formValue);
     }
 
-    this.coordService.sendCoordToTransform(payload).subscribe((data) => {
+    this.coordService.sendCoordToTransform(payload).pipe(takeUntil(this.destroy$)).subscribe((data) => {
       this.handleTransformResponse(data);
     });
   }
@@ -322,14 +322,14 @@ export class LandingComponent {
 
   checkABS(coord: CoordinateInitial | CoordinateTransformed): void {
     let payload = this.createAbsIntersectionPayload(coord);
-    this.absService.intersectAbs(payload).subscribe((data) => {
+    this.absService.intersectAbs(payload).pipe(takeUntil(this.destroy$)).subscribe((data) => {
       this.handleAbsResponse(data);
     });
   }
 
   checkAdminInfo(coord: CoordinateInitial | CoordinateTransformed): void {
     let payload = this.createCapasIntersectionPayload(coord);
-    this.capasService.intersectCapas(payload).subscribe((data) => {
+    this.capasService.intersectCapas(payload).pipe(takeUntil(this.destroy$)).subscribe((data) => {
       this.handleCapasResponse(data);
     });
   }

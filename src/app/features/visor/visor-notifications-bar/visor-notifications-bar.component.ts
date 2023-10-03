@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MapService } from '@core/services/map.service';
 import { Subject, map, takeUntil } from 'rxjs';
 import {
@@ -9,7 +9,7 @@ import {
   templateUrl: './visor-notifications-bar.component.html',
   styleUrls: ['./visor-notifications-bar.component.scss']
 })
-export class VisorNotificationsBarComponent implements OnInit, AfterViewInit {
+export class VisorNotificationsBarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('coordinates') private coordinatesDiv!: ElementRef<HTMLDivElement>;
 
@@ -34,6 +34,11 @@ export class VisorNotificationsBarComponent implements OnInit, AfterViewInit {
     //this.map.getControls().MousePosition.setTarget(this.coordinatesDiv.nativeElement);
     //this.map.getControls().getArray()[2].setTarget(this.coordinatesDiv);
     addMouseControlToMap(this.coordinatesDiv.nativeElement, this.map);
+  }
+
+  ngOnDestroy(): void {
+    this.unSubscribe.next();
+    this.unSubscribe.complete();
   }
 
 

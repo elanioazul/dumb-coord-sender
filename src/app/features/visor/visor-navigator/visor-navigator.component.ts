@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { recursos } from '@core/consts/recursos';
 import { IRecurso } from '@core/interfaces/reecurso-interfaz';
 import { OrsService } from '@core/services/ors.service';
+import { Subject, takeUntil } from 'rxjs';
 
 
 
@@ -10,7 +11,9 @@ import { OrsService } from '@core/services/ors.service';
   templateUrl: './visor-navigator.component.html',
   styleUrls: ['./visor-navigator.component.scss']
 })
-export class VisorNavigatorComponent implements OnInit {
+export class VisorNavigatorComponent implements OnInit, OnDestroy {
+
+  destroy$ = new Subject<void>();
 
   recursos!: IRecurso[];
 
@@ -24,7 +27,7 @@ export class VisorNavigatorComponent implements OnInit {
   ngOnInit(): void {
     this.recursos = recursos;
 
-    this.orsService.getLatestRuteDetails$.subscribe(([origin, destination]) => {
+    this.orsService.getLatestRuteDetails$.pipe(takeUntil(this.destroy$)).subscribe(([origin, destination]) => {
       if ((origin && destination) && origin != null && destination != null) {
         this.orsService.getOrsInfo(origin, destination).subscribe((res: any) => {
           this.orsService.setRuta(res.features[0].geometry);
@@ -69,6 +72,11 @@ export class VisorNavigatorComponent implements OnInit {
   
     const kilometers = (meters / 1000).toFixed(1);
     return `${kilometers} km${kilometers !==  "1.0" ? 's' : ''}`;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }
