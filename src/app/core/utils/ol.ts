@@ -7,11 +7,12 @@ import LayerTile from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import OSM from 'ol/source/OSM';
-import { Circle as CircleStyle } from 'ol/style';
+import { Circle as CircleStyle, Icon } from 'ol/style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 import proj4 from 'proj4';
+import {IconAnchorUnits, IconOrigin} from 'ol/style/Icon';
 
 import { Attribution, OverviewMap, Control, Zoom, ScaleLine, MousePosition } from 'ol/control';
 import DragZoom from 'ol/interaction/DragZoom.js';
@@ -167,23 +168,23 @@ export const createOSMBaseLayer = (): TileLayer<OSM> => {
   return OsmLayer;
 }
 
-export const createLayerGroup = (params: any[], layer?: any): LayerGroup => {
+export const createLayerGroup = (params: any[], title: string, layer?: any): LayerGroup => {
   let group: LayerGroup;
   if (params.length > 1) {
     group = new LayerGroup({
-      title: 'Divisions administratives',
+      title: title,
       layers: params.map(param => createWMSlayer(param)),
       fold: 'open'
     } as GroupLayerOptions)
   } else if (params.length == 1) {
     group = new LayerGroup({
-      title: 'Sanitàries',
+      title: title,
       layers: params.map(param => createWMSlayer(param)),
       fold: 'open'
     } as GroupLayerOptions)
   } else {
     group = new LayerGroup({
-      title: 'Coordenades',
+      title: title,
       layers: [layer],
       fold: 'open'
     } as GroupLayerOptions)
@@ -252,6 +253,22 @@ export const createVectorLayer = (features: Feature[]): VectorLayer<VectorSource
 
   return vectorLayer;
 };
+
+
+
+export const createRutaVectorLayer = (): VectorLayer<VectorSource<Geometry>> => {
+  let vectorLayer = new VectorLayer({
+    source: new VectorSource({
+      features: []
+    }),
+    title: 'Ruta a incident',
+    style: null /*function (feature) {
+      return styles[feature.get('type')];
+    }*/
+  } as BaseLayerOptions);
+
+  return vectorLayer;
+}
 
 export const transformPointToFeature = (sirdId: number, lon: any, lat: any): Feature => {
   const source = determineSourceSrid(sirdId);

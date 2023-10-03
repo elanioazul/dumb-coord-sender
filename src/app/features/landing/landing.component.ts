@@ -47,6 +47,7 @@ import { transformPointToFeature, flyToPosition } from '../../core/utils/ol';
 import { AbsService } from 'src/app/core/services/abs.service';
 import { AdmincapasService } from 'src/app/core/services/admincapas.service';
 import { Router } from '@angular/router';
+import { OrsService } from '@core/services/ors.service';
 
 @Component({
   selector: 'app-landing',
@@ -96,6 +97,7 @@ export class LandingComponent {
     private builder: FormBuilder,
     private messageService: MessageService,
     private mapService: MapService,
+    private orsService: OrsService,
     private router: Router
   ) {
     this.form = this.builder.group<IForm>({
@@ -257,6 +259,7 @@ export class LandingComponent {
         );
         this.mapService.addFeature('coordinate', feature);
         this.mapService.addFeature('coordinates', feature);
+        this.orsService.setDestination(point.coordinates);
         this.router.navigate(['/', 'visor-page']);
         flyToPosition(this.map, point.coordinates[1], point.coordinates[0])
       })

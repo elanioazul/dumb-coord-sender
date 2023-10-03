@@ -9,6 +9,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
+import { ListboxModule } from 'primeng/listbox';
 
 @NgModule({
   declarations: [],
@@ -20,10 +21,11 @@ import { DialogModule } from 'primeng/dialog';
     DropdownModule,
     TooltipModule,
     DialogModule,
+    ListboxModule
   ],
   providers: [MessageService],
   bootstrap: [],
-  exports: [MessagesModule, ButtonModule, InputTextModule, RadioButtonModule, DropdownModule, TooltipModule, DialogModule]
+  exports: [MessagesModule, ButtonModule, InputTextModule, RadioButtonModule, DropdownModule, TooltipModule, DialogModule, ListboxModule]
 })
 export class PrimengModule { }
 
