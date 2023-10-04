@@ -19,7 +19,7 @@ export class VisorComponent implements OnInit, AfterViewInit {
 
   map!: Map;
 
-  templateSubscription!: Subscription;
+  //templateSubscription!: Subscription;
   templateArray: ElementRef<HTMLElement>[] = [];
 
   sidebarDiv?: ElementRef<HTMLElement>;
@@ -32,13 +32,14 @@ export class VisorComponent implements OnInit, AfterViewInit {
   domElement: any;
 
   constructor(private mapService: MapService, private sidebarService: SidebarService) {
-    this.templateSubscription = this.sidebarService.template$.subscribe( domNode => {
+    this.subscriptions.push(this.sidebarService.template$.subscribe( domNode => {
       if (domNode) {
         this.templateArray.push(domNode)
       } else {
         this.templateArray = []
       }
     })
+    )
   }
   
   ngOnInit(): void {}

@@ -6,35 +6,19 @@ import {
   centerMap,
   createOSMBaseLayer,
   createVectorLayer,
+  createRutaVectorLayer,
   goToCoordinates,
   createBaseLayersGroupForLayerSwitcher,
   createLayerGroup
 } from '../utils/ol';
 import { Feature, Map } from 'ol';
-// import { Geometry } from 'ol/geom';
-// import OSM from 'ol/source/OSM';
-import VectorLayer from 'ol/layer/Vector';
-// import VectorSource from 'ol/source/Vector';
 import { Extent, getCenter } from 'ol/extent';
-// import ImageWMS from 'ol/source/ImageWMS';
-// import TileWMS from 'ol/source/TileWMS';
-// import ImageLayer from 'ol/layer/Image';
-// import TileLayer from 'ol/layer/Tile';
 import { adminlayersParams, sanitarialayersParams } from '@core/consts/geoserver-layers'
-import LayerGroup from 'ol/layer/Group';
+import {IMaps} from '@core/interfaces/maps.interfaz';
+import { ILayers } from '@core/interfaces/layers.interfaz';
 
-interface IMaps {
-  viewer: Map | null;
-  overview: Map | null;
-}
 
-interface ILayers {
-  sanitationlayers: LayerGroup | null;
-  adminLayers: LayerGroup | null;
-  //coordinates: VectorLayer<any> | null;
-  coordinates: LayerGroup | null;
-  coordinate: VectorLayer<any> | null;
-}
+
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +35,7 @@ export class MapService {
     sanitationlayers: null,
     adminLayers: null,
     coordinates: null,
+    route: null,
     coordinate: null
   });
 
@@ -112,7 +97,7 @@ export class MapService {
         createOSMBaseLayer(), 
         layers.coordinate!
       ], [createBaseLayersGroupForLayerSwitcher()]),
-      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.coordinates!, layers.adminLayers!, layers.sanitationlayers!]),
+      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.coordinates!, layers.adminLayers!, layers.sanitationlayers!, layers.route!]),
     };
     this.setMaps(initialMaps);
   }
@@ -123,10 +108,11 @@ export class MapService {
 
   initLayers(features: Feature[]): void {
     const initialLayers: ILayers = {
-      sanitationlayers: createLayerGroup(sanitarialayersParams),
-      adminLayers: createLayerGroup(adminlayersParams),
+      sanitationlayers: createLayerGroup(sanitarialayersParams, 'Sanitàries'),
+      adminLayers: createLayerGroup(adminlayersParams, 'Divisions administratives'),
       coordinate: createVectorLayer([]),
-      coordinates: createLayerGroup([], createVectorLayer(features))
+      coordinates: createLayerGroup([], 'Coordenades', createVectorLayer(features)),
+      route: createLayerGroup([], 'ruta', createRutaVectorLayer())
     };
     this.setLayers(initialLayers);
   }
@@ -150,25 +136,4 @@ export class MapService {
     if (!map) return;
     centerMap(map);
   }
-
-  // setVectorStyle() {
-  //   const vectorMapViewer = this.getLayerById('vectorMapViewer');
-  //   const vectorOverview = this.getLayerById('vectorOverview');
-
-  //   const setStyle = (feature: Feature) => {
-  //     const style = new Style({
-  //       image: new CircleStyle({
-  //         radius: 10,
-  //         stroke: new Stroke({
-  //           color: '#fff',
-  //         }),
-  //         fill: new Fill({
-  //           color: '#4caf50',
-  //         }),
-  //       }),
-  //     });
-
-  //     return style;
-  //   }
-  // }
 }

@@ -1,0 +1,39 @@
+:host::ng-deep {
+    .p-listbox {
+        border: none;
+    }
+    .p-panel-content {
+        min-height: 8em;
+    }
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+
+    &__listbox {
+        
+    }
+    &__details {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
+        &-title {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            padding-bottom: 2em;
+            font-weight: bold;
+        }
+
+        &-panels {
+            display: flex;
+            flex-direction: row;
+        }
+        
+    }
+}
