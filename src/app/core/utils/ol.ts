@@ -12,9 +12,9 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
 import proj4 from 'proj4';
-import {IconAnchorUnits, IconOrigin} from 'ol/style/Icon';
+import { MeasureWidget } from '@core/classes/measuring-control'
 
-import { Attribution, OverviewMap, Control, Zoom, ScaleLine, MousePosition } from 'ol/control';
+import { OverviewMap, Zoom, ScaleLine, MousePosition } from 'ol/control';
 import DragZoom from 'ol/interaction/DragZoom.js';
 
 import {
@@ -128,7 +128,7 @@ export const createMap = (target: string, layers: Layer[], layerGroup: LayerGrou
         ...layerGroup
       ],
       //interactions: [dragZoom],
-      controls: [overviewMapControl, zoom, scale],
+      controls: [overviewMapControl, zoom, scale, new MeasureWidget()],
     });
   } else {
     map = new Map({

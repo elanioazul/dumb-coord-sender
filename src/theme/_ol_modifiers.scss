@@ -55,6 +55,7 @@
   left: auto;
   right: 8px;
   top: 60px;
+  z-index: 100;
   @media(min-width:767px) {
     top: 65px;
   }
@@ -106,4 +107,24 @@
   background-color: rgb(185, 100, 100);
   border-width: 2px;
   border-color: rgba(219,63,63,1);
+}
+
+//measure Widget
+.ol-measure {
+  bottom: auto;
+  left: auto;
+  right: 8px;
+  top: 90px;
+  @media(min-width:767px) {
+    top: 95px;
+  }
+}
+.ol-measure button {
+  width: 20px;
+  height: 20px;
+  @media(min-width:767px) {
+    width: 25px;
+    height: 25px;
+  }
+  background-color: $coorp;
 }
