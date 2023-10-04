@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, throwError } from 'rxjs';
 import { Coordinate } from 'ol/coordinate';
 import { Feature } from 'ol';
 import Polyline from 'ol/format/Polyline.js';
@@ -99,15 +99,13 @@ export class OrsService {
   getOrsInfo(from: Coordinate, to: Coordinate): Observable<any> {
     return this.http.get(apiUrlOrs + 'start=' + `${from}` + '&end=' + `${to}`)
     .pipe(
-      catchError((error) => of(error)),
       map((res: any) => {
-        if (!res) {
-          throw new Error(
-            'Error consultando ORS chronos'
-          );
-        } else {
-          return res;
+        if (!res.error) {
+          return res
         }
+      }),
+      catchError((error) => {
+        return throwError(() => error)
       })
     );
   }
