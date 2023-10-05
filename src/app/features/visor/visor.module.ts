@@ -11,6 +11,7 @@ import { PrimengModule } from '@shared/components/primeng/primeng.module';
 import { VisorNotificationsBarComponent } from './visor-notifications-bar/visor-notifications-bar.component';
 import { VisorSidebarComponent } from './visor-sidebar/visor-sidebar.component';
 import { VisorNavigatorComponent } from './visor-navigator/visor-navigator.component';
+import { VisorMeasurementComponent } from './visor-measurement/visor-measurement.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { VisorNavigatorComponent } from './visor-navigator/visor-navigator.compo
     VisorHeaderComponent,
     VisorNotificationsBarComponent,
     VisorSidebarComponent,
-    VisorNavigatorComponent
+    VisorNavigatorComponent,
+    VisorMeasurementComponent
   ],
   imports: [
     CommonModule,

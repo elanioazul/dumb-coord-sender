@@ -4,12 +4,12 @@
     width: 100%;
     height: 2em;
     display: table;
-    background-color: $coorp;;
+    background-color: $lightblue;
 }
 .notification-bar > div {
     height: 100%;
     display: table-cell;
-    border: 1px solid $coorp2;
+    border: 1px solid $lightblue;
     width: 34%;
     box-sizing: border-box;
     vertical-align: middle;

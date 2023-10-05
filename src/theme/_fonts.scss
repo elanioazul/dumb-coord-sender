@@ -1,3 +1,8 @@
 $fontOne: "Anonymous Pro", monospace;
 $fontTwo: "Ruda", sans-serif;
 $fontThree: "Mulish", sans-serif;
+
+@font-face {
+    font-family: FontGIS;
+    src: url(../../node_modules//font-gis//fonts/font-gis.woff ) format("woff");
+  }

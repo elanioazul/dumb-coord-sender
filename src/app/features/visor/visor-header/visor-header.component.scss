@@ -2,7 +2,7 @@
 
 
 header {
-  background-color: $coorp;
+  background-color: $lightblue;
   min-height: 3.75;
 }
   
@@ -22,12 +22,12 @@ header {
     transition: transform 0.2s ease, color 0.2s ease;
     font-family: $fontTwo;
     font-size: 1rem;
-    color: $black;
+    color: $textblack;
   }
 
   &__back-text:hover {
     transform: translateX(4px);
-    color: $green;
+    color: $superlightblue;
   }
 
   &__logo {

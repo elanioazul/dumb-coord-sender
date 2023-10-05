@@ -132,6 +132,7 @@ export class OrsService {
     return feature;
   }
 
+  //para cuando si se quiere hacer hover sobre la ruta y marcar la posición del ratón sobre la ruta
   setGeomarker(feature: Feature): void {
     let position = feature.getGeometry()?.clone();
     let geoMarker = new Feature({

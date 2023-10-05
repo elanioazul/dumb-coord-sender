@@ -10,7 +10,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { ListboxModule } from 'primeng/listbox';
-import { PanelModule } from 'primeng/panel'
+import { PanelModule } from 'primeng/panel';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @NgModule({
   declarations: [],
@@ -23,11 +24,12 @@ import { PanelModule } from 'primeng/panel'
     TooltipModule,
     DialogModule,
     ListboxModule,
-    PanelModule
+    PanelModule,
+    SelectButtonModule
   ],
   providers: [MessageService],
   bootstrap: [],
-  exports: [MessagesModule, ButtonModule, InputTextModule, RadioButtonModule, DropdownModule, TooltipModule, DialogModule, ListboxModule, PanelModule]
+  exports: [MessagesModule, ButtonModule, InputTextModule, RadioButtonModule, DropdownModule, TooltipModule, DialogModule, ListboxModule, PanelModule, SelectButtonModule]
 })
 export class PrimengModule { }
 

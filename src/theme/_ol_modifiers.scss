@@ -11,7 +11,7 @@
 }
 //scaleControl
 .ol-scale-line {
-  background-color: $coorp;
+  background-color: $lightblue;
   left: unset;
   right: 1em;
 }
@@ -23,7 +23,7 @@
 }
 
 .ol-zoom .ol-zoom-in {
-  background-color: $coorp;
+  background-color: $lightblue;
   width: 20px;
   height: 20px;
   @media(min-width:767px) {
@@ -36,7 +36,7 @@
   outline: none;
 }
 .ol-zoom .ol-zoom-out {
-  background-color: $coorp;
+  background-color: $lightblue;
   width: 20px;
   height: 20px;
   @media(min-width:767px) {
@@ -61,7 +61,7 @@
 }
 
  .ol-custom-overviewmap:not(.ol-collapsed)  {
-  border: 2px solid $coorp;
+  border: 2px solid $lightblue;
 }
  .ol-custom-overviewmap .ol-overviewmap-map {
   border: none;
@@ -93,7 +93,7 @@
     width: 25px;
     height: 25px;
   }
-  background-color: $coorp;
+  background-color: $lightblue;
 }
 
  .ol-custom-overviewmap button:focus {
