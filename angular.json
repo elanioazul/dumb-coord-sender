@@ -36,6 +36,8 @@
               "node_modules/primeflex/primeflex.css",
               "node_modules/ol-layerswitcher/dist/ol-layerswitcher.css",
               "node_modules/ol/ol.css",
+              "node_modules/ol-ext/dist/ol-ext.css",
+              "node_modules/font-gis/css/font-gis.css",
               "src/styles.scss"
             ],
             "scripts": []

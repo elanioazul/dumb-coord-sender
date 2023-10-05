@@ -5,6 +5,7 @@
         <li><a href="#switch-layers" role="tab"><i class="pi pi-sliders-v" style="font-size: 1.5rem"></i></a></li>
         <li><a href="#lists" role="tab"><i class="pi pi-search" style="font-size: 1.5rem"></i></a></li>
         <li><a href="#point-details" role="tab"><i class="pi pi-info-circle" style="font-size: 1.5rem"></i></a></li>
+        <li><a href="#measure" role="tab"><i class="fg-measure fg-4x" style="font-size: 1.5rem; line-height: 1;"></i></a></li>
       </ul>
     
       <ul role="tablist">
@@ -29,6 +30,13 @@
     
       <div class="sidebar-pane" id="point-details">
         <h1 class="sidebar-header">Detalls del punt<span class="sidebar-close"><i class="pi pi-chevron-left" style="font-size: 1rem"></i></span></h1>
+      </div>
+
+      <div class="sidebar-pane" id="measure">
+        <h1 class="sidebar-header">Mesuraments<span class="sidebar-close"><i class="pi pi-chevron-left" style="font-size: 1rem"></i></span></h1>
+        <div class="measure">
+          <app-visor-measurement></app-visor-measurement>
+        </div>
       </div>
     
     </div>

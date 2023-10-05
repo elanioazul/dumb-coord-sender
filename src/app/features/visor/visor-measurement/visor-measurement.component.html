@@ -1,0 +1,25 @@
+<div class="pt-3 flex flex-column align-items-center">
+	<p-selectButton
+		class="pb-3"
+		[options]="measurementTool.config.modes"
+		optionLabel="icon"
+		(onChange)="onModeChanged($event.value.type)"
+		[(ngModel)]="selectedMode"
+	>
+		<ng-template let-item>
+			<span [class]="item.icon"></span>
+		</ng-template>
+	</p-selectButton>
+	<p-dropdown
+		*ngIf="selectedMode?.type === 'distancia'"
+		[options]="measurementTool.config.lengthUnits"
+		optionLabel="label"
+		[(ngModel)]="selectedLengthUnit"
+	></p-dropdown>
+	<p-dropdown
+		*ngIf="selectedMode?.type === 'superficie'"
+		[options]="measurementTool.config.areaUnits"
+		optionLabel="label"
+		[(ngModel)]="selectedAreaUnit"
+	></p-dropdown>
+</div>

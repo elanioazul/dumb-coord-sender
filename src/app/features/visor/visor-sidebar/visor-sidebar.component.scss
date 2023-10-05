@@ -58,7 +58,7 @@
   top: 0;
   bottom: 0;
   height: 100%;
-  background-color: $coorp;
+  background-color: $lightblue;
 }
 .sidebar-left .sidebar-tabs {
   left: 0;
@@ -78,7 +78,7 @@
 .sidebar-tabs > ul > li {
   width: 100%;
   height: 40px;
-  color: $black;
+  color: $textblack;
   font-size: 12pt;
   overflow: hidden;
   transition: all 80ms;
@@ -86,12 +86,12 @@
 .sidebar-tabs > li:hover,
 .sidebar-tabs > ul > li:hover {
   color: #fff;
-  background-color: $coorp2;
+  background-color: $mediumblue;
 }
 .sidebar-tabs > li.active,
 .sidebar-tabs > ul > li.active {
   color: #fff;
-  background-color: $coorp2;
+  background-color: $mediumblue;
 }
 .sidebar-tabs > li.disabled,
 .sidebar-tabs > ul > li.disabled {
@@ -174,7 +174,7 @@
   line-height: 40px;
   font-size: 14.4pt;
   color: #fff;
-  background-color: $coorp2;
+  background-color: $mediumblue;
 }
 .sidebar-right .sidebar-header {
   padding-left: 40px;
