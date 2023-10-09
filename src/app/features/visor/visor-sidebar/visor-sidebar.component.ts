@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Output, Input, EventEmitter, AfterViewInit, Inject, InjectionToken, OnDestroy } from "@angular/core";
+import { Component, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { SidebarService } from "@core/services/sidebar.service";
 
 @Component({
@@ -10,6 +10,9 @@ export class VisorSidebarComponent implements AfterViewInit {
 
   @ViewChild("sidebar") sidebarDiv!: ElementRef<HTMLElement>;
   @ViewChild("layers") switchLayersDiv!: ElementRef<HTMLElement>;
+  @ViewChild("routes") routesDiv!: ElementRef<HTMLElement>;
+  @ViewChild("info") infoDiv!: ElementRef<HTMLElement>;
+  @ViewChild("measurements") measurementsDiv!: ElementRef<HTMLElement>;
 
   divSidebar?: any;
   divSwitcher?: any;
@@ -19,11 +22,19 @@ export class VisorSidebarComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     const element = this.sidebarDiv.nativeElement;
     this.divSidebar = element;
-    this.sidebarService.sendTemplate(this.divSidebar);
+    this.sidebarService.sendDiv(this.divSidebar);
 
     const element2 = this.switchLayersDiv.nativeElement;
     this.divSwitcher = element2;
-    this.sidebarService.sendTemplate(this.divSwitcher);
+    this.sidebarService.sendDiv(this.divSwitcher);
+  }
+
+  onSelectTab(tab: any): void {
+    this.sidebarService.selectTab(tab);
+  }
+  
+  onCloseTab(tab: any): void {
+    this.sidebarService.closeTab(tab);
   }
 
 }

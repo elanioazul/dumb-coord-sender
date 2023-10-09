@@ -32,7 +32,7 @@ export class VisorComponent implements OnInit, AfterViewInit {
   domElement: any;
 
   constructor(private mapService: MapService, private sidebarService: SidebarService) {
-    this.subscriptions.push(this.sidebarService.template$.subscribe( domNode => {
+    this.subscriptions.push(this.sidebarService.sidebarDivs$.subscribe( domNode => {
       if (domNode) {
         this.templateArray.push(domNode)
       } else {

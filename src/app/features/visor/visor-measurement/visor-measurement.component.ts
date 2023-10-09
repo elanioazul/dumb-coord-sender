@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 
 import { measurementTool } from '@core/consts/config-measurement-tool';
 import { MapService } from '@core/services/map.service';
@@ -11,7 +11,8 @@ import Tooltip from 'ol-ext/overlay/Tooltip';
 import Popup from 'ol-ext/overlay/Popup';
 import Draw from 'ol/interaction/Draw';
 import { Map } from 'ol';
-
+import { SidebarService } from '@core/services/sidebar.service';
+import { sideBarTabNames, sideBarTab } from '@core/enums/sidebar-tabs.enum';
 
 @Component({
   selector: 'app-visor-measurement',
@@ -40,18 +41,20 @@ export class VisorMeasurementComponent implements OnInit, OnDestroy {
       anchorOrigin: 'top-left',
       anchorXUnits: 'pixels',
       anchorYUnits: 'pixels',
-      anchor: [40,80],
+      anchor: [40, 80],
       height: 30,
       opacity: 0.8,
-      color: "red",
-      src: '../../../assets/icons/uEA35-pin-earth.svg'
-    })
+      color: 'red',
+      src: '../../../assets/icons/uEA35-pin-earth.svg',
+    }),
   });
 
-  constructor(private mapService: MapService) {
-    this.measuringLayer = new VectorLayer({
-      source: new VectorSource(),
-      style: this.popupMarkerStyle
+  constructor(
+    private mapService: MapService,
+    private sidebarService: SidebarService
+  ) {
+    this.sidebarService.combined$.subscribe((data: any) => {
+      this.determinehook(data)
     });
   }
 
@@ -67,8 +70,28 @@ export class VisorMeasurementComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.commonInitialization();
+  }
+
+  private determinehook(data: any): void {
+    if (data == undefined) {
+      return;
+    }
+    if ((data.source === 'closure' && data.tab[0] === sideBarTabNames.measurements) || (data.source === 'selection' && data.tab[0] !== sideBarTabNames.measurements)) {
+      this.ngOnDestroy()
+    }
+    if (data.source === 'selection' && data.tab[0] === sideBarTabNames.measurements) {
+      this.commonInitialization()
+    }
+  }
+
+  private commonInitialization(): void {
     //this.selectedAreaUnit = measurementTool.config.areaUnits[0];
     //this.selectedLengthUnit = measurementTool.config.lengthUnits[0];
+    this.measuringLayer = new VectorLayer({
+      source: new VectorSource(),
+      style: this.popupMarkerStyle,
+    });
     this.mapService.maps$
       .pipe(takeUntil(this.unSubscribe))
       .subscribe((maps) => {
@@ -229,5 +252,4 @@ export class VisorMeasurementComponent implements OnInit, OnDestroy {
         break;
     }
   }
-
 }
