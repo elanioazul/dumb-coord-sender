@@ -1,4 +1,17 @@
-import { AfterViewInit, Component, ComponentRef, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ComponentRef,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Renderer2,
+  ViewChild,
+  ViewContainerRef,
+  ViewEncapsulation,
+} from '@angular/core';
 import { IVisorTab } from '@core/interfaces/visor-tab.interfaz';
 import { SidebarService } from '@core/services/sidebar.service';
 
@@ -9,20 +22,24 @@ import { SidebarService } from '@core/services/sidebar.service';
   //encapsulation: ViewEncapsulation.None
 })
 export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
-  @ViewChild("widget") widgetDiv!: ElementRef<HTMLElement>;
+  @ViewChild('widget') widgetDiv!: ElementRef<HTMLElement>;
 
   divSwitcher?: any;
 
   @ViewChild('container', {
     static: true,
-    read: ViewContainerRef
-  }) container!: ViewContainerRef;
-  
+    read: ViewContainerRef,
+  })
+  container!: ViewContainerRef;
+
   @Input() configOptions!: IVisorTab;
 
-  @Output() messageEvent = new EventEmitter<string>()
+  @Output() messageEvent = new EventEmitter<string>();
 
-  constructor(private sidebarService: SidebarService){}
+  constructor(
+    private sidebarService: SidebarService,
+    private renderer: Renderer2
+  ) {}
 
   ngAfterViewInit(): void {
     this.checkIsSwitcherLayersTab();
@@ -34,24 +51,29 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
 
   checkIsSwitcherLayersTab() {
     if (this.widgetDiv.nativeElement.getAttribute('id') === 'layers') {
-      const element2 = this.widgetDiv.nativeElement;
-      this.divSwitcher = element2;
+      const elem = this.widgetDiv.nativeElement;
+      this.renderer.addClass(
+        elem,
+        'layer-switcher'
+      )
+      this.divSwitcher = elem;
       this.sidebarService.updateSwitchLayersNode(this.divSwitcher);
     }
   }
 
   sendMessageToLoaderComp(tabName: string): void {
-    this.messageEvent.emit(`mensaje por aqui al comp cargador desde componente ${tabName} dynamico`)
+    this.messageEvent.emit(
+      `mensaje por aqui al comp cargador desde componente ${tabName} dynamico`
+    );
   }
 
   private async loadWidget() {
-
     this.container.clear();
 
     if (this.configOptions.widget) {
       const componentInstance = await this.configOptions.widget();
-      const componentRef: ComponentRef<any> = this.container.createComponent(componentInstance);
+      const componentRef: ComponentRef<any> =
+        this.container.createComponent(componentInstance);
     }
   }
-
 }
