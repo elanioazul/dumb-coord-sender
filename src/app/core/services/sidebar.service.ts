@@ -6,13 +6,19 @@ import { Subject } from 'rxjs';
 })
 export class SidebarService {
 
-  private templateSource = new Subject<ElementRef<HTMLDivElement> | undefined>();
+  private sidebarDiv = new Subject<ElementRef<HTMLDivElement> | undefined>();
+  sidebarDiv$ = this.sidebarDiv.asObservable();
 
-  template$ = this.templateSource.asObservable();
+  private switchLayersDiv = new Subject<ElementRef<HTMLDivElement> | undefined>();
+  switchLayersDiv$ = this.switchLayersDiv.asObservable();
 
   constructor() { }
 
-  sendTemplate(template?: ElementRef<HTMLDivElement>) {
-    this.templateSource.next(template);
+  updateSidebarNode(template?: ElementRef<HTMLDivElement>) {
+    this.sidebarDiv.next(template);
+  }
+
+  updateSwitchLayersNode(template?: ElementRef<HTMLDivElement>) {
+    this.switchLayersDiv.next(template);
   }
 }

@@ -16,10 +16,8 @@ export class VisorSidebarComponent implements AfterViewInit {
   }) container!: ViewContainerRef;
 
   @ViewChild("sidebar") sidebarDiv!: ElementRef<HTMLElement>;
-  //@ViewChild("layers") switchLayersDiv!: ElementRef<HTMLElement>;
 
   divSidebar?: any;
-  //divSwitcher?: any;
 
   constructor(private sidebarService: SidebarService) {}
 
@@ -53,14 +51,14 @@ export class VisorSidebarComponent implements AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
+  updateSidebar(): void {
     const element = this.sidebarDiv.nativeElement;
     this.divSidebar = element;
-    this.sidebarService.sendTemplate(this.divSidebar);
+    this.sidebarService.updateSidebarNode(this.divSidebar);
+  }
 
-    // const element2 = this.switchLayersDiv.nativeElement;
-    // this.divSwitcher = element2;
-    // this.sidebarService.sendTemplate(this.divSwitcher);
+  ngAfterViewInit(): void {
+    this.updateSidebar();
   }
 
   onSelectTab(tab: any): void {
@@ -74,6 +72,7 @@ export class VisorSidebarComponent implements AfterViewInit {
 
     const componentInstance = await component();
     const componentRef: ComponentRef<VisorSidebarTabComponent> = this.container.createComponent(componentInstance);
+    this.updateSidebar();
     componentRef.instance.configOptions = inputs;
     componentRef.instance.messageEvent.subscribe((data:any)=>{
       console.log(data);

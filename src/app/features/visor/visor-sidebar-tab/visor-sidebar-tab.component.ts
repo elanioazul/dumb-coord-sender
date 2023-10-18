@@ -9,7 +9,6 @@ import { SidebarService } from '@core/services/sidebar.service';
   //encapsulation: ViewEncapsulation.None
 })
 export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
-  @ViewChild("layers") switchLayersDiv!: ElementRef<HTMLElement>;
   @ViewChild("widget") widgetDiv!: ElementRef<HTMLElement>;
 
   divSwitcher?: any;
@@ -23,21 +22,22 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
 
   @Output() messageEvent = new EventEmitter<string>()
 
-  constructor(private sidebarService: SidebarService){
-    
-    
-  }
+  constructor(private sidebarService: SidebarService){}
+
   ngAfterViewInit(): void {
-    console.log(this.widgetDiv);
-    if (this.widgetDiv.nativeElement.getAttribute('id') === 'layers') {
-      const element2 = this.widgetDiv.nativeElement;
-      this.divSwitcher = element2;
-      this.sidebarService.sendTemplate(this.divSwitcher);
-    }
+    this.checkIsSwitcherLayersTab();
   }
 
   ngOnInit() {
     this.loadWidget();
+  }
+
+  checkIsSwitcherLayersTab() {
+    if (this.widgetDiv.nativeElement.getAttribute('id') === 'layers') {
+      const element2 = this.widgetDiv.nativeElement;
+      this.divSwitcher = element2;
+      this.sidebarService.updateSwitchLayersNode(this.divSwitcher);
+    }
   }
 
   sendMessageToLoaderComp(): void {
