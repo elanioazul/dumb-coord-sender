@@ -40,8 +40,8 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sendMessageToLoaderComp(): void {
-    this.messageEvent.emit('mensaje por aqui al comp cargador desde comp dynamico')
+  sendMessageToLoaderComp(tabName: string): void {
+    this.messageEvent.emit(`mensaje por aqui al comp cargador desde componente ${tabName} dynamico`)
   }
 
   private async loadWidget() {
