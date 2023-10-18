@@ -41,8 +41,8 @@ export default class Sidebar extends Control {
         this._closeButtons = [];
         for (i = this._container.children.length - 1; i >= 0; i--) {
             child = this._container.children[i];
-            if (child.tagName == 'DIV' &&
-                    child.classList.contains('sidebar-pane')) {
+            if (child.tagName == 'APP-VISOR-SIDEBAR-TAB' &&
+            child.getElementsByClassName('sidebar-pane')[0].className == 'sidebar-pane') {
                 this._panes.push(child);
 
                 var closeButtons = child.querySelectorAll('.sidebar-close');
