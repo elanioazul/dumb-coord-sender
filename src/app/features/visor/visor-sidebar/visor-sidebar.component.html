@@ -1,15 +1,15 @@
-<div #sidebar class="sidebar collapsed">
-  <!-- Nav tabs -->
+<div #sidebar id="sidebar" class="sidebar collapsed">
+
   <div class="sidebar-tabs">
     <ul role="tablist">
-      <li><a href="#switch-layers-tab" role="tab"><i class="fg-layers-o fg-4x"
-            style="font-size: 1.5rem; line-height: 1;"></i></a></li>
-      <li><a href="#routes-tab" role="tab"><i class="fg-route fg-4x"
-            style="font-size: 1.5rem; line-height: 1;"></i></a></li>
-      <li><a href="#info-tab" role="tab"><i class="pi pi-info-circle"
-            style="font-size: 1.5rem"></i></a></li>
-      <li><a href="#measurements-tab" role="tab"><i
-            class="fg-measure fg-4x" style="font-size: 1.5rem; line-height: 1;"></i></a>
+      <li (click)="onSelectTab('layers')"><i class="fg-layers-o fg-4x"
+            style="font-size: 1.5rem; line-height: 1;"></i></li>
+      <li (click)="onSelectTab('routes')"><i class="fg-route fg-4x"
+            style="font-size: 1.5rem; line-height: 1;"></i></li>
+      <li (click)="onSelectTab('info')"><i class="pi pi-info-circle"
+            style="font-size: 1.5rem"></i></li>
+      <li (click)="onSelectTab('measurements')"><i class="fg-measure fg-4x" 
+            style="font-size: 1.5rem; line-height: 1;"></i>
       </li>
     </ul>
 
@@ -19,42 +19,8 @@
     </ul>
   </div>
 
-  <!-- Tab panes -->
   <div class="sidebar-content">
-
-    <div class="sidebar-pane" id="switch-layers-tab">
-      <h1 class="sidebar-header">Commutador de capes
-        <span class="sidebar-close"><i class="pi pi-chevron-left" style="font-size: 1rem"></i></span>
-      </h1>
-      <div #layers class="layer-switcher"></div>
-    </div>
-
-    <div class="sidebar-pane" id="routes-tab">
-      <h1 class="sidebar-header">Navegació
-        <span class="sidebar-close"><i class="pi pi-chevron-left" style="font-size: 1rem"></i></span>
-      </h1>
-      <div #routes>
-        <app-visor-navigator></app-visor-navigator>
-      </div>
-    </div>
-
-    <div class="sidebar-pane" id="info-tab">
-      <h1 class="sidebar-header">Detalls del punt
-        <span class="sidebar-close" ><i class="pi pi-chevron-left" style="font-size: 1rem"></i></span>
-      </h1>
-      <div #info>
-        <app-visor-info></app-visor-info>
-      </div>
-    </div>
-
-    <div class="sidebar-pane" id="measurements-tab">
-      <h1 class="sidebar-header">Mesuraments
-        <span class="sidebar-close"><i class="pi pi-chevron-left" style="font-size: 1rem"></i></span>
-      </h1>
-      <div #measurements>
-        <app-visor-measurement></app-visor-measurement>
-      </div>
-    </div>
-
+    <ng-container #container>
+    </ng-container>
   </div>
 </div>

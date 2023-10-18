@@ -35,6 +35,7 @@ export class VisorComponent implements OnInit, AfterViewInit {
     this.subscriptions.push(this.sidebarService.template$.subscribe( domNode => {
       if (domNode) {
         this.templateArray.push(domNode)
+        this.setDivs();
       } else {
         this.templateArray = []
       }
@@ -46,7 +47,7 @@ export class VisorComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initMap();
-    this.setDivs();
+    //this.setDivs();
     this.setSideBar();
     this.setSwitchLayers();
   }
@@ -62,9 +63,9 @@ export class VisorComponent implements OnInit, AfterViewInit {
 
   setDivs() {
     this.templateArray.forEach(element => {
-      if (element['className'] === 'sidebar collapsed') {
+      if (element['id'] === 'sidebar') {
         this.sidebarDiv = element;
-      } else if (element['className'] === 'layer-switcher') {
+      } else if (element['id'] === 'layers') {
         this.layerSwitcherDiv = element
       }
     })
