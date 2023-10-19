@@ -14,6 +14,7 @@ import { VisorNavigatorComponent } from './visor-sidebar/visor-navigator/visor-n
 import { VisorMeasurementComponent } from './visor-sidebar/visor-measurement/visor-measurement.component';
 import { VisorSidebarTabComponent } from './visor-sidebar-tab/visor-sidebar-tab.component';
 import { VisorInfoComponent } from './visor-sidebar/visor-info/visor-info.component';
+import { VisorSearchByCoordComponent } from './visor-sidebar/visor-search-by-coord/visor-search-by-coord.component';
 
 @NgModule({
   declarations: [
@@ -24,14 +25,16 @@ import { VisorInfoComponent } from './visor-sidebar/visor-info/visor-info.compon
     VisorNavigatorComponent,
     VisorMeasurementComponent,
     VisorSidebarTabComponent,
-    VisorInfoComponent
+    VisorInfoComponent,
+    VisorSearchByCoordComponent
   ],
   imports: [
     CommonModule,
     VisorRoutingModule,
     PrimengModule,
     MapModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class VisorModule { }
