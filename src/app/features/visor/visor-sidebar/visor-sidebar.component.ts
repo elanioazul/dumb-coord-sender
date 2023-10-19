@@ -43,6 +43,11 @@ export class VisorSidebarComponent implements AfterViewInit {
           component: () => import('@features/visor/visor-sidebar-tab/visor-sidebar-tab.component').then(m => m.VisorSidebarTabComponent),
           inputs: visorTabsConfig.find(item => item['id'] === type)!
         }
+      case 'searchbycoord':
+        return {
+          component: () => import('@features/visor/visor-sidebar-tab/visor-sidebar-tab.component').then(m => m.VisorSidebarTabComponent),
+          inputs: visorTabsConfig.find(item => item['id'] === type)!
+        }
       default:
         return {
           component: () => import('@features/visor/visor-sidebar-tab/visor-sidebar-tab.component').then(m => m.VisorSidebarTabComponent),

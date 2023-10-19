@@ -1,0 +1,62 @@
+<p-messages [showTransitionOptions]="'500ms'" [hideTransitionOptions]="'500ms'" [closable]="true"></p-messages>
+<div class="container">
+    <div class="container__formbox">
+        <form class="container__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <div class="container__form-controls">
+                <div class="container__form-control" formGroupName="epsgForm">
+                    <p-dropdown formControlName="epsg" [options]="coordSystemsOptions"
+                        placeholder="Selecciona tipo de coord" optionLabel="label" optionValue="id">
+                        <ng-template let-epsg pTemplate="item">
+                            <div pTooltip="{{epsg.epsgVal}}" tooltipPosition="right">
+                                <span>{{epsg.label}}</span>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+
+                <div *ngIf="selectedEpsg" formGroupName="coordsForm">
+                    <div formGroupName="noDms" class="container__form-control"
+                        *ngIf="selectedEpsg == 2 || selectedEpsg == 3 || selectedEpsg == 4 || selectedEpsg == 5 || selectedEpsg == 7 ; else DMS">
+                        <input formControlName="coords" type="text"
+                            pTooltip="Introduce separado por un espacio, longitud (x) y latitud (y), en este orden"
+                            pInputText />
+                    </div>
+
+                    <ng-template #DMS>
+                        <div class="container__form-control" formGroupName="dms">
+                            <div style="max-width: 40%;" formGroupName="longitude">
+                                <h3>Longitude</h3>
+                                <span>Degrees (º)<input formControlName="degrees" type="text" pInputText /></span><br>
+                                <span>Minutes (')<input formControlName="minutes" type="text" pInputText /></span><br>
+                                <span>Seconds ('')<input formControlName="seconds" type="text" pInputText /></span>
+                                <div *ngFor="let value of longitudeValues">
+                                    <p-radioButton [inputId]="value.key" [value]="value.key"
+                                        formControlName="lon"></p-radioButton>
+                                    <label [for]="value.name">{{ value.name }}</label>
+                                </div>
+                            </div>
+                            <div style="max-width: 40%;" formGroupName="latitude">
+                                <h3>Latitude</h3>
+                                <span>Degrees (º)<input formControlName="degrees" type="text" pInputText /></span><br>
+                                <span>Minutes (')<input formControlName="minutes" type="text" pInputText /></span><br>
+                                <span>Seconds ('')<input formControlName="seconds" type="text" pInputText /></span>
+                                <div *ngFor="let value of latitudeValues">
+                                    <p-radioButton [inputId]="value.key" [value]="value.key"
+                                        formControlName="lat"></p-radioButton>
+                                    <label [for]="value.name">{{ value.name }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+
+            </div>
+
+            <div class="container__form-send">
+                <p-button type="submit" [disabled]="form.invalid">Enviar</p-button>
+            </div>
+
+        </form>
+    </div>
+</div>
