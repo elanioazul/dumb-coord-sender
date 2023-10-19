@@ -12,7 +12,8 @@ import CircleStyle from 'ol/style/Circle';
 import proj4 from 'proj4';
 import { Point } from 'ol/geom';
 import { IMaps } from '@core/interfaces/maps.interfaz';
-
+import { createTextStyle } from '@core/utils/ol';
+import { pin } from '@core/enums/pin.marker.enum';
 const apiUrlOrs = 'https://ors.apps.aroas.westeurope.aroapp.io/ors/v2/directions/driving-car?';
 
 const originStyle = new Style({
@@ -110,9 +111,10 @@ export class OrsService {
     );
   }
 
-  setOrigin(coords: Coordinate): void {
+  setOrigin(coords: Coordinate, label: string): void {
     this.setRecurso(coords);
     const feature = this.createMercatorFeature(coords, 'origin');
+    originStyle.setText(createTextStyle(feature, this.maps.viewer?.getView().getResolution(), label, pin.origin))
     feature.setStyle(originStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
     //this.setGeomarker(feature);
@@ -146,6 +148,7 @@ export class OrsService {
   setDestination(coords: Coordinate): void {
     this.setIncidente(coords);
     const feature = this.createMercatorFeature(coords, 'destination');
+    destinationStyle.setText(createTextStyle(feature, this.maps.viewer?.getView().getResolution(), 'incidente: ' + coords.toString(), pin.destination))
     feature.setStyle(destinationStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
   }
