@@ -112,6 +112,9 @@ export default class Sidebar extends Control {
         }
 
         // close sidebar
+        if (this.element.classList.contains('sidebar-large')) {
+            this.element.classList.remove('sidebar-large');
+        }
         if (!this.element.classList.contains('collapsed')) {
             this.element.classList.add('collapsed');
         }
