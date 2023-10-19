@@ -24,15 +24,24 @@
     top: 5em;
     width: 305px;
   }
+  .sidebar.sidebar-large {
+    width: 90%;
+  }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
   .sidebar {
     width: 390px;
   }
+  .sidebar.sidebar-large {
+    width: 90%;
+  }
 }
 @media (min-width: 1200px) {
   .sidebar {
     width: 460px;
+  }
+  .sidebar.sidebar-large {
+    width: 90%;
   }
 }
 

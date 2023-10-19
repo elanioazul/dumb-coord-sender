@@ -1,5 +1,6 @@
 export interface IVisorTab {
     id : string,
     title: string,
-    widget?: any
+    widget?: any,
+    largeSidebarNeeded: boolean
 }

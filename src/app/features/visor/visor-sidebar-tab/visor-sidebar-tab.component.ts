@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { IVisorTab } from '@core/interfaces/visor-tab.interfaz';
 import { SidebarService } from '@core/services/sidebar.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-visor-sidebar-tab',
@@ -23,6 +24,8 @@ import { SidebarService } from '@core/services/sidebar.service';
 })
 export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
   @ViewChild('widget') widgetDiv!: ElementRef<HTMLElement>;
+
+  sidebarDiv!: ElementRef<HTMLDivElement>;
 
   divSwitcher?: any;
 
@@ -35,14 +38,18 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
   @Input() configOptions!: IVisorTab;
 
   @Output() messageEvent = new EventEmitter<string>();
+  subscriptions: Subscription[] = [];
 
   constructor(
     private sidebarService: SidebarService,
     private renderer: Renderer2
-  ) {}
+  ) {
+    this.getSidebarDomNode();
+  }
 
   ngAfterViewInit(): void {
     this.checkIsSwitcherLayersTab();
+    this.checkLargeSideBarIsNeeded();
   }
 
   ngOnInit() {
@@ -61,9 +68,33 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
     }
   }
 
+  checkLargeSideBarIsNeeded(): void {
+    if (this.sidebarDiv !== undefined && this.configOptions.largeSidebarNeeded) {
+      this.renderer.addClass(
+        this.sidebarDiv,
+        'sidebar-large'
+      )
+    } else {
+        this.renderer.removeClass(
+          this.sidebarDiv,
+          'sidebar-large'
+        )
+    }
+  }
+
   sendMessageToLoaderComp(tabName: string): void {
     this.messageEvent.emit(
       `mensaje por aqui al comp cargador desde componente ${tabName} dynamico`
+    );
+  }
+
+  private getSidebarDomNode(): void {
+    this.subscriptions.push(
+      this.sidebarService.sidebarDiv$.subscribe((domNode) => {
+        if (domNode) {
+          this.sidebarDiv = domNode;
+        }
+      })
     );
   }
 
