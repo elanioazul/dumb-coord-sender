@@ -75,6 +75,8 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.orsService.removeFeaturesFromLayer();
+    this.orsService.setRecursoToNull();
     this.destroy$.next();
     this.destroy$.complete();
   }
