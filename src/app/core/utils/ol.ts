@@ -7,7 +7,7 @@ import LayerTile from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import OSM from 'ol/source/OSM';
-import { Circle as CircleStyle, Icon } from 'ol/style';
+import { Circle as CircleStyle, Icon, Text } from 'ol/style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
@@ -29,6 +29,9 @@ import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import ImageLayer from 'ol/layer/Image';
 import { fromLonLat } from 'ol/proj';
+import { pin } from '@core/enums/pin.marker.enum';
+
+
 
 //geoserver url
 const geoserverUrl = 'http://localhost:8080/geoserver/ows?';
@@ -339,6 +342,48 @@ export const flyToPosition = (map: Map, lat: number, lon: number): void => {
     );
   }
 }
+
+export const createTextStyle = (feature: Feature, resolution: any, label: string, whatPin: string) => {
+  let align;
+  whatPin === pin.destination ? align = 'start' : align = 'end';
+  const baseline = 'top';
+  const fontFont = 'FontGIS'
+  const weight = 'normal';
+  const height = 1;
+  const size = '18px';
+  let offsetX;
+  whatPin === pin.destination ? offsetX = 0 : offsetX = -15;
+  const offsetY = -15;
+  let color;
+  whatPin === pin.destination ? color = '#050505' : color = '#db1d1d';
+  const oulineColor = '#ffffff';
+  const outlineWidth = 6;
+  const font = weight + ' ' + size + '/' + height + ' ' + fontFont;
+  return new Text({
+    textAlign: align,
+    textBaseline: baseline,
+    font: font,
+    text: getText(feature, resolution, label),
+    fill: new Fill({color: color}),
+    stroke: new Stroke({color: oulineColor, width: outlineWidth}),
+    offsetY: offsetY,
+    offsetX: offsetX
+  });
+}
+
+const getText = (feature: Feature, resolution: any, label: string) => {
+  const maxResolution = 1600;
+  //let text = feature.get('name');
+  let text = label;
+
+  if (resolution > maxResolution) {
+    text = '';
+  } else {
+    return text;
+  }
+
+  return text;
+};
 
 const determineSourceSrid = (sridId: number): any => {
   let source: any
