@@ -51,6 +51,8 @@ export default class Sidebar extends Control {
                 }
             }
         }
+        //create new private variables for more control
+        this._nonOpenableTabs = options.nonOpenableTabs;
     }
 
     /**
@@ -75,7 +77,7 @@ export default class Sidebar extends Control {
     };
 
     open(id) {
-        var i, child;
+        var i, child, isANonOpenableTab;
 
         // hide old active contents and show new content
         for (i = this._panes.length - 1; i >= 0; i--) {
@@ -95,9 +97,23 @@ export default class Sidebar extends Control {
                 child.classList.remove('active');
         }
 
+        isANonOpenableTab = this._nonOpenableTabs.find(tab => tab.id === id);
+
         // open sidebar (if necessary)
-        if (this.element.classList.contains('collapsed')) {
-            this.element.classList.remove('collapsed');
+        if (isANonOpenableTab) {
+            if (!this.element.classList.contains('collapsed')) {
+                this.element.classList.add('collapsed');
+            }
+            if (this.element.classList.contains('sidebar-large')) {
+                this.element.classList.remove('sidebar-large');
+            }
+        } else {
+            if (this.element.classList.contains('collapsed')) {
+                this.element.classList.remove('collapsed');
+            }
+            if (this.element.classList.contains('sidebar-large')) {
+                this.element.classList.remove('sidebar-large');
+            }
         }
 
         return this;

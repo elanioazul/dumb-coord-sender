@@ -6,6 +6,8 @@ import { MapService } from 'src/app/core/services/map.service';
 import Sidebar from '@core/js/ol5-sidebar.js';
 import LayerSwitcher from 'ol-layerswitcher';
 import { RenderOptions } from 'ol-layerswitcher';
+import { visorTabsConfig } from '@core/consts/visor-tab-config';
+import { IVisorTab } from '@core/interfaces/visor-tab.interfaz';
 
 @Component({
   selector: 'app-visor',
@@ -25,6 +27,8 @@ export class VisorComponent implements OnInit, AfterViewInit {
   optionsToRenderLayerSwitcher!: RenderOptions;
 
   domElement: any;
+
+  visorTabsConfig = visorTabsConfig;
 
   constructor(
     private mapService: MapService,
@@ -64,7 +68,9 @@ export class VisorComponent implements OnInit, AfterViewInit {
   refreshSidebar(): void {
     this.sidebar = new Sidebar({
       element: this.sidebarDiv,
+      nonOpenableTabs: this.visorTabsConfig.filter((tab: IVisorTab) => !tab.openableSidebarNeeded)
     });
+    this.sidebarService.updateSidebarInstance(this.sidebar)
     this.sidebar.setMap(this.map);
     this.map.addControl(this.sidebar);
   }

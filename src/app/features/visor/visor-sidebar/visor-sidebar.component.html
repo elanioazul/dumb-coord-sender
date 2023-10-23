@@ -2,17 +2,18 @@
 
   <div class="sidebar-tabs">
     <ul role="tablist">
-      <li (click)="onSelectTab('layers')"><a href="#layers" role="tab"><i class="fg-layers-o fg-4x"
-            style="font-size: 1.5rem; line-height: 1;"></i></a></li>
-      <li (click)="onSelectTab('routes')"><a href="#routes" role="tab"><i class="fg-route fg-4x"
-            style="font-size: 1.5rem; line-height: 1;"></i></a></li>
-      <li (click)="onSelectTab('info')"><a href="#info" role="tab"><i class="pi pi-info-circle"
-            style="font-size: 1.5rem"></i></a></li>
-      <li (click)="onSelectTab('measurements')"><a href="#measurements" role="tab"><i class="fg-measure fg-4x" 
-            style="font-size: 1.5rem; line-height: 1;"></i></a>
-      </li>
-      <li (click)="onSelectTab('searchbycoord')"><a href="#searchbycoord" role="tab"><i class="fg-search-map fg-4x" 
-            style="font-size: 1.5rem; line-height: 1;"></i></a>
+      <li (click)="onSelectTab('layers')"><a href="#layers" role="tab"><i [class]="visorTabsConfig[0].icon"
+            [style]="visorTabsConfig[0].iconStyle"></i></a></li>
+      <li (click)="onSelectTab('searchbycoord')"><a href="#searchbycoord" role="tab"><i [class]="visorTabsConfig[1].icon" 
+            [style]="visorTabsConfig[1].iconStyle"></i></a></li>
+      <li (click)="onSelectTab('routes')"><a href="#routes" role="tab"><i [class]="visorTabsConfig[2].icon"
+            [style]="visorTabsConfig[2].iconStyle"></i></a></li>
+      <li (click)="onSelectTab('routebyclicks')"><a href="#routebyclicks" role="tab"><i [class]="visorTabsConfig[3].icon"
+            [style]="visorTabsConfig[3].iconStyle"></i></a></li>
+      <li (click)="onSelectTab('info')"><a href="#info" role="tab"><i [class]="visorTabsConfig[4].icon"
+            [style]="visorTabsConfig[4].iconStyle"></i></a></li>
+      <li (click)="onSelectTab('measurements')"><a href="#measurements" role="tab"><i [class]="visorTabsConfig[5].icon" 
+            [style]="visorTabsConfig[5].iconStyle"></i></a>
       </li>
     </ul>
 

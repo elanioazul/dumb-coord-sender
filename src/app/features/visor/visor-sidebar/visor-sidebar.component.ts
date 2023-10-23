@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, Output, Input, EventEmitter, AfterViewInit, Inject, InjectionToken, OnDestroy, ViewContainerRef, ComponentRef } from "@angular/core";
 import { visorTabsConfig } from "@core/consts/visor-tab-config";
+import { IVisorTab } from "@core/interfaces/visor-tab.interfaz";
 import { SidebarService } from "@core/services/sidebar.service";
 import { VisorSidebarTabComponent } from '@features/visor/visor-sidebar-tab/visor-sidebar-tab.component';
 
@@ -9,6 +10,8 @@ import { VisorSidebarTabComponent } from '@features/visor/visor-sidebar-tab/viso
   styleUrls: ['./visor-sidebar.component.scss']
 })
 export class VisorSidebarComponent implements AfterViewInit {
+
+  visorTabsConfig = visorTabsConfig;
 
   @ViewChild('container', {
     static: true,
@@ -67,7 +70,14 @@ export class VisorSidebarComponent implements AfterViewInit {
   }
 
   onSelectTab(tab: any): void {
-    this.createDynamicSidebarTab(tab)
+    const tabConfig = this.visorTabsConfig.find((config: IVisorTab) => config.id === tab);
+    if (!tabConfig?.openableSidebarNeeded) {
+      this.container.clear();
+      //this.sidebarService.getSidebarInstance().close();
+    } else {
+      this.createDynamicSidebarTab(tab)
+      
+    }
   }
 
   private async createDynamicSidebarTab(type: string) {
