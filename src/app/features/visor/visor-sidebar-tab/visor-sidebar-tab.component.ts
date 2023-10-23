@@ -49,7 +49,6 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.checkIsSwitcherLayersTab();
-    this.checkLargeSideBarIsNeeded();
   }
 
   ngOnInit() {
@@ -65,20 +64,6 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
       )
       this.divSwitcher = elem;
       this.sidebarService.updateSwitchLayersNode(this.divSwitcher);
-    }
-  }
-
-  checkLargeSideBarIsNeeded(): void {
-    if (this.sidebarDiv !== undefined && this.configOptions.largeSidebarNeeded) {
-      this.renderer.addClass(
-        this.sidebarDiv,
-        'sidebar-large'
-      )
-    } else {
-        this.renderer.removeClass(
-          this.sidebarDiv,
-          'sidebar-large'
-        )
     }
   }
 

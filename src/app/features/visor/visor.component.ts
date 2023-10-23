@@ -68,7 +68,8 @@ export class VisorComponent implements OnInit, AfterViewInit {
   refreshSidebar(): void {
     this.sidebar = new Sidebar({
       element: this.sidebarDiv,
-      nonOpenableTabs: this.visorTabsConfig.filter((tab: IVisorTab) => !tab.openableSidebarNeeded)
+      nonOpenableTabs: this.visorTabsConfig.filter((tab: IVisorTab) => !tab.openableSidebarNeeded),
+      largerTabs: this.visorTabsConfig.filter((tab: IVisorTab) => tab.largeSidebarNeeded),
     });
     this.sidebarService.updateSidebarInstance(this.sidebar)
     this.sidebar.setMap(this.map);

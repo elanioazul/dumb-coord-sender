@@ -53,6 +53,7 @@ export default class Sidebar extends Control {
         }
         //create new private variables for more control
         this._nonOpenableTabs = options.nonOpenableTabs;
+        this._largerTabs = options.largerTabs;
     }
 
     /**
@@ -77,7 +78,7 @@ export default class Sidebar extends Control {
     };
 
     open(id) {
-        var i, child, isANonOpenableTab;
+        var i, child, isANonOpenableTab, isLargerTab;
 
         // hide old active contents and show new content
         for (i = this._panes.length - 1; i >= 0; i--) {
@@ -98,6 +99,7 @@ export default class Sidebar extends Control {
         }
 
         isANonOpenableTab = this._nonOpenableTabs.find(tab => tab.id === id);
+        isLargerTab = this._largerTabs.find(tab => tab.id === id);
 
         // open sidebar (if necessary)
         if (isANonOpenableTab) {
@@ -107,6 +109,8 @@ export default class Sidebar extends Control {
             if (this.element.classList.contains('sidebar-large')) {
                 this.element.classList.remove('sidebar-large');
             }
+        } else if (isLargerTab) {
+            this.element.classList.add('sidebar-large');
         } else {
             if (this.element.classList.contains('collapsed')) {
                 this.element.classList.remove('collapsed');
