@@ -9,7 +9,8 @@ import {
   createRutaVectorLayer,
   goToCoordinates,
   createBaseLayersGroupForLayerSwitcher,
-  createLayerGroup
+  createLayerGroup,
+  createClusterLayer
 } from '../utils/ol';
 import { Feature, Map } from 'ol';
 import { Extent, getCenter } from 'ol/extent';
@@ -111,7 +112,7 @@ export class MapService {
       sanitationlayers: createLayerGroup(sanitarialayersParams, 'Sanitàries'),
       adminLayers: createLayerGroup(adminlayersParams, 'Divisions administratives'),
       incident: createVectorLayer([]),
-      incidents: createLayerGroup([], 'Coordenades', createVectorLayer(features)),
+      incidents: createLayerGroup([], 'Incidents', createClusterLayer(features)),
       route: createLayerGroup([], 'ruta', createRutaVectorLayer())
     };
     this.setLayers(initialLayers);

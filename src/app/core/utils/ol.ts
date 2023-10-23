@@ -6,6 +6,7 @@ import TileLayer from 'ol/layer/Tile';
 import LayerTile from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
+import Cluster from 'ol/source/Cluster';
 import OSM from 'ol/source/OSM';
 import { Circle as CircleStyle, Icon, Text } from 'ol/style';
 import Fill from 'ol/style/Fill';
@@ -251,13 +252,53 @@ export const createVectorLayer = (features: Feature[]): VectorLayer<VectorSource
 
       return style;
     },
-    title: features ? 'Coordenades passades' : 'Coordenade',
+    title: 'Incidente',
   } as BaseLayerOptions);
 
   return vectorLayer;
 };
 
+export const createClusterLayer = (features: Feature[]): VectorLayer<VectorSource<Geometry>> => {
 
+  const source = new VectorSource({
+    features: features,
+  });
+
+  const clusterSource = new Cluster({
+    distance: 20,
+    minDistance: 20,
+    source: source,
+  });
+
+  const clustersLayer = new VectorLayer({
+    source: clusterSource,
+    style: function (feature) {
+      const size = feature.get('features').length;
+      const style = new Style({
+        image: new CircleStyle({
+          radius: 10,
+          stroke: new Stroke({
+            color: '#fff',
+          }),
+          fill: new Fill({
+            color: '#3399CC',
+          }),
+        }),
+        text: new Text({
+          text: size.toString(),
+          fill: new Fill({
+            color: '#fff',
+          }),
+        }),
+      });
+
+      return style;
+    },
+    title: 'Incidentes'
+  } as BaseLayerOptions);
+  
+  return clustersLayer;
+};
 
 export const createRutaVectorLayer = (): VectorLayer<VectorSource<Geometry>> => {
   let vectorLayer = new VectorLayer({
@@ -369,6 +410,27 @@ export const createTextStyle = (feature: Feature, resolution: any, label: string
     offsetY: offsetY,
     offsetX: offsetX
   });
+}
+
+export const getClusterStyle = (features: Feature[], condition: boolean) => {
+  const style =  new Style({
+    image: new CircleStyle({
+      radius: 10,
+      stroke: new Stroke({
+        color: '#fff',
+      }),
+      fill: new Fill({
+        color: condition ? '#4caf50' : '#3399CC',
+      }),
+    }),
+    text: new Text({
+      text: features.length.toString(),
+      fill: new Fill({
+        color: '#fff',
+      }),
+    }),
+  });
+  return style;
 }
 
 const getText = (feature: Feature, resolution: any, label: string) => {
