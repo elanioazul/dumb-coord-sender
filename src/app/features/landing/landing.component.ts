@@ -257,8 +257,8 @@ export class LandingComponent {
           point.coordinates[0],
           point.coordinates[1]
         );
-        this.mapService.addFeature('coordinate', feature);
-        this.mapService.addFeature('coordinates', feature);
+        this.mapService.addFeature('incident', feature);
+        this.mapService.addFeature('incidents', feature);
         this.orsService.setDestination(point.coordinates);
         this.router.navigate(['/', 'visor-page']);
         flyToPosition(this.map, point.coordinates[1], point.coordinates[0])

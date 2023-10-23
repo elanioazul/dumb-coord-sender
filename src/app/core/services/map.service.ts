@@ -34,9 +34,9 @@ export class MapService {
   private layers: BehaviorSubject<ILayers> = new BehaviorSubject<ILayers>({
     sanitationlayers: null,
     adminLayers: null,
-    coordinates: null,
+    incidents: null,
     route: null,
-    coordinate: null
+    incident: null
   });
 
   public layers$ = this.layers.asObservable();
@@ -75,12 +75,12 @@ export class MapService {
 
   addFeature(layerId: string, feature: Feature) {
     //const layer = this.getLayerById(layerId);
-    if (layerId === 'coordinates' && this.layers.value['coordinates']) {
-      (this.layers.value['coordinates'].getLayers() as any).getArray()[0].getSource().addFeature(feature);
+    if (layerId === 'incidents' && this.layers.value['incidents']) {
+      (this.layers.value['incidents'].getLayers() as any).getArray()[0].getSource().addFeature(feature);
     }
-    if (layerId === 'coordinate') {
-      this.layers.value['coordinate']?.getSource().clear();
-      this.layers.value['coordinate']?.getSource().addFeature(feature);
+    if (layerId === 'incident') {
+      this.layers.value['incident']?.getSource().clear();
+      this.layers.value['incident']?.getSource().addFeature(feature);
     }
   }
 
@@ -95,9 +95,9 @@ export class MapService {
     const initialMaps = {
       overview: createMap('overview', [
         createOSMBaseLayer(), 
-        layers.coordinate!
+        layers.incident!
       ], [createBaseLayersGroupForLayerSwitcher()]),
-      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.coordinates!, layers.adminLayers!, layers.sanitationlayers!, layers.route!]),
+      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!, layers.route!]),
     };
     this.setMaps(initialMaps);
   }
@@ -110,8 +110,8 @@ export class MapService {
     const initialLayers: ILayers = {
       sanitationlayers: createLayerGroup(sanitarialayersParams, 'Sanitàries'),
       adminLayers: createLayerGroup(adminlayersParams, 'Divisions administratives'),
-      coordinate: createVectorLayer([]),
-      coordinates: createLayerGroup([], 'Coordenades', createVectorLayer(features)),
+      incident: createVectorLayer([]),
+      incidents: createLayerGroup([], 'Coordenades', createVectorLayer(features)),
       route: createLayerGroup([], 'ruta', createRutaVectorLayer())
     };
     this.setLayers(initialLayers);

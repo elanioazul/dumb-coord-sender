@@ -193,8 +193,8 @@ export class VisorSearchByCoordComponent implements OnInit, OnDestroy {
           point.coordinates[0],
           point.coordinates[1]
         );
-        //this.mapService.addFeature('coordinate', feature);
-        //this.mapService.addFeature('coordinates', feature);
+        //this.mapService.addFeature('incident', feature);
+        //this.mapService.addFeature('incidents', feature);
         this.orsService.setDestination(point.coordinates);
         flyToPosition(this.map, point.coordinates[1], point.coordinates[0])
       })

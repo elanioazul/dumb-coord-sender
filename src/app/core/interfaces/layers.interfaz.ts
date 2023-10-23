@@ -3,8 +3,7 @@ import VectorLayer from 'ol/layer/Vector';
 export interface ILayers {
     sanitationlayers: LayerGroup | null;
     adminLayers: LayerGroup | null;
-    //coordinates: VectorLayer<any> | null;
-    coordinates: LayerGroup | null;
+    incidents: LayerGroup | null;
+    incident: VectorLayer<any> | null;
     route: LayerGroup | null;
-    coordinate: VectorLayer<any> | null;
 }
