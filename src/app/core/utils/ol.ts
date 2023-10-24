@@ -300,25 +300,12 @@ export const createClusterLayer = (features: Feature[]): VectorLayer<VectorSourc
   return clustersLayer;
 };
 
-export const createRutaVectorLayer = (): VectorLayer<VectorSource<Geometry>> => {
+export const createRutaVectorLayer = (rutaType: string): VectorLayer<VectorSource<Geometry>> => {
   let vectorLayer = new VectorLayer({
     source: new VectorSource({
       features: []
     }),
-    title: 'Ruta a incident',
-    style: null /*function (feature) {
-      return styles[feature.get('type')];
-    }*/
-  } as BaseLayerOptions);
-
-  return vectorLayer;
-}
-export const createRutaByClicksVectorLayer = (): VectorLayer<VectorSource<Geometry>> => {
-  let vectorLayer = new VectorLayer({
-    source: new VectorSource({
-      features: []
-    }),
-    title: 'Ruta by clicks',
+    title: rutaType == 'route' ? 'Ruta a incident' : 'Ruta by clicks',
     style: null /*function (feature) {
       return styles[feature.get('type')];
     }*/
