@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MapService } from './core/services/map.service';
 import { CoordinatesService } from './core/services/coordinates.service';
 import {
-  transformPointToFeature,
+  transformPointToMercatorFeature,
   createFeaturesProjectionTransofmationNeeded,
 } from './core/utils/ol';
 
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.coordService.getTransformedCoordList$.subscribe((data: any) => {
-      //const features = data.map((transformed: any) => transformPointToFeature(transformed.longitude, transformed.latitude))
+      //const features = data.map((transformed: any) => transformPointToMercatorFeature(transformed.longitude, transformed.latitude))
       const features = createFeaturesProjectionTransofmationNeeded(data);
       this.mapService.initLayers(features);
     });

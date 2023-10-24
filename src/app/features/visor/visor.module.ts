@@ -15,6 +15,8 @@ import { VisorMeasurementComponent } from './visor-sidebar/visor-measurement/vis
 import { VisorSidebarTabComponent } from './visor-sidebar-tab/visor-sidebar-tab.component';
 import { VisorInfoComponent } from './visor-sidebar/visor-info/visor-info.component';
 import { VisorSearchByCoordComponent } from './visor-sidebar/visor-search-by-coord/visor-search-by-coord.component';
+import { VisorSidebarNoTemplateTabComponent } from './visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component';
+import { VisorNavigatorByClicksComponent } from './visor-sidebar/visor-navigator-by-clicks/visor-navigator-by-clicks.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { VisorSearchByCoordComponent } from './visor-sidebar/visor-search-by-coo
     VisorMeasurementComponent,
     VisorSidebarTabComponent,
     VisorInfoComponent,
-    VisorSearchByCoordComponent
+    VisorSearchByCoordComponent,
+    VisorSidebarNoTemplateTabComponent,
+    VisorNavigatorByClicksComponent
   ],
   imports: [
     CommonModule,

@@ -47,7 +47,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     const originFeature = this.orsService.getFeatureByType('origin');
     const routeFeature = this.orsService.getFeatureByType('route');
     const features = new Array(originFeature, routeFeature);
-    if (originFeature) this.orsService.deleteFeatureFromLayer(features);
+    if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
     const selectedResourceName = this.recursos.find(
       (recurso: IRecurso) =>
         true == this.arraysAreEqual(recurso.coordinates, option.value)
@@ -98,7 +98,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.orsService.removeFeaturesFromLayer();
+    this.orsService.removeFeaturesFromRoute();
     this.orsService.setRecursoToNull();
     this.destroy$.next();
     this.destroy$.complete();

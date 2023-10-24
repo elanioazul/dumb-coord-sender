@@ -5,6 +5,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   Renderer2,
@@ -22,7 +23,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./visor-sidebar-tab.component.scss'],
   //encapsulation: ViewEncapsulation.None
 })
-export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
+export class VisorSidebarTabComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('widget') widgetDiv!: ElementRef<HTMLElement>;
 
   sidebarDiv!: ElementRef<HTMLDivElement>;
@@ -46,13 +47,17 @@ export class VisorSidebarTabComponent implements OnInit, AfterViewInit {
   ) {
     this.getSidebarDomNode();
   }
-
+  
   ngAfterViewInit(): void {
     this.checkIsSwitcherLayersTab();
   }
-
+  
   ngOnInit() {
     this.loadWidget();
+  }
+  
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   checkIsSwitcherLayersTab() {

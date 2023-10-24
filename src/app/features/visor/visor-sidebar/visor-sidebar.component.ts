@@ -3,7 +3,8 @@ import { visorTabsConfig } from "@core/consts/visor-tab-config";
 import { IVisorTab } from "@core/interfaces/visor-tab.interfaz";
 import { SidebarService } from "@core/services/sidebar.service";
 import { VisorSidebarTabComponent } from '@features/visor/visor-sidebar-tab/visor-sidebar-tab.component';
-
+import { VisorSidebarNoTemplateTabComponent }  from '@features/visor/visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component';
+import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-visor-sidebar',
   templateUrl: './visor-sidebar.component.html',
@@ -22,9 +23,25 @@ export class VisorSidebarComponent implements AfterViewInit {
 
   divSidebar?: any;
 
-  constructor(private sidebarService: SidebarService) {}
+  constructor(private sidebarService: SidebarService, private messageService: MessageService) {}
 
-  optionsByType = (type: string) => {
+  emptyTemplateTabsOptionsByType = (type: string) => {
+    switch (type) {
+      case 'routebyclicks':
+        return {
+          component: () => import('@features/visor/visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component').then(m => m.VisorSidebarNoTemplateTabComponent),
+          inputs: visorTabsConfig.find(item => item['id'] === type)!
+        }
+      default:
+        return {
+          component: () => import('@features/visor/visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component').then(m => m.VisorSidebarNoTemplateTabComponent),
+          inputs: visorTabsConfig.find(item => item['id'] === type)!
+        }
+
+    }
+  }
+
+  templateTabsOptionsByType = (type: string) => {
     switch (type) {
       case 'layers':
         return {
@@ -73,7 +90,7 @@ export class VisorSidebarComponent implements AfterViewInit {
     const tabConfig = this.visorTabsConfig.find((config: IVisorTab) => config.id === tab);
     if (!tabConfig?.openableSidebarNeeded) {
       this.container.clear();
-      //this.sidebarService.getSidebarInstance().close();
+      this.createDynamicNoTemplateTab(tab);
     } else {
       this.createDynamicSidebarTab(tab)
       
@@ -82,8 +99,10 @@ export class VisorSidebarComponent implements AfterViewInit {
 
   private async createDynamicSidebarTab(type: string) {
 
+    this.clearToasts();
+
     this.container.clear();
-    const {component, inputs} = this.optionsByType(type);
+    const {component, inputs} = this.templateTabsOptionsByType(type);
 
     const componentInstance = await component();
     const componentRef: ComponentRef<VisorSidebarTabComponent> = this.container.createComponent(componentInstance);
@@ -92,6 +111,32 @@ export class VisorSidebarComponent implements AfterViewInit {
     componentRef.instance.messageEvent.subscribe((data:any)=>{
       console.log(data);
     })
+  }
+
+  private async createDynamicNoTemplateTab(type: string) {
+
+    this.clearToasts();
+    
+    this.container.clear();
+    const {component, inputs} = this.emptyTemplateTabsOptionsByType(type);
+    
+    this.showToastMessage(inputs.toasterMessage);
+
+    const componentInstance = await component();
+    const componentRef: ComponentRef<VisorSidebarNoTemplateTabComponent> = this.container.createComponent(componentInstance);
+    this.updateSidebar();
+    componentRef.instance.configOptions = inputs;
+    // componentRef.instance.messageEvent.subscribe((data:any)=>{
+    //   console.log(data);
+    // })
+  }
+
+  private showToastMessage(message?: string): void {
+    this.messageService.add({ severity: 'info', summary: 'Info', detail: message });
+  }
+
+  private clearToasts() {
+    this.messageService.clear();
   }
 
 }

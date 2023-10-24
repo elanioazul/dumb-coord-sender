@@ -30,6 +30,8 @@ export const visorTabsConfig: IVisorTab[] = [
   {
     id: 'routebyclicks',
     title: 'Navegació by clicks',
+    widget: () => import('@features/visor/visor-sidebar/visor-navigator-by-clicks/visor-navigator-by-clicks.component').then(m => m.VisorNavigatorByClicksComponent),
+    toasterMessage: 'Consulta la ruta con dos clicks en el mapa',
     openableSidebarNeeded: false,
     largeSidebarNeeded: false,
     icon: 'fg-route fg-4x',

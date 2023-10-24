@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient} from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of, throwError } from 'rxjs';
 import { Coordinate } from 'ol/coordinate';
 import { Feature } from 'ol';
-import Polyline from 'ol/format/Polyline.js';
 import LineString from 'ol/geom/LineString.js';
 import { MapService } from './map.service';
 import { ILayers } from '@core/interfaces/layers.interfaz';
@@ -50,21 +49,50 @@ const geoMarkerStyle = new Style({
     }),
   }),
 });
+const startStyle = new Style({
+  image: new Icon({
+    anchorOrigin: 'top-right',
+    anchorXUnits: 'pixels',
+    anchorYUnits: 'pixels',
+    opacity: 0.8,
+    src: '../../../assets/icons/startpoint.png'
+  })
+});
+const endStyle = new Style({
+  image: new Icon({
+    anchorOrigin: 'top-right',
+    anchorXUnits: 'pixels',
+    anchorYUnits: 'pixels',
+    opacity: 0.8,
+    src: '../../../assets/icons/endpoint.png'
+  })
+});
+const rutaByClicksStyle = new Style({
+  stroke: new Stroke({
+    width: 6,
+    color: [0, 0, 0, 1],
+  }),
+});
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrsService {
 
-  private origin = new BehaviorSubject<Coordinate | null>(null);
-  origin$ = this.origin.asObservable();
-  private destination = new BehaviorSubject<Coordinate | null>(null);
-  destination$ = this.destination.asObservable();
+  private recurso = new BehaviorSubject<Coordinate | null>(null);
+  recurso$ = this.recurso.asObservable();
+  private incidente = new BehaviorSubject<Coordinate | null>(null);
+  incidente$ = this.incidente.asObservable();
 
   getLatestRuteDetails$ = combineLatest([
-    this.origin$,
-    this.destination$
+    this.recurso$,
+    this.incidente$
   ]);
+
+  private startPoint = new BehaviorSubject<Coordinate | null>(null);
+  startPoint$ = this.startPoint.asObservable();
+  private endPoint = new BehaviorSubject<Coordinate | null>(null);
+  endPoint$ = this.endPoint.asObservable();
 
   layers: ILayers;
   maps!: IMaps;
@@ -77,26 +105,9 @@ export class OrsService {
     this.maps = this.mapService.getAllMaps();
   }
 
-  setRecurso(coords: Coordinate):void {
-    this.origin.next(coords);
-  }
-  setRecursoToNull():void {
-    this.origin.next(null);
-  }
-  getRecurso(): Coordinate | null {
-    return this.origin.value;
-  }
-
-  setIncidente(coords: Coordinate):void {
-    this.destination.next(coords);
-  }
-  setIncidenteToNull():void {
-    this.destination.next(null);
-  }
-  getIncidente(): Coordinate | null {
-    return this.destination.value;
-  }
-
+  //////////////////////
+  /*common*/
+  /////////////////////
   getOrsInfo(from: Coordinate, to: Coordinate): Observable<any> {
     return this.http.get(apiUrlOrs + 'start=' + `${from}` + '&end=' + `${to}`)
     .pipe(
@@ -111,6 +122,44 @@ export class OrsService {
     );
   }
 
+  getFeatureByType(type: string): Feature {
+    return (this.layers.route?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
+  }
+
+  setGeomarker(feature: Feature): void {
+    let position = feature.getGeometry()?.clone();
+    let geoMarker = new Feature({
+      geometry: position,
+    });
+    geoMarker.setId('geoMarker');
+    geoMarker.setStyle(geoMarkerStyle);
+    (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(geoMarker);
+  }
+
+  //////////////////////
+  /*visor-navigator widget*/
+  /////////////////////
+
+  setRecurso(coords: Coordinate):void {
+    this.recurso.next(coords);
+  }
+  setRecursoToNull():void {
+    this.recurso.next(null);
+  }
+  getRecurso(): Coordinate | null {
+    return this.recurso.value;
+  }
+
+  setIncidente(coords: Coordinate):void {
+    this.incidente.next(coords);
+  }
+  setIncidenteToNull():void {
+    this.incidente.next(null);
+  }
+  getIncidente(): Coordinate | null {
+    return this.incidente.value;
+  }
+
   setOrigin(coords: Coordinate, label: string): void {
     this.setRecurso(coords);
     const feature = this.createMercatorFeature(coords, 'origin');
@@ -119,6 +168,14 @@ export class OrsService {
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
     //this.setGeomarker(feature);
 
+  }
+
+  setDestination(coords: Coordinate): void {
+    this.setIncidente(coords);
+    const feature = this.createMercatorFeature(coords, 'destination');
+    destinationStyle.setText(createTextStyle(feature, this.maps.viewer?.getView().getResolution(), 'incidente: ' + coords.toString(), pin.destination))
+    feature.setStyle(destinationStyle);
+    (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
   }
 
   createMercatorFeature(coords: Coordinate, type: string): Feature {
@@ -133,26 +190,6 @@ export class OrsService {
     feature.setId(type);
     return feature;
   }
-
-  //para cuando si se quiere hacer hover sobre la ruta y marcar la posición del ratón sobre la ruta
-  setGeomarker(feature: Feature): void {
-    let position = feature.getGeometry()?.clone();
-    let geoMarker = new Feature({
-      geometry: position,
-    });
-    geoMarker.setId('geoMarker');
-    geoMarker.setStyle(geoMarkerStyle);
-    (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(geoMarker);
-  }
-
-  setDestination(coords: Coordinate): void {
-    this.setIncidente(coords);
-    const feature = this.createMercatorFeature(coords, 'destination');
-    destinationStyle.setText(createTextStyle(feature, this.maps.viewer?.getView().getResolution(), 'incidente: ' + coords.toString(), pin.destination))
-    feature.setStyle(destinationStyle);
-    (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
-  }
-
 
   setRuta(geometry: any): void {
     const linestringOriginal = new LineString(geometry.coordinates)
@@ -171,16 +208,70 @@ export class OrsService {
     }, 500);
   }
 
-  getFeatureByType(type: string): Feature {
-    return (this.layers.route?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
-  }
-
-  deleteFeatureFromLayer(features: Feature[]): void {
+  deleteFeatureFromRouteLayer(features: Feature[]): void {
     features.forEach((feature: Feature) => (this.layers.route?.getLayers() as any).getArray()[0].getSource().removeFeature(feature));
     
   }
-
-  removeFeaturesFromLayer(): void {
+  removeFeaturesFromRoute(): void {
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().clear();
+  }
+
+  //////////////////////
+  /*visor-navigator by clicks widget*/
+  /////////////////////
+
+  setStartPoint(coords: Coordinate):void {
+    this.startPoint.next(coords);
+  }
+  setStartPointToNull():void {
+    this.startPoint.next(null);
+  }
+  getStartPoint(): Coordinate | null {
+    return this.startPoint.value;
+  }
+
+  setEndPoint(coords: Coordinate):void {
+    this.endPoint.next(coords);
+  }
+  setEndPointToNull():void {
+    this.endPoint.next(null);
+  }
+  getEndPoint(): Coordinate | null {
+    return this.endPoint.value;
+  }
+  
+  setRutaByClicks(geometry: any): void {
+    const linestringOriginal = new LineString(geometry.coordinates)
+    const transformedLineString = new LineString(
+      linestringOriginal.getCoordinates().map(coord => proj4("EPSG:4326", "EPSG:3857", coord))
+    );
+    const feature = new Feature({
+      geometry: transformedLineString,
+    });
+    feature.setId('route-by-clicks');
+    feature.setStyle(rutaByClicksStyle);
+    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
+    setTimeout(() => {
+      this.maps.viewer?.getView().fit((this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().getExtent()),
+      { duration:1000 }
+    }, 500);
+  }
+  
+  loadStartPoint(coords: Coordinate): void {
+    this.setStartPoint(coords);
+    const feature = this.createMercatorFeature(coords, 'start-point');
+    feature.setStyle(startStyle);
+    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
+  }
+
+  loadEndPoint(coords: Coordinate): void {
+    this.setEndPoint(coords);
+    const feature = this.createMercatorFeature(coords, 'end-point');
+    feature.setStyle(endStyle);
+    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
+  }
+
+  removeFeaturesFromRouteByClicks(): void {
+    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().clear();
   }
 }
