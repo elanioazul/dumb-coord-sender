@@ -5,6 +5,7 @@ import { transformMercatorCoordsTo4326Point } from '@core/utils/ol';
 import { Map } from 'ol';
 import { Coordinate } from 'ol/coordinate';
 import { Subject, takeUntil } from 'rxjs';
+import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 @Component({
   selector: 'app-visor-navigator-by-clicks',
   templateUrl: './visor-navigator-by-clicks.component.html',
@@ -77,7 +78,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
     if (this.start !== null && this.end !== null)
       this.orsService
         .getOrsInfo(this.start, this.end)
-        .subscribe((res: any) => {
+        .subscribe((res: IOpenRouteServiceRes) => {
           this.orsService.setRutaByClicks(res.features[0].geometry);
         });
   }

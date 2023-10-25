@@ -13,6 +13,8 @@ import { Point } from 'ol/geom';
 import { IMaps } from '@core/interfaces/maps.interfaz';
 import { createTextStyle } from '@core/utils/ol';
 import { pin } from '@core/enums/pin.marker.enum';
+import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
+
 const apiUrlOrs = 'https://ors.apps.aroas.westeurope.aroapp.io/ors/v2/directions/driving-car?';
 
 const originStyle = new Style({
@@ -108,8 +110,8 @@ export class OrsService {
   //////////////////////
   /*common*/
   /////////////////////
-  getOrsInfo(from: Coordinate, to: Coordinate): Observable<any> {
-    return this.http.get(apiUrlOrs + 'start=' + `${from}` + '&end=' + `${to}`)
+  getOrsInfo(from: Coordinate, to: Coordinate): Observable<IOpenRouteServiceRes> {
+    return this.http.get<IOpenRouteServiceRes>(apiUrlOrs + 'start=' + `${from}` + '&end=' + `${to}`)
     .pipe(
       map((res: any) => {
         if (!res.error) {

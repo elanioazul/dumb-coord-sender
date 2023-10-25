@@ -3,7 +3,7 @@ import { recursos } from '@core/consts/recursos';
 import { IRecurso } from '@core/interfaces/reecurso-interfaz';
 import { OrsService } from '@core/services/ors.service';
 import { Subject, takeUntil } from 'rxjs';
-
+import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 @Component({
   selector: 'app-visor-navigator',
   templateUrl: './visor-navigator.component.html',
@@ -30,7 +30,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
         if (origin && destination && origin != null && destination != null) {
           this.orsService
             .getOrsInfo(origin, destination)
-            .subscribe((res: any) => {
+            .subscribe((res: IOpenRouteServiceRes) => {
               this.orsService.setRuta(res.features[0].geometry);
               this.distance = this.convertDistance(
                 res.features[0].properties.summary.distance

@@ -1,4 +1,7 @@
-export interface IRootObject {
+//en realidad creo que este IOpenRouteServiceRes es un FeatureCollection o GeoJsonObject de geojson dependency
+//deberia serlo, pero le habrán metido cosas extra que deja de ser estricto
+import { FeatureCollection, Feature, GeoJSON, Geometry } from 'geojson';
+export interface IOpenRouteServiceRes {
     bbox:     number[];
     features: IFeature[];
     metadata: IMetadata;
@@ -7,15 +10,15 @@ export interface IRootObject {
    
    export interface IFeature {
     bbox:       number[];
-    geometry:   IGeometry;
+    geometry:   Geometry;
     properties: IProperties;
     type:       string;
    }
    
-   export interface IGeometry {
-    coordinates: Array<number[]>;
-    type:        string;
-   }
+//    export interface IGeometry {
+//     coordinates: Array<number[]>;
+//     type:        string;
+//    }
    
    export interface IProperties {
     segments:   ISegment[];
