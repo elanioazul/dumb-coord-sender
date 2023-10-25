@@ -57,7 +57,8 @@ const startStyle = new Style({
     anchorXUnits: 'pixels',
     anchorYUnits: 'pixels',
     opacity: 0.8,
-    src: '../../../assets/icons/startpoint.png'
+    src: '../../../assets/icons/startpoint.png',
+    anchor: [15, 30]
   })
 });
 const endStyle = new Style({
@@ -66,7 +67,8 @@ const endStyle = new Style({
     anchorXUnits: 'pixels',
     anchorYUnits: 'pixels',
     opacity: 0.8,
-    src: '../../../assets/icons/endpoint.png'
+    src: '../../../assets/icons/endpoint.png',
+    anchor: [15, 30]
   })
 });
 const rutaByClicksStyle = new Style({
