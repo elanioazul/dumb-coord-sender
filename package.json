@@ -18,6 +18,7 @@
     "@angular/platform-browser": "^15.2.0",
     "@angular/platform-browser-dynamic": "^15.2.0",
     "@angular/router": "^15.2.0",
+    "@types/geojson": "^7946.0.12",
     "@types/ol": "^7.0.0",
     "font-gis": "^1.0.5",
     "ol": "^7.4.0",
