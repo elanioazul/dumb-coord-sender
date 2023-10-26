@@ -300,12 +300,12 @@ export const createClusterLayer = (features: Feature[]): VectorLayer<VectorSourc
   return clustersLayer;
 };
 
-export const createRutaVectorLayer = (): VectorLayer<VectorSource<Geometry>> => {
+export const createRutaVectorLayer = (rutaType: string): VectorLayer<VectorSource<Geometry>> => {
   let vectorLayer = new VectorLayer({
     source: new VectorSource({
       features: []
     }),
-    title: 'Ruta a incident',
+    title: rutaType == 'route' ? 'Ruta a incident' : 'Ruta by clicks',
     style: null /*function (feature) {
       return styles[feature.get('type')];
     }*/
@@ -314,13 +314,29 @@ export const createRutaVectorLayer = (): VectorLayer<VectorSource<Geometry>> => 
   return vectorLayer;
 }
 
-export const transformPointToFeature = (sirdId: number, lon: any, lat: any): Feature => {
+export const transformPointToMercatorFeature = (sirdId: number, lon: any, lat: any): Feature => {
   const source = determineSourceSrid(sirdId);
   const dest = new (proj4 as any).Proj('EPSG:3857');
   const {x, y} = proj4.transform(source, dest, [lon, lat]);
   const coords = [x, y];
   const point = new Point(coords);
   return new Feature(point);
+}
+
+export const transformMercatorCoordsTo4326Point = (lon: any, lat: any): Point => {
+  const source = new (proj4 as any).Proj('EPSG:3857');
+  const dest = new (proj4 as any).Proj('+proj=longlat +datum=WGS84 +no_defs +type=crs');
+  const {x, y} = proj4.transform(source, dest, [lon, lat]);
+  const coords = [x, y];
+  return new Point(coords);
+}
+
+export const transform4326CoordsToMercatorPoint = (lon: any, lat: any): Point => {
+  const source = new (proj4 as any).Proj('+proj=longlat +datum=WGS84 +no_defs +type=crs');
+  const dest = new (proj4 as any).Proj('EPSG:3857');
+  const {x, y} = proj4.transform(source, dest, [lon, lat]);
+  const coords = [x, y];
+  return new Point(coords);
 }
 
 export const createFeaturesProjectionTransofmationNeeded = (elems: any[]): Feature[] => {

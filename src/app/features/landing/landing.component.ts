@@ -43,7 +43,7 @@ import {
 } from '../../core/consts/lat-lon-vals';
 import { MapService } from 'src/app/core/services/map.service';
 import { Feature, Map } from 'ol';
-import { transformPointToFeature, flyToPosition } from '../../core/utils/ol';
+import { flyToPosition, transformPointToMercatorFeature } from '../../core/utils/ol';
 import { AbsService } from 'src/app/core/services/abs.service';
 import { AdmincapasService } from 'src/app/core/services/admincapas.service';
 import { Router } from '@angular/router';
@@ -252,7 +252,7 @@ export class LandingComponent {
     this.subscriptions.push(
       this.mapService.maps$.subscribe((maps) => {
         this.map = maps.overview!;
-        const feature = transformPointToFeature(
+        const feature = transformPointToMercatorFeature(
           sridId,
           point.coordinates[0],
           point.coordinates[1]

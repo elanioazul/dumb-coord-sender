@@ -10,7 +10,7 @@ import { OrsService } from '@core/services/ors.service';
 import { MessageService } from 'primeng/api';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Map } from 'ol';
-import { flyToPosition, transformPointToFeature } from '@core/utils/ol';
+import { flyToPosition, transformPointToMercatorFeature } from '@core/utils/ol';
 @Component({
   selector: 'app-visor-search-by-coord',
   templateUrl: './visor-search-by-coord.component.html',
@@ -188,7 +188,7 @@ export class VisorSearchByCoordComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.mapService.maps$.subscribe((maps) => {
         this.map = maps.overview!;
-        const feature = transformPointToFeature(
+        const feature = transformPointToMercatorFeature(
           sridId,
           point.coordinates[0],
           point.coordinates[1]
