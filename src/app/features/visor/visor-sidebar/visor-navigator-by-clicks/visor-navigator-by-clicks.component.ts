@@ -1,15 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MapService } from '@core/services/map.service';
 import { OrsService } from '@core/services/ors.service';
-import { transformMercatorCoordsTo4326Point } from '@core/utils/ol';
+import { transformMercatorCoordsTo4326Point, transform4326CoordsToMercatorPoint } from '@core/utils/ol';
 import { Map, Feature, Collection } from 'ol';
 import { Coordinate } from 'ol/coordinate';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 import Modify from 'ol/interaction/Modify.js';
-import ModifyEvent from 'ol/interaction/Modify';
 import { ILayers } from '@core/interfaces/layers.interfaz';
-import { Geometry } from 'ol/geom';
+import Popup from 'ol-ext/overlay/Popup';
 @Component({
   selector: 'app-visor-navigator-by-clicks',
   templateUrl: './visor-navigator-by-clicks.component.html',
@@ -25,6 +24,11 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
   modification!: Modify;
   layers: ILayers;
 
+  private infoPopup: Popup | null;
+  private infoPopupCoords!: Coordinate;
+  private infoPopupHtml!: string;
+
+
   constructor(private orsService: OrsService, private mapService: MapService){
     this.layers = this.mapService.getAllLayers();
   }
@@ -35,17 +39,19 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
     .subscribe((maps) => {
       if (maps.viewer!) {
         this.map = maps.viewer;
-        // this.tooltip = new Tooltip({
-        //   formatArea: this.formatArea,
-        //   formatLength: this.formatLength,
-        // });
-        // this.map.addOverlay(this.tooltip);
-        // this.createCoordsPopup();
+        this.createInfoPopup();
         this.setClickEvent();
-        //this.addModifyInteraction();
-        //this.measuringLayer.setMap(this.map);
       }
     });
+    combineLatest([this.orsService.distance$, this.orsService.duration$])
+    .pipe(takeUntil(this.unSubscribe))
+    .subscribe(([distance, duration]) => {
+        this.wrapPopupContent(distance, duration)
+    });
+  }
+
+  wrapPopupContent(distance: string | null, duration: string | null): void {
+    this.infoPopupHtml = `Distancia: ${distance}` + '<br/>' + `Duración: ${duration}`
   }
 
   ngOnDestroy(): void {
@@ -58,6 +64,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
     this.end = null;
     this.removeClickEvent();
     this.removeModifyInteraction();
+    this.map?.removeOverlay(this.infoPopup);
   }
 
   private removeClickEvent(): void {
@@ -115,6 +122,18 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
     this.map.on('click'/*dblclick*/, this.clickEventHandler);
   }
 
+  private createInfoPopup(): void {
+    this.infoPopup = new Popup({
+      id: 'routeByClicksPopup',
+      popupClass: 'tooltips marginTooltip',
+      closeBox: false,
+      positioning: 'bottom-auto',
+      autoPan: true,
+      autoPanAnimation: { duration: 250 },
+    });
+    this.map.addOverlay(this.infoPopup);
+  }
+
   private clickEventHandler = (e) => {
     if (this.orsService.getStartPoint() !== null && this.orsService.getEndPoint() !== null) {
       this.orsService.setStartPointToNull();
@@ -142,8 +161,14 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
     if (this.start !== null && this.end !== null)
       this.orsService
         .getOrsInfo(this.start, this.end)
+        .pipe(takeUntil(this.unSubscribe))
         .subscribe((res: IOpenRouteServiceRes) => {
+          const mediano = this.orsService.findMedian(res.features[0].geometry.coordinates);
+          this.infoPopupCoords = transform4326CoordsToMercatorPoint(mediano[0], mediano[1]).getCoordinates();
           this.orsService.setRutaByClicks(res.features[0].geometry);
+          this.orsService.setDistance(res.features[0].properties.summary.distance);
+          this.orsService.setDuration(res.features[0].properties.summary.duration);
+          this.infoPopup.show(this.infoPopupCoords, this.infoPopupHtml);
         });
   }
 

@@ -32,15 +32,22 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
             .getOrsInfo(origin, destination)
             .subscribe((res: IOpenRouteServiceRes) => {
               this.orsService.setRuta(res.features[0].geometry);
-              this.distance = this.convertDistance(
+              this.distance = this.orsService.convertDistance(
                 res.features[0].properties.summary.distance
               );
-              this.time = this.convertTime(
+              this.time = this.orsService.convertTime(
                 res.features[0].properties.summary.duration
               );
             });
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    this.orsService.removeFeaturesFromRoute();
+    this.orsService.setRecursoToNull();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   selectionChanged(option: any): void {
@@ -56,51 +63,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     this.orsService.setOrigin(option.value, selectedResourceName);
   }
 
-  convertTime(seconds: number): string {
-    if (isNaN(seconds) || seconds < 0) {
-      return 'Invalid input';
-    }
-
-    const hours = (seconds / 3600).toFixed(1);
-    const remainingSeconds = seconds % 3600;
-    const minutes = (remainingSeconds / 60).toFixed(1);
-    const remainingSecondsAfterMinutes = (remainingSeconds % 60).toFixed(1);
-
-    const hoursText =
-      parseInt(hours) > 0 ? `${hours} hour${hours !== '1.0' ? 's' : ''}` : '';
-    const minutesText =
-      parseInt(minutes) > 0
-        ? `${minutes} min${minutes !== '1.0' ? 's' : ''}`
-        : '';
-    const secondsText =
-      parseInt(remainingSecondsAfterMinutes) > 0
-        ? `${remainingSecondsAfterMinutes} sec${
-            remainingSecondsAfterMinutes !== '1.0' ? 's' : ''
-          }`
-        : '';
-
-    const timeParts = [hoursText, minutesText, secondsText].filter(Boolean);
-
-    return timeParts.join(' and ');
-  }
-
-  convertDistance(meters: number): string {
-    if (isNaN(meters) || meters < 0) {
-      return 'Invalid input';
-    }
-
-    const kilometers = (meters / 1000).toFixed(1);
-    return `${kilometers} km${kilometers !== '1.0' ? 's' : ''}`;
-  }
-
   private arraysAreEqual(arr1: any[], arr2: any[]): boolean {
     return JSON.stringify(arr1) === JSON.stringify(arr2);
-  }
-
-  ngOnDestroy(): void {
-    this.orsService.removeFeaturesFromRoute();
-    this.orsService.setRecursoToNull();
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

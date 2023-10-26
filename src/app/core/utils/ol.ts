@@ -331,6 +331,14 @@ export const transformMercatorCoordsTo4326Point = (lon: any, lat: any): Point =>
   return new Point(coords);
 }
 
+export const transform4326CoordsToMercatorPoint = (lon: any, lat: any): Point => {
+  const source = new (proj4 as any).Proj('+proj=longlat +datum=WGS84 +no_defs +type=crs');
+  const dest = new (proj4 as any).Proj('EPSG:3857');
+  const {x, y} = proj4.transform(source, dest, [lon, lat]);
+  const coords = [x, y];
+  return new Point(coords);
+}
+
 export const createFeaturesProjectionTransofmationNeeded = (elems: any[]): Feature[] => {
   let source: any;
   const dest = new (proj4 as any).Proj('EPSG:3857');

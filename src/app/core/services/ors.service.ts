@@ -98,6 +98,15 @@ export class OrsService {
   private endPoint = new BehaviorSubject<Coordinate | null>(null);
   endPoint$ = this.endPoint.asObservable();
 
+  private distanceSubject = new BehaviorSubject<number | null>(null);
+  distance$: Observable<string | null> = this.distanceSubject.asObservable().pipe(
+    map((distance) => (distance !== null ? this.convertDistance(distance) : null))
+  );
+  private durationSubject = new BehaviorSubject<number | null>(null);
+  duration$: Observable<string | null> = this.durationSubject.asObservable().pipe(
+    map((duration) => (duration !== null ? this.convertTime(duration) : null))
+  );
+
   layers: ILayers;
   maps!: IMaps;
 
@@ -134,6 +143,43 @@ export class OrsService {
     geoMarker.setId('geoMarker');
     geoMarker.setStyle(geoMarkerStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(geoMarker);
+  }
+
+  convertTime(seconds: number): string {
+    if (isNaN(seconds) || seconds < 0) {
+      return 'Invalid input';
+    }
+
+    const hours = (seconds / 3600).toFixed(1);
+    const remainingSeconds = seconds % 3600;
+    const minutes = (remainingSeconds / 60).toFixed(1);
+    const remainingSecondsAfterMinutes = (remainingSeconds % 60).toFixed(1);
+
+    const hoursText =
+      parseInt(hours) > 0 ? `${hours} hour${hours !== '1.0' ? 's' : ''}` : '';
+    const minutesText =
+      parseInt(minutes) > 0
+        ? `${minutes} min${minutes !== '1.0' ? 's' : ''}`
+        : '';
+    const secondsText =
+      parseInt(remainingSecondsAfterMinutes) > 0
+        ? `${remainingSecondsAfterMinutes} sec${
+            remainingSecondsAfterMinutes !== '1.0' ? 's' : ''
+          }`
+        : '';
+
+    const timeParts = [hoursText, minutesText, secondsText].filter(Boolean);
+
+    return timeParts.join(' and ');
+  }
+
+  convertDistance(meters: number): string {
+    if (isNaN(meters) || meters < 0) {
+      return 'Invalid input';
+    }
+
+    const kilometers = (meters / 1000).toFixed(1);
+    return `${kilometers} km${kilometers !== '1.0' ? 's' : ''}`;
   }
 
   //////////////////////
@@ -243,9 +289,17 @@ export class OrsService {
   getEndPoint(): Coordinate | null {
     return this.endPoint.value;
   }
+
+  findMedian = (arr: Array<number[]>): Coordinate => {
+    const sortedCoordinates = arr.slice().sort((a, b) => a[0] - b[0]);
+
+    const middleIndex = Math.floor(sortedCoordinates.length / 2);
+  
+    return sortedCoordinates[middleIndex];
+  };
   
   setRutaByClicks(geometry: any): void {
-    const linestringOriginal = new LineString(geometry.coordinates)
+    const linestringOriginal = new LineString(geometry.coordinates);
     const transformedLineString = new LineString(
       linestringOriginal.getCoordinates().map(coord => proj4("EPSG:4326", "EPSG:3857", coord))
     );
@@ -285,5 +339,13 @@ export class OrsService {
 
   getRutaByclicksFeatureByType(type: string): Feature {
     return (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
+  }
+
+  setDistance(value: number | null) {
+    this.distanceSubject.next(value);
+  }
+
+  setDuration(value: number | null) {
+    this.durationSubject.next(value);
   }
 }

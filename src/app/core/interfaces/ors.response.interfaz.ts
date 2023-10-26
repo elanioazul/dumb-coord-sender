@@ -10,15 +10,15 @@ export interface IOpenRouteServiceRes {
    
    export interface IFeature {
     bbox:       number[];
-    geometry:   Geometry;
+    geometry:   IGeometry;
     properties: IProperties;
     type:       string;
    }
    
-//    export interface IGeometry {
-//     coordinates: Array<number[]>;
-//     type:        string;
-//    }
+   export interface IGeometry {
+    coordinates: Array<number[]>;
+    type:        string;
+   }
    
    export interface IProperties {
     segments:   ISegment[];
