@@ -126,10 +126,6 @@ export class OrsService {
     );
   }
 
-  getFeatureByType(type: string): Feature {
-    return (this.layers.route?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
-  }
-
   setGeomarker(feature: Feature): void {
     let position = feature.getGeometry()?.clone();
     let geoMarker = new Feature({
@@ -214,10 +210,14 @@ export class OrsService {
 
   deleteFeatureFromRouteLayer(features: Feature[]): void {
     features.forEach((feature: Feature) => (this.layers.route?.getLayers() as any).getArray()[0].getSource().removeFeature(feature));
-    
   }
+  
   removeFeaturesFromRoute(): void {
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().clear();
+  }
+
+  getRutaFeatureByType(type: string): Feature {
+    return (this.layers.route?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
   }
 
   //////////////////////
@@ -275,7 +275,15 @@ export class OrsService {
     (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
   }
 
+  deleteFeatureFromRouteByClicksLayer(features: Feature[]): void {
+    features.forEach((feature: Feature) => (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().removeFeature(feature));
+  }
+
   removeFeaturesFromRouteByClicks(): void {
     (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().clear();
+  }
+
+  getRutaByclicksFeatureByType(type: string): Feature {
+    return (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
   }
 }

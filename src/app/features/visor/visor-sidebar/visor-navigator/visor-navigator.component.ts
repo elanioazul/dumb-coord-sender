@@ -44,8 +44,8 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   }
 
   selectionChanged(option: any): void {
-    const originFeature = this.orsService.getFeatureByType('origin');
-    const routeFeature = this.orsService.getFeatureByType('route');
+    const originFeature = this.orsService.getRutaFeatureByType('origin');
+    const routeFeature = this.orsService.getRutaFeatureByType('route');
     const features = new Array(originFeature, routeFeature);
     if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
     const selectedResourceName = this.recursos.find(
