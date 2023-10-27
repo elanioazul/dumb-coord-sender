@@ -3,6 +3,7 @@ import DragBox from 'ol/interaction/DragBox.js';
 import { Map } from 'ol';
 import { Subject, takeUntil } from 'rxjs';
 import { MapService } from '@core/services/map.service';
+import { CursorStyleService } from '@core/services/cursor-style.service';
 @Component({
   selector: 'app-visor-zoom-in',
   templateUrl: './visor-zoom-in.component.html',
@@ -13,9 +14,9 @@ export class VisorZoomInComponent implements OnInit, OnDestroy {
 
   map!: Map;
 
-  zoomInInteraction;
+  zoomInInteraction!: DragBox;
 
-  constructor(private mapService: MapService) {
+  constructor(private mapService: MapService, private cursorStyleService: CursorStyleService) {
     this.mapService.maps$
     .pipe(takeUntil(this.unSubscribe))
     .subscribe((maps) => {
@@ -23,6 +24,7 @@ export class VisorZoomInComponent implements OnInit, OnDestroy {
         this.map = maps.viewer;
       }
     });
+    this.cursorStyleService.setCursorStyle('zoom-in');
   }
   
   ngOnInit(): void {
@@ -38,6 +40,7 @@ export class VisorZoomInComponent implements OnInit, OnDestroy {
     this.zoomInInteraction.un('boxend', this.onDragStart);
     this.zoomInInteraction.un('boxend', this.boxendListener);
     this.map.removeInteraction(this.zoomInInteraction);
+    this.cursorStyleService.setCursorStyle('default');
   }
 
   private onDragStart = (): void => {

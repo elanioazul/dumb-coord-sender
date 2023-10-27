@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CursorStyleService } from '@core/services/cursor-style.service';
 import { Feature, Map } from 'ol';
 
 @Component({
@@ -14,12 +15,15 @@ export class MapComponent implements OnInit, AfterViewInit {
   
   @ViewChild('map') mapRef!: ElementRef<HTMLElement>;
 
-  constructor() { }
+  constructor(private cursorStyleService: CursorStyleService) { }
 
   ngOnInit(): void {
   }
   
   ngAfterViewInit(): void {
+    this.cursorStyleService.cursorStyle$.subscribe(cursorStyle => {
+      this.mapRef.nativeElement.style.cursor = cursorStyle;
+    });
     this.map.setTarget(this.mapRef.nativeElement);
     this.map.getViewport().addEventListener('click', this.onFeatureClicked.bind(this) );
   }
