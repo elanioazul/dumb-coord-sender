@@ -32,6 +32,16 @@ export class VisorSidebarComponent implements AfterViewInit {
           component: () => import('@features/visor/visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component').then(m => m.VisorSidebarNoTemplateTabComponent),
           inputs: visorTabsConfig.find(item => item['id'] === type)!
         }
+      case 'zoomin':
+        return {
+          component: () => import('@features/visor/visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component').then(m => m.VisorSidebarNoTemplateTabComponent),
+          inputs: visorTabsConfig.find(item => item['id'] === type)!
+        }
+      case 'zoomout':
+        return {
+          component: () => import('@features/visor/visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component').then(m => m.VisorSidebarNoTemplateTabComponent),
+          inputs: visorTabsConfig.find(item => item['id'] === type)!
+        }
       default:
         return {
           component: () => import('@features/visor/visor-sidebar-no-template-tab/visor-sidebar-no-template-tab.component').then(m => m.VisorSidebarNoTemplateTabComponent),

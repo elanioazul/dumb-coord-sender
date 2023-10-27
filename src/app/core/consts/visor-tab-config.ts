@@ -55,4 +55,24 @@ export const visorTabsConfig: IVisorTab[] = [
     icon: 'fg-measure fg-4x',
     iconStyle: 'font-size: 1.5rem; line-height: 1;'
   },
+  {
+    id: 'zoomin',
+    title: 'Zoom in',
+    widget: () => import('@features/visor/visor-sidebar/visor-zoom-in/visor-zoom-in.component').then(m => m.VisorZoomInComponent),
+    toasterMessage: 'Arrastre y haga zoom in',
+    openableSidebarNeeded: false,
+    largeSidebarNeeded: false,
+    icon: 'fg-zoom-in fg-4x',
+    iconStyle: 'font-size: 1.5rem; line-height: 1;'
+  },
+  {
+    id: 'zoomout',
+    title: 'Zoom in',
+    widget: () => import('@features/visor/visor-sidebar/visor-zoom-out/visor-zoom-out.component').then(m => m.VisorZoomOutComponent),
+    toasterMessage: 'Arrastre y haga zoom out',
+    openableSidebarNeeded: false,
+    largeSidebarNeeded: false,
+    icon: 'fg-zoom-out fg-4x',
+    iconStyle: 'font-size: 1.5rem; line-height: 1;'
+  },
 ];
