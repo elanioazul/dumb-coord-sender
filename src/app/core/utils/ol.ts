@@ -16,7 +16,7 @@ import proj4 from 'proj4';
 import {IconAnchorUnits, IconOrigin} from 'ol/style/Icon';
 
 import { Attribution, OverviewMap, Control, Zoom, ScaleLine, MousePosition } from 'ol/control';
-import DragZoom from 'ol/interaction/DragZoom.js';
+//import DragZoom from 'ol/interaction/DragZoom.js';
 
 import {
   BaseLayerOptions,
@@ -38,7 +38,7 @@ import { pin } from '@core/enums/pin.marker.enum';
 const geoserverUrl = 'http://localhost:8080/geoserver/ows?';
 
 //controls
-const dragZoom = new DragZoom();
+//const dragZoom = new DragZoom();
 const zoom = new Zoom();
 
 const scale = new ScaleLine();

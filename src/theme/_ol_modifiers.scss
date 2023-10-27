@@ -101,9 +101,15 @@
 }
 
 
-//dragzoomControl
-.ol-dragzoom {
-  background-color: rgb(185, 100, 100);
-  border-width: 2px;
-  border-color: rgba(219,63,63,1);
+//DragZoom control
+// .ol-dragzoom {
+//   background-color: rgb(185, 100, 100);
+//   border-width: 2px;
+//   border-color: rgba(219,63,63,1);
+// }
+
+//DragBox interaction
+.ol-dragbox {
+  border: 2px dashed $mediumblue;
+  background-color: $lightblue transparent;
 }
