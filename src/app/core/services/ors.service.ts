@@ -249,9 +249,16 @@ export class OrsService {
     feature.setStyle(rutaStyle);
     (this.layers.route?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
     setTimeout(() => {
-      this.maps.viewer?.getView().fit((this.layers.route?.getLayers() as any).getArray()[0].getSource().getExtent()),
+      this.fitRoute(),
       { duration:1000 }
     }, 500);
+  }
+
+  fitRoute(): void {
+    this.maps.viewer?.getView().fit((this.layers.route?.getLayers() as any).getArray()[0].getSource().getExtent());
+    const currentZoom = this.maps.viewer?.getView().getZoom();
+    if (currentZoom)
+    this.maps.viewer?.getView().setZoom(currentZoom - 0.5);
   }
 
   deleteFeatureFromRouteLayer(features: Feature[]): void {
@@ -310,9 +317,16 @@ export class OrsService {
     feature.setStyle(rutaByClicksStyle);
     (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
     setTimeout(() => {
-      this.maps.viewer?.getView().fit((this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().getExtent()),
+      this.fitRouteByClicks(),
       { duration:1000 }
     }, 500);
+  }
+
+  fitRouteByClicks(): void {
+    this.maps.viewer?.getView().fit((this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().getExtent());
+    const currentZoom = this.maps.viewer?.getView().getZoom();
+    if (currentZoom)
+    this.maps.viewer?.getView().setZoom(currentZoom - 0.5);
   }
   
   loadStartPoint(coords: Coordinate): void {
