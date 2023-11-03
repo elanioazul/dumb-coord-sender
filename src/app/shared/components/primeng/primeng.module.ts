@@ -13,6 +13,7 @@ import { ListboxModule } from 'primeng/listbox';
 import { PanelModule } from 'primeng/panel';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToastModule } from 'primeng/toast';
+import { TableModule } from 'primeng/table';
 @NgModule({
   declarations: [],
   imports: [
@@ -26,7 +27,8 @@ import { ToastModule } from 'primeng/toast';
     ListboxModule,
     PanelModule,
     SelectButtonModule,
-    ToastModule
+    ToastModule,
+    TableModule
   ],
   providers: [MessageService],
   bootstrap: [],

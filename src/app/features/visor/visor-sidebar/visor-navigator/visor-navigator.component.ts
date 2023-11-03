@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { recursos } from '@core/consts/recursos';
+//import { recursos } from '@core/consts/recursos';
 import { IRecurso } from '@core/interfaces/reecurso-interfaz';
 import { OrsService } from '@core/services/ors.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
+import { RecursosService } from '@core/services/recursos.service';
 @Component({
   selector: 'app-visor-navigator',
   templateUrl: './visor-navigator.component.html',
@@ -19,10 +20,15 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   distance!: string;
   time!: string;
 
-  constructor(private orsService: OrsService) {}
+  constructor(private orsService: OrsService, private resourcesService: RecursosService) {
+    this.resourcesService.getResourcesByRadio().subscribe(data => {
+      console.log(data);
+      
+    })
+  }
 
   ngOnInit(): void {
-    this.recursos = recursos;
+    //this.recursos = recursos;
 
     this.orsService.getLatestRuteDetails$
       .pipe(takeUntil(this.destroy$))
@@ -50,18 +56,18 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  selectionChanged(option: any): void {
-    const originFeature = this.orsService.getRutaFeatureByType('origin');
-    const routeFeature = this.orsService.getRutaFeatureByType('route');
-    const features = new Array(originFeature, routeFeature);
-    if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
-    const selectedResourceName = this.recursos.find(
-      (recurso: IRecurso) =>
-        true == this.arraysAreEqual(recurso.coordinates, option.value)
-    )?.name;
-    if (selectedResourceName)
-    this.orsService.setOrigin(option.value, selectedResourceName);
-  }
+  // selectionChanged(option: any): void {
+  //   const originFeature = this.orsService.getRutaFeatureByType('origin');
+  //   const routeFeature = this.orsService.getRutaFeatureByType('route');
+  //   const features = new Array(originFeature, routeFeature);
+  //   if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
+  //   const selectedResourceName = this.recursos.find(
+  //     (recurso: IRecurso) =>
+  //       true == this.arraysAreEqual(recurso.coordinates, option.value)
+  //   )?.name;
+  //   if (selectedResourceName)
+  //   this.orsService.setOrigin(option.value, selectedResourceName);
+  // }
 
   private arraysAreEqual(arr1: any[], arr2: any[]): boolean {
     return JSON.stringify(arr1) === JSON.stringify(arr2);
