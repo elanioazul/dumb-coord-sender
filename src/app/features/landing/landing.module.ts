@@ -8,10 +8,11 @@ import { LandingComponent } from './landing.component';
 
 import { PrimengModule } from 'src/app/shared/components/primeng/primeng.module';
 import { MapModule } from "@shared/components";
+import { ExternalIntegrationComponent } from './external-integration/external-integration.component'
 
 @NgModule({
   declarations: [
-    LandingComponent
+    LandingComponent, ExternalIntegrationComponent
   ],
   imports: [
     CommonModule,
