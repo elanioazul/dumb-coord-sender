@@ -14,8 +14,15 @@ import { PanelModule } from 'primeng/panel';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
+import { MultiSelectModule} from 'primeng/multiselect';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+import { TableComponent } from './table/table.component';
 @NgModule({
-  declarations: [],
+  declarations: [TableComponent],
   imports: [
     MessagesModule,
     ButtonModule,
@@ -28,11 +35,27 @@ import { TableModule } from 'primeng/table';
     PanelModule,
     SelectButtonModule,
     ToastModule,
-    TableModule
+    TableModule,
+    MultiSelectModule,
+    FormsModule,
+    CommonModule,
+    ProgressSpinnerModule
   ],
   providers: [MessageService],
   bootstrap: [],
-  exports: [MessagesModule, ButtonModule, InputTextModule, RadioButtonModule, DropdownModule, TooltipModule, DialogModule, ListboxModule, PanelModule, SelectButtonModule, ToastModule]
+  exports: [
+    MessagesModule,
+    ButtonModule,
+    InputTextModule,
+    RadioButtonModule,
+    DropdownModule,
+    TooltipModule,
+    DialogModule,
+    ListboxModule,
+    PanelModule,
+    SelectButtonModule,
+    ToastModule,
+    TableComponent,
+  ],
 })
-export class PrimengModule { }
-
+export class PrimengModule {}

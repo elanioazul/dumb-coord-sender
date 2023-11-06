@@ -5,6 +5,8 @@ import { OrsService } from '@core/services/ors.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 import { RecursosService } from '@core/services/recursos.service';
+import { Resource } from '@core/classes/resource';
+import { RECURSOSCOLUMNS } from '@core/consts/columns-table-recursos';
 @Component({
   selector: 'app-visor-navigator',
   templateUrl: './visor-navigator.component.html',
@@ -13,7 +15,8 @@ import { RecursosService } from '@core/services/recursos.service';
 export class VisorNavigatorComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
 
-  recursos!: IRecurso[];
+  recursos!: Resource[];
+  columns!: any
 
   selectedRecurso!: IRecurso;
 
@@ -21,9 +24,14 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   time!: string;
 
   constructor(private orsService: OrsService, private resourcesService: RecursosService) {
-    this.resourcesService.getResourcesByRadio().subscribe(data => {
-      console.log(data);
-      
+    this.instantiateTable();
+    
+  }
+  
+  instantiateTable(): void {
+    this.resourcesService.getResourcesByRadio().subscribe((data: any) => {
+      this.recursos = data
+      this.columns = RECURSOSCOLUMNS;
     })
   }
 
@@ -68,6 +76,11 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   //   if (selectedResourceName)
   //   this.orsService.setOrigin(option.value, selectedResourceName);
   // }
+
+  onSelectedActuation(recurso: Resource): void {
+    console.log(recurso);
+    
+  }
 
   private arraysAreEqual(arr1: any[], arr2: any[]): boolean {
     return JSON.stringify(arr1) === JSON.stringify(arr2);

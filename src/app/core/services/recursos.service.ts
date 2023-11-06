@@ -81,7 +81,7 @@ export class RecursosService {
     .pipe(
       map((data: any) =>
         data.content.map((item: any) => {
-          return new Resource(item[0], item[1], item[2], item[3], item[4])
+          return new Resource(item)
         })
       )
     
