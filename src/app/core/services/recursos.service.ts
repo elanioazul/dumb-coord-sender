@@ -63,28 +63,33 @@ export class RecursosService {
     return this.longitude.getValue();
   }
 
-  getResourcesByRadio(): Observable<IResourcesByRadioRes> {
+  getResourcesByRadio(page: number, size: number): Observable<IResourcesByRadioRes> {
 
-    const params = new HttpParams()
+    let params = new HttpParams()
     .set('latitudeId', this.getLatitude())
     .set('longitudeId', this.getLongitude())
     .set('distance', this.getRequestedDistance())
     .set('unit', this.getRequestedUnit())
     .set('selectedSrid', this.getSelectedSrid())
     .set('resourceSrid', 25831)
-    .set('targetSrid', 4326);
+    .set('targetSrid', 4326)
+    .set('page', page)
+    .set('size', size);
+
+    // if (page && size) {
+    //   params = params.set('page', page)
+    //   params = params.set('size', size);
+    // } else {
+    //   params = params.set('page', 0)
+    //   params = params.set('size', 20);//1382 es el max num registros en resources table
+    // }
 
     return this.http.get<IResourcesByRadioRes>(apiUrlRecursos, { params })
     .pipe(
-      catchError(this.handleError)
-    )
-    .pipe(
-      map((data: any) =>
-        data.content.map((item: any) => {
-          return new Resource(item)
-        })
-      )
-    
+      catchError(this.handleError),
+      map((res: IResourcesByRadioRes) => ({
+        ...res, content: res.content.map((item: any) => new Resource(item))
+      }))
     );
   }
 

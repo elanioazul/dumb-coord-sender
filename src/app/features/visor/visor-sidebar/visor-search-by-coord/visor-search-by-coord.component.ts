@@ -212,6 +212,6 @@ export class VisorSearchByCoordComponent implements OnInit, OnDestroy {
     this.resourcesService.setSelectedSrid(epsgVal)
     this.resourcesService.setLatitude(point.coordinates[1])
     this.resourcesService.setLongitude(point.coordinates[0])
-    this.resourcesService.getResourcesByRadio();
+    //this.resourcesService.getResourcesByRadio();
   }
 }

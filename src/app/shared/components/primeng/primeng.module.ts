@@ -16,6 +16,8 @@ import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import { MultiSelectModule} from 'primeng/multiselect';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { PaginatorModule } from 'primeng/paginator';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -39,7 +41,9 @@ import { TableComponent } from './table/table.component';
     MultiSelectModule,
     FormsModule,
     CommonModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    InputNumberModule,
+    PaginatorModule
   ],
   providers: [MessageService],
   bootstrap: [],
@@ -56,6 +60,8 @@ import { TableComponent } from './table/table.component';
     SelectButtonModule,
     ToastModule,
     TableComponent,
+    InputNumberModule,
+    PaginatorModule
   ],
 })
 export class PrimengModule {}

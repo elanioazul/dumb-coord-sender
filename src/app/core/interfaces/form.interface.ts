@@ -1,6 +1,8 @@
 import { FormGroup, FormControl } from '@angular/forms';
 import { ICoordinateSystem } from './coord-system.interfaz';
 import { CoordinateSystem } from '../classes/coord-system';
+
+/*Form de visor-search-by-coord*/
 export interface IForm {
   epsgForm: FormGroup<any>;
   coordsForm: FormGroup<any>;
@@ -30,4 +32,17 @@ export interface ILatitudeForm {
   minutes: FormControl<string | null | undefined>;
   seconds: FormControl<string | null | undefined>;
   lat: FormControl<any | null | undefined>;
+}
+
+
+/*Form de visor-navigator (para request de recursos sugeridos)*/
+export interface IRecursosForm {
+  unitForm: FormGroup<any>;
+  radioForm: FormGroup<any>;
+}
+export interface IUnitForm {
+  unit: FormControl<string | null | undefined>;
+}
+export interface IRadioForm {
+  radio: FormControl<number | null | undefined>;
 }

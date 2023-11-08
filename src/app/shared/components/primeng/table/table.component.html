@@ -4,12 +4,20 @@
         *ngIf="dataDetail?.length"
         [value]="dataDetail"
         [columns]="columns"
+        [rows]="rows"
+        [paginator]="true"
+        [first]="first"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        [rowsPerPageOptions]="rowsPerPageOptions"
+        [loading]="isLoading"
+        currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} filas"
         [showCurrentPageReport]="true"
+        (onPage)="onPageChange($event)"
+        (onLazyLoad)="onLazyLoad($event)"
         responsiveLayout="scroll"
         selectionMode="single"
         [tableStyle]="{'table-layout': 'auto'}"
-        [rows]="rows"
-        [paginator]="true"
     >
         <ng-template pTemplate="header" class="header" let-columns value="es">
             <tr>
@@ -53,9 +61,5 @@
     <i class="pi pi-search"></i>
     <p>{{ noElemsMsg }}</p>
 </ng-template>
-<!-- <div class="content" *ngIf="dataDetail.length == 0">
-    <i class="pi pi-search"></i>
-    <p>{{ noElemsMsg }}</p>
-</div> -->
 
 <p-progressSpinner [hidden]="dataDetail?.length" styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
