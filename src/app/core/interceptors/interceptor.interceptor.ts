@@ -17,7 +17,8 @@ export class InterceptorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.sessionStorageService.getData('access_token');
 
-    if (token && !request.url.includes('localhost')) {
+    //no meto token si es endpoint localhost o ORS fuera de paraguas de chronos auth
+    if (token && !request.url.includes('localhost') && !request.url.includes('ors.apps.aroas.westeurope.aroapp.io/ors/v2/directions/driving-car?')) {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token.replace('"','').replace('"','')}`
