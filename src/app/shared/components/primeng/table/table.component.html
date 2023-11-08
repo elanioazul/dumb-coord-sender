@@ -57,8 +57,10 @@
     </p-table>
 </div>
 <ng-template #noRecursos class="no-recursos">
-    <i class="pi pi-search"></i>
-    <p>{{ noElemsMsg }}</p>
+    <div class="flex flex-row">
+        <i class="pi pi-search"></i>
+        <p>{{ noElemsMsg }}</p>
+    </div>
 </ng-template>
 
-<p-progressSpinner [hidden]="dataDetail?.length" styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+<p-progressSpinner [hidden]="!isLoading" styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
