@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-//import { recursos } from '@core/consts/recursos';
 import { IRecurso, IResourcesByRadioRes } from '@core/interfaces/reecurso-interfaz';
 import { OrsService } from '@core/services/ors.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -80,8 +79,6 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    //this.recursos = recursos;
-
     this.orsService.getLatestRuteDetails$
       .pipe(takeUntil(this.destroy$))
       .subscribe(([origin, destination]) => {

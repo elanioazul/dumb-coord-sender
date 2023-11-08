@@ -76,14 +76,6 @@ export class RecursosService {
     .set('page', page)
     .set('size', size);
 
-    // if (page && size) {
-    //   params = params.set('page', page)
-    //   params = params.set('size', size);
-    // } else {
-    //   params = params.set('page', 0)
-    //   params = params.set('size', 20);//1382 es el max num registros en resources table
-    // }
-
     return this.http.get<IResourcesByRadioRes>(apiUrlRecursos, { params })
     .pipe(
       catchError(this.handleError),
