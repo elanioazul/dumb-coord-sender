@@ -34,9 +34,8 @@
     [first]="first"
     [totalRecords]="totalRecords"
     [isLoading]="loading"
-    [rowsPerPageOptions]="[10,20,50]"
     (selectedResource)="onSelectedActuation($event)"
-    (lazyLoad)="handleLazyLoad($event)"
+    (lazyLoad)="bringData($event)"
     >
 </app-table>
 </div>

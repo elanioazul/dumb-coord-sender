@@ -17,7 +17,7 @@ export class TableComponent {
   @Input() dataDetail!: any;
   @Input() rows!: number;
   @Input() columns: any;
-  @Input() rowsPerPageOptions!: number[];
+  //@Input() rowsPerPageOptions!: number[];
   @Input() isLoading!: boolean;
   @Input() first!: number;
   @Input() totalRecords!: number;

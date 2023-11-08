@@ -68,17 +68,13 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   }
   
   instantiateTable(): void {
-    this.loading = true;
-    this.resourcesService.getResourcesByRadio(this.first, this.rows).subscribe((data: IResourcesByRadioRes) => {
-      this.columns = RECURSOSCOLUMNS;
-      this.updateTable(data)
-      this.loading = false;
-    })
+    this.columns = RECURSOSCOLUMNS;
+    this.bringData();
   }
 
   updateTable(data: IResourcesByRadioRes): void {
     this.recursos = data.content;
-    this.first = data.pageable.number /** 10*/;
+    this.first = data.pageable.number * 10;
     this.rows = data.pageable.size;
     this.totalRecords = data.pageable.totalElements;
   }
@@ -117,27 +113,19 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     const formValue = this.form.getRawValue();
     this.resourcesService.setRequestedDistance(formValue.radioForm.radio);
     this.resourcesService.setRequestedUnit(formValue.unitForm.unit);
+    this.first = 0;
+    this.bringData();
+    
+  }
+
+  bringData(event?: LazyLoadEvent): void {
+    this.loading = true;
+    this.first = event?.first? event.first : 0;
     const first = this.first ? this.first / 10 : this.first;
     this.resourcesService.getResourcesByRadio(first, this.rows).subscribe((data: IResourcesByRadioRes) => {
       this.updateTable(data)
       this.loading = false;
     });
-    
-  }
-
-  // handlePagination(event: any): void {
-  //   console.log(event);
-    
-  // }
-
-  handleLazyLoad(event: LazyLoadEvent): void {
-    if (event.first)
-    this.first = event.first;
-    this.resourcesService.getResourcesByRadio(this.first, this.rows).subscribe((data: IResourcesByRadioRes) => {
-      this.updateTable(data)
-      this.loading = false;
-    });
-    
   }
 
   // selectionChanged(option: any): void {

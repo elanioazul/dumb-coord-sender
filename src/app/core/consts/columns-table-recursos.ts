@@ -31,7 +31,7 @@ export const RECURSOSCOLUMNS = [
   },
   {
     field: 'actions',
-    header: 'Accion',
+    header: 'Ver ruta',
     type: 'eye-icon',
     dataType: 'icon',
   },
