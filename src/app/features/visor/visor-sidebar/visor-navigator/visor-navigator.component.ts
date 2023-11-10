@@ -9,6 +9,7 @@ import { RECURSOSCOLUMNS } from '@core/consts/columns-table-recursos';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IRadioForm, IRecursosForm, IUnitForm } from '@core/interfaces/form.interface';
 import { LazyLoadEvent } from 'primeng/api';
+import { units } from '@core/consts/units-to-request-resources';
 @Component({
   selector: 'app-visor-navigator',
   templateUrl: './visor-navigator.component.html',
@@ -30,17 +31,11 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   distance!: string | undefined;
   time!: string | undefined;
 
-  units = [
-    {
-      name: 'KILOMETER',
-      label: 'km'
-    },
-    {
-      name: 'METER',
-      label: 'm'
-    },
-  ]
+  units = units;
   form!: FormGroup<any>;
+
+  destination!: number[] | null;
+  noIncidenteMsg: string = "Introduzca un incidente sobre el que buscar recursos por distancia";
 
   constructor(
     private orsService: OrsService, 
@@ -82,6 +77,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     this.orsService.getLatestRuteDetails$
       .pipe(takeUntil(this.destroy$))
       .subscribe(([origin, destination]) => {
+        this.destination = destination;
         if (origin && destination && origin != null && destination != null) {
           this.orsService
             .getOrsInfo(origin, destination)
