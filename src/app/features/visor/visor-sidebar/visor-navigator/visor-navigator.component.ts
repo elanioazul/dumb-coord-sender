@@ -133,7 +133,10 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     const features = new Array(originFeature, routeFeature);
     if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
     const arr = new Array(recurso.coordx, recurso.coordy);
-    this.orsService.setOrigin(arr, (recurso.resourceId).toString());
+    this.orsService.setOrigin(arr, 'RecursoId ' + (recurso.resourceId).toString());
+    const incidentCoords = this.orsService.getIncidente();
+    if (incidentCoords)
+    this.orsService.setDestination(incidentCoords);
   }
 
   private arraysAreEqual(arr1: any[], arr2: any[]): boolean {
