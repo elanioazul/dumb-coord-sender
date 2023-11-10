@@ -27,6 +27,14 @@
             </div>
         </div>
     </form>
+    <div class="box__details" *ngIf="time && distance">
+        <p-panel header="Temps">
+            <p>{{time}}</p>
+        </p-panel>
+        <p-panel header="Distància">
+            <p>{{distance}}</p>
+        </p-panel>
+    </div>
     <app-table
     [dataDetail]="recursos"
     [columns]="columns"
