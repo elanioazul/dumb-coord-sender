@@ -125,22 +125,13 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     });
   }
 
-  // selectionChanged(option: any): void {
-  //   const originFeature = this.orsService.getRutaFeatureByType('origin');
-  //   const routeFeature = this.orsService.getRutaFeatureByType('route');
-  //   const features = new Array(originFeature, routeFeature);
-  //   if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
-  //   const selectedResourceName = this.recursos.find(
-  //     (recurso: IRecurso) =>
-  //       true == this.arraysAreEqual(recurso.coordinates, option.value)
-  //   )?.name;
-  //   if (selectedResourceName)
-  //   this.orsService.setOrigin(option.value, selectedResourceName);
-  // }
-
   onSelectedActuation(recurso: Resource): void {
-    console.log(recurso);
-    
+    const originFeature = this.orsService.getRutaFeatureByType('origin');
+    const routeFeature = this.orsService.getRutaFeatureByType('route');
+    const features = new Array(originFeature, routeFeature);
+    if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
+    const arr = new Array(recurso.coordx, recurso.coordy);
+    this.orsService.setOrigin(arr, (recurso.resourceId).toString());
   }
 
   private arraysAreEqual(arr1: any[], arr2: any[]): boolean {
