@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IRadioForm, IRecursosForm, IUnitForm } from '@core/interfaces/form.interface';
 import { LazyLoadEvent } from 'primeng/api';
 import { units } from '@core/consts/units-to-request-resources';
+import { SidebarService } from '@core/services/sidebar.service';
 @Component({
   selector: 'app-visor-navigator',
   templateUrl: './visor-navigator.component.html',
@@ -41,7 +42,8 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   constructor(
     private orsService: OrsService, 
     private resourcesService: RecursosService,
-    private builder: FormBuilder
+    private builder: FormBuilder,
+    private sidebarService: SidebarService
   ) {
     this.first = 0;
     this.rows = 10;
@@ -138,6 +140,8 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   }
 
   onSelectedRow(selectedRowElement: any): void {
-    this.resourcesService.setSelectedRowElement(selectedRowElement)
+    this.resourcesService.setSelectedRowElement(selectedRowElement);
+    this.sidebarService.getSidebarInstance()._onCloseClick();
+    
   }
 }
