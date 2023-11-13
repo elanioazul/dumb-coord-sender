@@ -15,7 +15,7 @@
         (onPage)="onPageChange($event)"
         (onLazyLoad)="onLazyLoad($event)"
         responsiveLayout="scroll"
-        selectionMode="single"
+        selectionMode="checkbox"
         [tableStyle]="{'table-layout': 'auto'}"
     >
         <ng-template pTemplate="header" class="header" let-columns value="es">
@@ -44,12 +44,12 @@
                 </ng-container>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-data let-actuation value="es">
-            <tr>
+        <ng-template pTemplate="body" let-data let-resource value="es">
+            <tr #rowElement [ngClass]="{'selected-row': rowElement === selectedRowElement}">
                 <td *ngFor="let col of columns">
                     <span *ngIf="col.field !== 'actions'">{{ data[col.field] }}</span>
                     <span *ngIf="col.field === 'actions'">
-                        <button type="button" *ngIf="col.type === 'eye-icon'" pButton class="" icon="pi pi-eye" (click)="moreInformation(actuation)"></button>
+                        <button type="button" *ngIf="col.type === 'eye-icon'" pButton class="" icon="pi pi-eye" (click)="moreInformation(resource, rowElement)"></button>
                     </span>
                 </td>
             </tr>

@@ -24,6 +24,10 @@
         }
     }
 
+    .p-datatable .selected-row {
+        background-color: $lightblue;
+    }
+
     .header {
         display: flex;
         justify-content: space-between;

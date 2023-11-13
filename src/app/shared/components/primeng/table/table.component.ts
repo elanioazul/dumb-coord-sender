@@ -30,6 +30,8 @@ export class TableComponent {
   @ViewChild('dataTable')
   private table!: Table;
 
+  selectedRowElement: any = null;
+
   noElemsMsg: string = "No se han encontrado recursos";
 
   constructor() {}
@@ -42,9 +44,14 @@ export class TableComponent {
     return DOMAIN_FILTERS[field]
   }
 
-  moreInformation(data: dataRequested): void {
+  moreInformation(data: dataRequested, rowElement: any): void {
     if ("resourceId" in data && "tiporecurso" in data) {
-      this.selectedResource.emit(data)
+      this.selectedResource.emit(data);
+      if (this.selectedRowElement  === rowElement) {
+        this.selectedRowElement  = null;
+      } else {
+          this.selectedRowElement  = rowElement;
+      }
     } else {
       this.anyOther.emit(data)
     }
