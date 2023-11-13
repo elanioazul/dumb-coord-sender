@@ -140,8 +140,4 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   onSelectedRow(selectedRowElement: any): void {
     this.resourcesService.setSelectedRowElement(selectedRowElement)
   }
-
-  private arraysAreEqual(arr1: any[], arr2: any[]): boolean {
-    return JSON.stringify(arr1) === JSON.stringify(arr2);
-  }
 }

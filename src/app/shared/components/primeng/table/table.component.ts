@@ -45,10 +45,6 @@ export class TableComponent {
 
   constructor() {}
 
-  selectProduct(resource: any) {
-    console.log(resource);
-  }
-
   getDomains(field: DOMAIN_TYPES) {
     return DOMAIN_FILTERS[field]
   }
