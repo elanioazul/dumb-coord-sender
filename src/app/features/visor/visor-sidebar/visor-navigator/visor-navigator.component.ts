@@ -27,6 +27,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   loading!: boolean;
 
   selectedRecurso!: IRecurso;
+  selectedRow!: any;
 
   distance!: string | undefined;
   time!: string | undefined;
@@ -46,6 +47,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     this.rows = 10;
     this.instantiateTable();
     this.initForm();
+    this.selectedRow = this.resourcesService.getSelectedRowElement();
   }
 
   initForm(): void {
@@ -133,6 +135,10 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     const incidentCoords = this.orsService.getIncidente();
     if (incidentCoords)
     this.orsService.setDestination(incidentCoords);
+  }
+
+  onSelectedRow(selectedRowElement: any): void {
+    this.resourcesService.setSelectedRowElement(selectedRowElement)
   }
 
   private arraysAreEqual(arr1: any[], arr2: any[]): boolean {

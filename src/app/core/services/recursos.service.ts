@@ -11,6 +11,16 @@ const apiUrlRecursos = 'https://qas-chronos-router.apps.aroas.westeurope.aroapp.
 })
 export class RecursosService {
 
+  private selectedResourceRow: any = null;
+
+  getSelectedRowElement(): any {
+    return this.selectedResourceRow;
+  }
+
+  setSelectedRowElement(rowElement: any): void {
+    this.selectedResourceRow = rowElement;
+  }
+
   public requestedDistance = new BehaviorSubject<number>(2);
   requestedDistance$ = this.requestedDistance.asObservable();
 

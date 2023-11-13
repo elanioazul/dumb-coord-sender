@@ -23,6 +23,7 @@ export class TableComponent {
   @Input() totalRecords!: number;
 
   @Output() selectedResource = new EventEmitter<IRecurso>();
+  @Output() selectedRow = new EventEmitter<any>();
   @Output() anyOther = new EventEmitter<any>();
   @Output() pageChange = new EventEmitter<any>();
   @Output() lazyLoad = new EventEmitter<any>();
@@ -30,7 +31,15 @@ export class TableComponent {
   @ViewChild('dataTable')
   private table!: Table;
 
-  selectedRowElement: any = null;
+  _selectedRowElement: any;
+  @Input()
+  set selectedRowElement(value: any) {
+    this._selectedRowElement = value;
+  }
+
+  get selectedRowElement(): any {
+    return this._selectedRowElement;
+  }
 
   noElemsMsg: string = "No se han encontrado recursos";
 
@@ -44,6 +53,10 @@ export class TableComponent {
     return DOMAIN_FILTERS[field]
   }
 
+  shouldSelectRow(rowData: any): boolean {
+    return this.selectedRowElement && this.selectedRowElement.childNodes[0].innerText === rowData.resourceId.toString();
+  }
+
   moreInformation(data: dataRequested, rowElement: any): void {
     if ("resourceId" in data && "tiporecurso" in data) {
       this.selectedResource.emit(data);
@@ -51,6 +64,7 @@ export class TableComponent {
         this.selectedRowElement  = null;
       } else {
           this.selectedRowElement  = rowElement;
+          this.selectedRow.emit(rowElement)
       }
     } else {
       this.anyOther.emit(data)
