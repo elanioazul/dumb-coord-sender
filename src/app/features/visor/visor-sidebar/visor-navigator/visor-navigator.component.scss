@@ -3,7 +3,7 @@
         border: none;
     }
     .p-panel-content {
-        min-height: 8em;
+        max-height: 3em;
     }
 }
 
@@ -13,27 +13,42 @@
     justify-content: center;
     align-items: flex-start;
 
-    &__listbox {
-        
-    }
-    &__details {
+    &__form {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-
-        &-title {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            padding-bottom: 2em;
-            font-weight: bold;
-        }
-
-        &-panels {
-            display: flex;
-            flex-direction: row;
-        }
-        
+        width: 100%;
     }
+    &__form-controls {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: end;
+        padding-top: 10px;
+        width: 100%;
+    }
+    // &__form-control {
+    //     display: flex;
+    //     flex-direction: column;
+    //     justify-content: center;
+    //     align-items: flex-start;
+    // }
+    &__form-send {
+        padding-top: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+    }
+
+}
+
+.field-title {
+    margin-bottom: 0.5rem;
+}
+
+app-table {
+    padding-top: 1em;
+    width: 100%;
 }

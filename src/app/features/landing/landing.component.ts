@@ -219,7 +219,7 @@ export class LandingComponent {
     )?.id;
 
     if (res.initial_point && res.transformed_point && cooidSystemId) {
-      this.initOverviewMap(point, cooidSystemId);
+      //this.initOverviewMap(point, cooidSystemId);
       this.messageService.add({
         summary: 'Éxito',
         detail: `Coordendadas transformadas con exito. Recarge la página.`,
@@ -248,23 +248,23 @@ export class LandingComponent {
     });
   }
 
-  initOverviewMap(point: any, sridId: number): void {
-    this.subscriptions.push(
-      this.mapService.maps$.subscribe((maps) => {
-        this.map = maps.overview!;
-        const feature = transformPointToMercatorFeature(
-          sridId,
-          point.coordinates[0],
-          point.coordinates[1]
-        );
-        this.mapService.addFeature('incident', feature);
-        this.mapService.addFeature('incidents', feature);
-        this.orsService.setDestination(point.coordinates);
-        this.router.navigate(['/', 'visor-page']);
-        flyToPosition(this.map, point.coordinates[1], point.coordinates[0])
-      })
-    );
-  }
+  // initOverviewMap(point: any, sridId: number): void {
+  //   this.subscriptions.push(
+  //     this.mapService.maps$.subscribe((maps) => {
+  //       this.map = maps.overview!;
+  //       const feature = transformPointToMercatorFeature(
+  //         sridId,
+  //         point.coordinates[0],
+  //         point.coordinates[1]
+  //       );
+  //       this.mapService.addFeature('incident', feature);
+  //       this.mapService.addFeature('incidents', feature);
+  //       this.orsService.setDestination(point.coordinates);
+  //       this.router.navigate(['/', 'visor-page']);
+  //       flyToPosition(this.map, point.coordinates[1], point.coordinates[0])
+  //     })
+  //   );
+  // }
 
   handleAbsResponse(data: any): void {
     const res = JSON.parse(data.body);

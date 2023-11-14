@@ -1,1 +1,4 @@
 //@import "./colors";
+body > div.p-column-filter-overlay {
+    z-index: 4000 !important;
+}

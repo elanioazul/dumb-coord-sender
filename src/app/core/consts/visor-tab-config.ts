@@ -23,7 +23,7 @@ export const visorTabsConfig: IVisorTab[] = [
     title: 'Recursos',
     widget: () => import('@features/visor/visor-sidebar/visor-navigator/visor-navigator.component').then(m => m.VisorNavigatorComponent),
     openableSidebarNeeded: true,
-    largeSidebarNeeded: false,
+    largeSidebarNeeded: true,
     icon: 'fg-car fg-4x',
     iconStyle: 'font-size: 1.5rem; line-height: 1;'
   },

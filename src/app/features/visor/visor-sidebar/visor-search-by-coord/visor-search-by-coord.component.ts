@@ -11,6 +11,7 @@ import { MessageService } from 'primeng/api';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Map } from 'ol';
 import { flyToPosition, transformPointToMercatorFeature } from '@core/utils/ol';
+import { RecursosService } from '@core/services/recursos.service';
 @Component({
   selector: 'app-visor-search-by-coord',
   templateUrl: './visor-search-by-coord.component.html',
@@ -36,6 +37,7 @@ export class VisorSearchByCoordComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private orsService: OrsService,
     private messageService: MessageService,
+    private resourcesService: RecursosService
   ) {
     this.form = this.builder.group<IForm>({
       epsgForm: this.builder.group<IepsgForm>({
@@ -195,9 +197,21 @@ export class VisorSearchByCoordComponent implements OnInit, OnDestroy {
         );
         //this.mapService.addFeature('incident', feature);
         //this.mapService.addFeature('incidents', feature);
-        this.orsService.setDestination(point.coordinates);
+        this.orsService.setDestination(this.orsService.resourceRoute, point.coordinates);
         flyToPosition(this.map, point.coordinates[1], point.coordinates[0])
+        const coordEpsgVal = this.coordSystemsOptions.find(
+          (system) => system.id == sridId
+        )?.epsgVal;
+        this.loadResourcesTable(point, coordEpsgVal);
       })
     );
+  }
+
+  loadResourcesTable(point: any, epsgVal?: number): void {
+    if (epsgVal)
+    this.resourcesService.setSelectedSrid(epsgVal)
+    this.resourcesService.setLatitude(point.coordinates[1])
+    this.resourcesService.setLongitude(point.coordinates[0])
+    //this.resourcesService.getResourcesByRadio();
   }
 }

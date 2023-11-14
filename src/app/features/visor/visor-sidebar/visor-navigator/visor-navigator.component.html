@@ -1,18 +1,49 @@
-<div class="box">
-    <div class="box__listbox">
-        <p-listbox [options]="recursos" [(ngModel)]="selectedRecurso" optionLabel="name" optionValue="coordinates" (onChange)="selectionChanged($event)" ></p-listbox>
-    </div>
-    <div class="box__details" *ngIf="selectedRecurso && time && distance">
-        <div class="box__details-title"> 
-            <h1>Detalls</h1>
+<div class="box" *ngIf="destination !== null; else noIncidente">
+    <form class="box__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="box__form-controls">
+            <div class="box__form-control" formGroupName="unitForm">
+                <div class="gap-2 w-12rem">
+                    <h5 class="field-title">Unidad</h5>
+                    <p-dropdown formControlName="unit" [options]="units"
+                        placeholder="Selecciona unidad" optionLabel="label" optionValue="name">
+                        <ng-template let-unit pTemplate="item">
+                            <div pTooltip="{{unit.name}}" tooltipPosition="right">
+                                <span>{{unit.label}}</span>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+            
+            <div class="box__form-control" formGroupName="radioForm">
+                <h5 class="field-title">Radio</h5>
+                <div class="gap-2 w-12rem">
+                    <p-inputNumber formControlName="radio" [showButtons]="true" buttonLayout="horizontal" spinnerMode="horizontal" inputId="horizontal" decrementButtonClass="p-button-secondary"
+                        incrementButtonClass="p-button-secondary" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                </div>
+            </div>
+            <div class="box__form-send">
+                <p-button type="submit" [disabled]="form.invalid">Enviar</p-button>
+            </div>
         </div>
-        <div class="box__details-panels">
-            <p-panel header="Temps">
-                <p>{{time}}</p>
-            </p-panel>
-            <p-panel header="Distància">
-                <p>{{distance}}</p>
-            </p-panel>
-        </div>
-    </div>
+    </form>
+    <app-table
+    [dataDetail]="recursos"
+    [columns]="columns"
+    [rows]="rows"
+    [first]="first"
+    [totalRecords]="totalRecords"
+    [isLoading]="loading"
+    (selectedResource)="onSelectedResource($event)"
+    (selectedRow)="onSelectedRow($event)"
+    [selectedRowElement]="highlightedRow"
+    (lazyLoad)="bringData($event)"
+    >
+</app-table>
 </div>
+<ng-template #noIncidente class="no-recursos">
+    <div class="flex flex-row">
+        <i class="pi pi-exclamation-triangle"></i>
+        <p>{{ noIncidenteMsg }}</p>
+    </div>
+</ng-template>

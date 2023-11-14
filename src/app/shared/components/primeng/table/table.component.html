@@ -1,0 +1,66 @@
+<div class="content" *ngIf="dataDetail?.length !==0; else noRecursos">
+    <p-table 
+        #dataTable
+        *ngIf="dataDetail?.length"
+        [value]="dataDetail"
+        [columns]="columns"
+        [rows]="rows"
+        [paginator]="true"
+        [first]="first"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        [loading]="isLoading"
+        currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} filas"
+        [showCurrentPageReport]="true"
+        (onPage)="onPageChange($event)"
+        (onLazyLoad)="onLazyLoad($event)"
+        responsiveLayout="scroll"
+        selectionMode="checkbox"
+        [tableStyle]="{'table-layout': 'auto'}"
+    >
+        <ng-template pTemplate="header" class="header" let-columns value="es">
+            <tr>
+                <ng-container *ngFor="let col of columns">
+                    <th [pSortableColumn]="col.field">
+                        {{col.header}}
+                        <p-sortIcon *ngIf="col.field !== 'actions'" field="col.field" value="es" ></p-sortIcon>
+
+                        <p-columnFilter 
+                            *ngIf="col.type === 'domain'" 
+                            [field]="col.field" 
+                            value="es"
+                            matchMode="in" 
+                            display="menu" 
+                            [showMatchModes]="false" 
+                            [showOperator]="false" 
+                            [showAddButton]="false"
+                        >
+                        <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            <p-multiSelect [ngModel]="value" (onChange)="filter($event.value)" [options]="getDomains(col.field)" placeholder="Seleccione una opción" optionValue="value"  optionLabel="name">
+                            </p-multiSelect>
+                        </ng-template>
+                    </p-columnFilter>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data let-resource let-rowData value="es">
+            <tr #rowElement [ngClass]="{'selected-row': shouldSelectRow(rowData)}">
+                <td *ngFor="let col of columns">
+                    <span *ngIf="col.field !== 'actions'">{{ data[col.field] }}</span>
+                    <span *ngIf="col.field === 'actions'">
+                        <button type="button" *ngIf="col.type === 'eye-icon'" pButton class="" icon="pi pi-eye" (click)="moreInformation(resource, rowElement)"></button>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<ng-template #noRecursos class="no-recursos">
+    <div class="flex flex-row">
+        <i class="pi pi-exclamation-triangle"></i>
+        <p>{{ noElemsMsg }}</p>
+    </div>
+</ng-template>
+
+<p-progressSpinner [hidden]="!isLoading" styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>

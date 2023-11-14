@@ -5,6 +5,4 @@ export interface ILayers {
     adminLayers: LayerGroup | null;
     incidents: LayerGroup | null;
     incident: VectorLayer<any> | null;
-    route: LayerGroup | null;
-    routeByClicks: LayerGroup | null;
 }

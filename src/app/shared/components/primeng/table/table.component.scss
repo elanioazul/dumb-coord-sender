@@ -1,0 +1,57 @@
+@import "../../../../../theme/colors";
+:host::ng-deep {
+    .p-datatable {
+        .p-datatable-header {
+            background-color: transparent;
+            border-top: none;
+        }
+
+        .p-datatable-thead {
+            border-bottom: none;
+        }
+
+        .p-datatable-tbody {
+            >tr {
+                cursor: pointer;
+                &:hover{
+                    background-color: $purple;
+                }
+            }
+        }
+
+        .p-paginator {
+            justify-content: flex-end;
+        }
+    }
+
+    .p-datatable .selected-row {
+        background-color: $lightblue;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+
+    }
+
+}
+
+.p-button.p-button-icon-only {
+    width: 3rem;
+    padding: 0.75rem 0;
+    height: 1rem;
+    color: $darkblue;
+    background: none;
+    border: none;
+
+    &:hover {
+        font-weight: bold;
+        background: $mediumblue;
+        color: white;
+        height: 1rem;
+    }
+}
+
+.my-custom-multiselect {
+    z-index: 4000;
+}

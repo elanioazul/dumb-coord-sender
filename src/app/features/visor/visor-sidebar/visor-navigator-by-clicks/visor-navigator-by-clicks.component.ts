@@ -4,11 +4,13 @@ import { OrsService } from '@core/services/ors.service';
 import { transformMercatorCoordsTo4326Point, transform4326CoordsToMercatorPoint } from '@core/utils/ol';
 import { Map, Feature, Collection } from 'ol';
 import { Coordinate } from 'ol/coordinate';
-import { Subject, combineLatest, takeUntil } from 'rxjs';
+import { Subject, combineLatest, find, takeUntil } from 'rxjs';
 import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 import Modify from 'ol/interaction/Modify.js';
-import { ILayers } from '@core/interfaces/layers.interfaz';
 import Popup from 'ol-ext/overlay/Popup';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import { Geometry } from 'ol/geom';
 @Component({
   selector: 'app-visor-navigator-by-clicks',
   templateUrl: './visor-navigator-by-clicks.component.html',
@@ -18,11 +20,13 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
   private unSubscribe = new Subject<void>();
   map!: Map;
 
+  routeByClicksLayer!: VectorLayer<VectorSource<Geometry>>;
+  routeByClicksLayerId = 'routeByClicks'
+
   start!: Coordinate | null;
   end!: Coordinate | null;
 
   modification!: Modify;
-  layers: ILayers;
 
   private infoPopup: Popup | null;
   private infoPopupCoords!: Coordinate;
@@ -30,7 +34,10 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
 
 
   constructor(private orsService: OrsService, private mapService: MapService){
-    this.layers = this.mapService.getAllLayers();
+    this.routeByClicksLayer = new VectorLayer({
+      source: new VectorSource()
+    });
+    this.routeByClicksLayer.setProperties({id: this.routeByClicksLayerId})
   }
 
   ngOnInit(): void {
@@ -41,6 +48,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
         this.map = maps.viewer;
         this.createInfoPopup();
         this.setClickEvent();
+        this.routeByClicksLayer.setMap(this.map);
       }
     });
     combineLatest([this.orsService.distance$, this.orsService.duration$])
@@ -57,7 +65,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unSubscribe.next();
     this.unSubscribe.complete();
-    this.orsService.removeFeaturesFromRouteByClicks();
+    this.orsService.removeFeaturesFromRouteByClicks(this.routeByClicksLayer);
     this.orsService.setStartPointToNull();
     this.start = null;
     this.orsService.setEndPointToNull();
@@ -65,6 +73,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
     this.removeClickEvent();
     this.removeModifyInteraction();
     this.map?.removeOverlay(this.infoPopup);
+    this.routeByClicksLayer.setMap(null);
   }
 
   private removeClickEvent(): void {
@@ -72,8 +81,9 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
   }
 
   private removeModifyInteraction(): void {
-    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().un('modifystart', this.onModifyStart);
-    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().un('modifyend', this.onModifyEnd);
+    const found: any = this.map.getLayers().getArray().find((lay: any) => lay.getProperties().id === this.routeByClicksLayerId);
+    found?.getSource().un('modifystart', this.onModifyStart);
+    found?.getSource().un('modifyend', this.onModifyEnd);
   }
 
   private onModifyStart = (): void => {
@@ -92,10 +102,10 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
       const newStrt = transformMercatorCoordsTo4326Point(startFeatCoord[0], startFeatCoord[1]);
       const newEnd = transformMercatorCoordsTo4326Point(endFeatCoord[0], endFeatCoord[1]);
   
-      this.orsService.removeFeaturesFromRouteByClicks();
+      this.orsService.removeFeaturesFromRouteByClicks(this.routeByClicksLayer);
 
-      this.orsService.loadStartPoint(newStrt.getCoordinates());
-      this.orsService.loadEndPoint(newEnd.getCoordinates());
+      this.orsService.loadStartPoint(this.routeByClicksLayer, newStrt.getCoordinates());
+      this.orsService.loadEndPoint(this.routeByClicksLayer, newEnd.getCoordinates());
       this.start = newStrt.getCoordinates();
       this.end = newEnd.getCoordinates();
 
@@ -115,7 +125,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
   }
 
   private determineFeaturesToBeModified(): Collection<Feature> {
-    return new Collection([this.orsService.getRutaByclicksFeatureByType('start-point'), this.orsService.getRutaByclicksFeatureByType('end-point')]);
+    return new Collection([this.orsService.getRutaByclicksFeatureByType(this.routeByClicksLayer, 'start-point'), this.orsService.getRutaByclicksFeatureByType(this.routeByClicksLayer, 'end-point')]);
   }
 
   private setClickEvent(): void {
@@ -140,15 +150,15 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
       this.start = null;
       this.orsService.setEndPointToNull();
       this.end = null;
-      this.orsService.removeFeaturesFromRouteByClicks();
+      this.orsService.removeFeaturesFromRouteByClicks(this.routeByClicksLayer);
     }
     if (this.orsService.getStartPoint() == null) {
       const point = transformMercatorCoordsTo4326Point(e.coordinate[0], e.coordinate[1])
-      this.orsService.loadStartPoint(point.getCoordinates());
+      this.orsService.loadStartPoint(this.routeByClicksLayer, point.getCoordinates());
       this.start = point.getCoordinates();
     } else if (this.orsService.getEndPoint() == null) {
       const point = transformMercatorCoordsTo4326Point(e.coordinate[0], e.coordinate[1])
-      this.orsService.loadEndPoint(point.getCoordinates());
+      this.orsService.loadEndPoint(this.routeByClicksLayer, point.getCoordinates());
       this.end = point.getCoordinates();
     }
     if (this.start && this.end) {
@@ -165,7 +175,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
         .subscribe((res: IOpenRouteServiceRes) => {
           const mediano = this.orsService.findMedian(res.features[0].geometry.coordinates);
           this.infoPopupCoords = transform4326CoordsToMercatorPoint(mediano[0], mediano[1]).getCoordinates();
-          this.orsService.setRutaByClicks(res.features[0].geometry);
+          this.orsService.setRutaByClicks(this.routeByClicksLayer, res.features[0].geometry);
           this.orsService.setDistance(res.features[0].properties.summary.distance);
           this.orsService.setDuration(res.features[0].properties.summary.duration);
           this.infoPopup.show(this.infoPopupCoords, this.infoPopupHtml);
