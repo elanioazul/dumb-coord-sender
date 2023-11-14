@@ -139,7 +139,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     this.orsService.setDestination(incidentCoords);
   }
 
-  onSelectedRow(selectedRowElement: any): void {
+  onSelectedRow(selectedRowElement: HTMLTableRowElement): void {
     this.resourcesService.setSelectedRowElement(selectedRowElement);
     this.sidebarService.getSidebarInstance()._onCloseClick();
     

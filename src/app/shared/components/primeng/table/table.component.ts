@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { DOMAIN_FILTERS, DOMAIN_TYPES } from '@core/consts/columns-table-recursos';
 import { IRecurso } from '@core/interfaces/reecurso-interfaz';
 import { Table } from 'primeng/table';
@@ -23,7 +23,7 @@ export class TableComponent {
   @Input() totalRecords!: number;
 
   @Output() selectedResource = new EventEmitter<IRecurso>();
-  @Output() selectedRow = new EventEmitter<any>();
+  @Output() selectedRow = new EventEmitter<HTMLTableRowElement>();
   @Output() anyOther = new EventEmitter<any>();
   @Output() pageChange = new EventEmitter<any>();
   @Output() lazyLoad = new EventEmitter<any>();

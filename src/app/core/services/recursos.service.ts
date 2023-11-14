@@ -13,11 +13,11 @@ export class RecursosService {
 
   private selectedResourceRow: any = null;
 
-  getSelectedRowElement(): any {
+  getSelectedRowElement(): HTMLTableRowElement {
     return this.selectedResourceRow;
   }
 
-  setSelectedRowElement(rowElement: any): void {
+  setSelectedRowElement(rowElement: HTMLTableRowElement): void {
     this.selectedResourceRow = rowElement;
   }
 
