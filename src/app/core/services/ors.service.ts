@@ -9,11 +9,13 @@ import { ILayers } from '@core/interfaces/layers.interfaz';
 import { Fill, Icon, Stroke, Style } from 'ol/style';
 import CircleStyle from 'ol/style/Circle';
 import proj4 from 'proj4';
-import { Point } from 'ol/geom';
+import { Geometry, Point } from 'ol/geom';
 import { IMaps } from '@core/interfaces/maps.interfaz';
 import { createTextStyle } from '@core/utils/ol';
 import { pin } from '@core/enums/pin.marker.enum';
 import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
 
 const apiUrlOrs = 'https://ors.apps.aroas.westeurope.aroapp.io/ors/v2/directions/driving-car?';
 
@@ -305,7 +307,7 @@ export class OrsService {
     return sortedCoordinates[middleIndex];
   };
   
-  setRutaByClicks(geometry: any): void {
+  setRutaByClicks(layer: VectorLayer<VectorSource<Geometry>>, id: string, geometry: any): void {
     const linestringOriginal = new LineString(geometry.coordinates);
     const transformedLineString = new LineString(
       linestringOriginal.getCoordinates().map(coord => proj4("EPSG:4326", "EPSG:3857", coord))
@@ -315,44 +317,40 @@ export class OrsService {
     });
     feature.setId('route-by-clicks');
     feature.setStyle(rutaByClicksStyle);
-    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
+    layer.getSource()?.addFeature(feature);
     setTimeout(() => {
-      this.fitRouteByClicks(),
+      this.fitRouteByClicks(layer, id),
       { duration:1000 }
     }, 500);
   }
 
-  fitRouteByClicks(): void {
-    this.maps.viewer?.getView().fit((this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().getExtent());
+  fitRouteByClicks(layer: VectorLayer<VectorSource<Geometry>>, id: string): void {
+    this.maps.viewer?.getView().fit(layer.getSource()!.getExtent());
     const currentZoom = this.maps.viewer?.getView().getZoom();
     if (currentZoom)
     this.maps.viewer?.getView().setZoom(currentZoom - 0.5);
   }
   
-  loadStartPoint(coords: Coordinate): void {
+  loadStartPoint(layer: VectorLayer<VectorSource<Geometry>>, coords: Coordinate): void {
     this.setStartPoint(coords);
     const feature = this.createMercatorFeature(coords, 'start-point');
     feature.setStyle(startStyle);
-    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
+    layer.getSource()?.addFeature(feature);
   }
 
-  loadEndPoint(coords: Coordinate): void {
+  loadEndPoint(layer: VectorLayer<VectorSource<Geometry>>, coords: Coordinate): void {
     this.setEndPoint(coords);
     const feature = this.createMercatorFeature(coords, 'end-point');
     feature.setStyle(endStyle);
-    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().addFeature(feature);
+    layer.getSource()?.addFeature(feature);
   }
 
-  deleteFeatureFromRouteByClicksLayer(features: Feature[]): void {
-    features.forEach((feature: Feature) => (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().removeFeature(feature));
+  removeFeaturesFromRouteByClicks(layer: VectorLayer<VectorSource<Geometry>>): void {
+    layer.getSource()?.clear();
   }
 
-  removeFeaturesFromRouteByClicks(): void {
-    (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().clear();
-  }
-
-  getRutaByclicksFeatureByType(type: string): Feature {
-    return (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().getFeatureById(type);
+  getRutaByclicksFeatureByType(layer: VectorLayer<VectorSource<Geometry>>, type: string): Feature {
+    return (layer as any).getSource().getFeatureById(type);
   }
 
   setDistance(value: number | null) {

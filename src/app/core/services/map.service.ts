@@ -37,8 +37,7 @@ export class MapService {
     adminLayers: null,
     incidents: null,
     route: null,
-    incident: null,
-    routeByClicks: null
+    incident: null
   });
 
   public layers$ = this.layers.asObservable();
@@ -99,7 +98,7 @@ export class MapService {
         createOSMBaseLayer(), 
         layers.incident!
       ], [createBaseLayersGroupForLayerSwitcher()]),
-      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!, layers.route!, layers.routeByClicks!]),
+      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!, layers.route!]),
     };
     this.setMaps(initialMaps);
   }
@@ -115,7 +114,6 @@ export class MapService {
       incident: createVectorLayer([]),
       incidents: createLayerGroup([], 'Incidents', createClusterLayer(features)),
       route: createLayerGroup([], 'Ruta a Incidente', createRutaVectorLayer('route')),
-      routeByClicks: createLayerGroup([], 'Ruta by clicks', createRutaVectorLayer('route-by-click'))
     };
     this.setLayers(initialLayers);
   }
