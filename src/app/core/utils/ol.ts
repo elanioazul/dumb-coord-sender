@@ -300,20 +300,6 @@ export const createClusterLayer = (features: Feature[]): VectorLayer<VectorSourc
   return clustersLayer;
 };
 
-export const createRutaVectorLayer = (rutaType: string): VectorLayer<VectorSource<Geometry>> => {
-  let vectorLayer = new VectorLayer({
-    source: new VectorSource({
-      features: []
-    }),
-    title: rutaType == 'route' ? 'Ruta a incident' : 'Ruta by clicks',
-    style: null /*function (feature) {
-      return styles[feature.get('type')];
-    }*/
-  } as BaseLayerOptions);
-
-  return vectorLayer;
-}
-
 export const transformPointToMercatorFeature = (sirdId: number, lon: any, lat: any): Feature => {
   const source = determineSourceSrid(sirdId);
   const dest = new (proj4 as any).Proj('EPSG:3857');

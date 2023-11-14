@@ -7,7 +7,6 @@ import { Coordinate } from 'ol/coordinate';
 import { Subject, combineLatest, find, takeUntil } from 'rxjs';
 import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 import Modify from 'ol/interaction/Modify.js';
-import { ILayers } from '@core/interfaces/layers.interfaz';
 import Popup from 'ol-ext/overlay/Popup';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -28,7 +27,6 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
   end!: Coordinate | null;
 
   modification!: Modify;
-  layers: ILayers;
 
   private infoPopup: Popup | null;
   private infoPopupCoords!: Coordinate;
@@ -36,12 +34,10 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
 
 
   constructor(private orsService: OrsService, private mapService: MapService){
-    this.layers = this.mapService.getAllLayers();
     this.routeByClicksLayer = new VectorLayer({
-      source: new VectorSource(),
-      //style: this.popupMarkerStyle
+      source: new VectorSource()
     });
-    this.routeByClicksLayer.setProperties({id: 'routeByClicks'})
+    this.routeByClicksLayer.setProperties({id: this.routeByClicksLayerId})
   }
 
   ngOnInit(): void {
@@ -88,12 +84,6 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
     const found: any = this.map.getLayers().getArray().find((lay: any) => lay.getProperties().id === this.routeByClicksLayerId);
     found?.getSource().un('modifystart', this.onModifyStart);
     found?.getSource().un('modifyend', this.onModifyEnd);
-
-    //this.routeByClicksLayer.getSource()?.un('modifystart', this.onModifyStart);
-    //this.routeByClicksLayer.getSource()?.un('modifyend', this.onModifyEnd);
-    
-    // (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().un('modifystart', this.onModifyStart);
-    // (this.layers.routeByClicks?.getLayers() as any).getArray()[0].getSource().un('modifyend', this.onModifyEnd);
   }
 
   private onModifyStart = (): void => {

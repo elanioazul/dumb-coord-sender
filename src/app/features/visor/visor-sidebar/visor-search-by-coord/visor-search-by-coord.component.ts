@@ -197,7 +197,7 @@ export class VisorSearchByCoordComponent implements OnInit, OnDestroy {
         );
         //this.mapService.addFeature('incident', feature);
         //this.mapService.addFeature('incidents', feature);
-        this.orsService.setDestination(point.coordinates);
+        this.orsService.setDestination(this.orsService.resourceRoute, point.coordinates);
         flyToPosition(this.map, point.coordinates[1], point.coordinates[0])
         const coordEpsgVal = this.coordSystemsOptions.find(
           (system) => system.id == sridId

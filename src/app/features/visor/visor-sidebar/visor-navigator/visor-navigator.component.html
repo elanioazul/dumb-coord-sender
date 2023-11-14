@@ -42,9 +42,9 @@
     [first]="first"
     [totalRecords]="totalRecords"
     [isLoading]="loading"
-    (selectedResource)="onSelectedActuation($event)"
+    (selectedResource)="onSelectedResource($event)"
     (selectedRow)="onSelectedRow($event)"
-    [selectedRowElement]="selectedRow"
+    [selectedRowElement]="highlightedRow"
     (lazyLoad)="bringData($event)"
     >
 </app-table>

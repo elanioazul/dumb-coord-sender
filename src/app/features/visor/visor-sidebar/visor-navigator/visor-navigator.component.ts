@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IRecurso, IResourcesByRadioRes } from '@core/interfaces/reecurso-interfaz';
 import { OrsService } from '@core/services/ors.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 import { RecursosService } from '@core/services/recursos.service';
 import { Resource } from '@core/classes/resource';
@@ -11,6 +11,14 @@ import { IRadioForm, IRecursosForm, IUnitForm } from '@core/interfaces/form.inte
 import { LazyLoadEvent } from 'primeng/api';
 import { units } from '@core/consts/units-to-request-resources';
 import { SidebarService } from '@core/services/sidebar.service';
+import Popup from 'ol-ext/overlay/Popup';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import { Geometry } from 'ol/geom';
+import { Map } from 'ol';
+import { MapService } from '@core/services/map.service';
+import { Coordinate } from 'ol/coordinate';
+import { transform4326CoordsToMercatorPoint } from '@core/utils/ol';
 @Component({
   selector: 'app-visor-navigator',
   templateUrl: './visor-navigator.component.html',
@@ -18,6 +26,8 @@ import { SidebarService } from '@core/services/sidebar.service';
 })
 export class VisorNavigatorComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
+
+  map!: Map;
 
   recursos!: Resource[];
   columns!: any;
@@ -28,7 +38,7 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   loading!: boolean;
 
   selectedRecurso!: IRecurso;
-  selectedRow!: any;
+  highlightedRow!: any;
 
   distance!: string | undefined;
   time!: string | undefined;
@@ -38,18 +48,23 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
 
   destination!: number[] | null;
   noIncidenteMsg: string = "Introduzca un incidente sobre el que buscar recursos por distancia";
+  
+  private infoPopup: Popup | null;
+  private infoPopupCoords!: Coordinate;
+  private infoPopupHtml!: string;
 
   constructor(
     private orsService: OrsService, 
     private resourcesService: RecursosService,
     private builder: FormBuilder,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private mapService: MapService
   ) {
     this.first = 0;
     this.rows = 10;
     this.instantiateTable();
     this.initForm();
-    this.selectedRow = this.resourcesService.getSelectedRowElement();
+    this.highlightedRow = this.resourcesService.getSelectedRowElement();
   }
 
   initForm(): void {
@@ -86,23 +101,42 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
           this.orsService
             .getOrsInfo(origin, destination)
             .subscribe((res: IOpenRouteServiceRes) => {
-              this.orsService.setRuta(res.features[0].geometry);
-              this.distance = this.orsService.convertDistance(
-                res.features[0].properties.summary.distance
-              );
-              this.time = this.orsService.convertTime(
-                res.features[0].properties.summary.duration
-              );
+              const mediano = this.orsService.findMedian(res.features[0].geometry.coordinates);
+              this.infoPopupCoords = transform4326CoordsToMercatorPoint(mediano[0], mediano[1]).getCoordinates();
+              this.orsService.setRuta(this.orsService.resourceRoute, res.features[0].geometry);
+              this.orsService.setDistance(res.features[0].properties.summary.distance);
+              this.orsService.setDuration(res.features[0].properties.summary.duration);
+              this.infoPopup.show(this.infoPopupCoords, this.infoPopupHtml);
             });
         }
       });
+    this.mapService.maps$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((maps) => {
+      if (maps.viewer!) {
+        this.map = maps.viewer;
+        this.createInfoPopup();
+        this.orsService.resourceRoute.setMap(this.map);
+      }
+    });
+    combineLatest([this.orsService.distance$, this.orsService.duration$])
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(([distance, duration]) => {
+        this.wrapPopupContent(distance, duration)
+    });
   }
 
   ngOnDestroy(): void {
-    this.orsService.removeFeaturesFromRoute();
+    this.orsService.removeFeaturesFromRoute(this.orsService.resourceRoute);
     this.orsService.setRecursoToNull();
+    this.map?.removeOverlay(this.infoPopup);
+    this.orsService.resourceRoute.setMap(null);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  wrapPopupContent(distance: string | null, duration: string | null): void {
+    this.infoPopupHtml = `Distancia: ${distance}` + '<br/>' + `Duración: ${duration}`
   }
 
   onSubmit(): void {
@@ -127,21 +161,33 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSelectedActuation(recurso: Resource): void {
-    const originFeature = this.orsService.getRutaFeatureByType('origin');
-    const routeFeature = this.orsService.getRutaFeatureByType('route');
+  onSelectedResource(recurso: Resource): void {
+    const originFeature = this.orsService.getRutaFeatureByType(this.orsService.resourceRoute, 'origin');
+    const routeFeature = this.orsService.getRutaFeatureByType(this.orsService.resourceRoute, 'route');
     const features = new Array(originFeature, routeFeature);
-    if (originFeature) this.orsService.deleteFeatureFromRouteLayer(features);
+    if (originFeature) this.orsService.deleteFeatureFromRouteLayer(this.orsService.resourceRoute, features);
     const arr = new Array(recurso.coordx, recurso.coordy);
-    this.orsService.setOrigin(arr, 'RecursoId ' + (recurso.resourceId).toString());
+    this.orsService.setOrigin(this.orsService.resourceRoute, arr, 'RecursoId ' + (recurso.resourceId).toString());
     const incidentCoords = this.orsService.getIncidente();
     if (incidentCoords)
-    this.orsService.setDestination(incidentCoords);
+    this.orsService.setDestination(this.orsService.resourceRoute, incidentCoords);
   }
 
   onSelectedRow(selectedRowElement: HTMLTableRowElement): void {
     this.resourcesService.setSelectedRowElement(selectedRowElement);
     this.sidebarService.getSidebarInstance()._onCloseClick();
-    
+
+  }
+
+  private createInfoPopup(): void {
+    this.infoPopup = new Popup({
+      id: 'routePopup',
+      popupClass: 'tooltips marginTooltip',
+      closeBox: false,
+      positioning: 'bottom-auto',
+      autoPan: true,
+      autoPanAnimation: { duration: 250 },
+    });
+    this.map.addOverlay(this.infoPopup);
   }
 }

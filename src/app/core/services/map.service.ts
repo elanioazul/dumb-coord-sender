@@ -6,7 +6,6 @@ import {
   centerMap,
   createOSMBaseLayer,
   createVectorLayer,
-  createRutaVectorLayer,
   goToCoordinates,
   createBaseLayersGroupForLayerSwitcher,
   createLayerGroup,
@@ -36,7 +35,6 @@ export class MapService {
     sanitationlayers: null,
     adminLayers: null,
     incidents: null,
-    route: null,
     incident: null
   });
 
@@ -98,7 +96,7 @@ export class MapService {
         createOSMBaseLayer(), 
         layers.incident!
       ], [createBaseLayersGroupForLayerSwitcher()]),
-      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!, layers.route!]),
+      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!]),
     };
     this.setMaps(initialMaps);
   }
@@ -113,7 +111,6 @@ export class MapService {
       adminLayers: createLayerGroup(adminlayersParams, 'Divisions administratives'),
       incident: createVectorLayer([]),
       incidents: createLayerGroup([], 'Incidents', createClusterLayer(features)),
-      route: createLayerGroup([], 'Ruta a Incidente', createRutaVectorLayer('route')),
     };
     this.setLayers(initialLayers);
   }
