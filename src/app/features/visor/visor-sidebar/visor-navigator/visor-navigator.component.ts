@@ -40,9 +40,6 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   selectedRecurso!: IRecurso;
   highlightedRow!: any;
 
-  distance!: string | undefined;
-  time!: string | undefined;
-
   units = units;
   form!: FormGroup<any>;
 
@@ -141,8 +138,6 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     this.loading = true;
-    this.distance = undefined;
-    this.time = undefined;
     const formValue = this.form.getRawValue();
     this.resourcesService.setRequestedDistance(formValue.radioForm.radio);
     this.resourcesService.setRequestedUnit(formValue.unitForm.unit);
