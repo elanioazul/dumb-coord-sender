@@ -307,7 +307,7 @@ export class OrsService {
     return sortedCoordinates[middleIndex];
   };
   
-  setRutaByClicks(layer: VectorLayer<VectorSource<Geometry>>, id: string, geometry: any): void {
+  setRutaByClicks(layer: VectorLayer<VectorSource<Geometry>>, geometry: any): void {
     const linestringOriginal = new LineString(geometry.coordinates);
     const transformedLineString = new LineString(
       linestringOriginal.getCoordinates().map(coord => proj4("EPSG:4326", "EPSG:3857", coord))
@@ -319,12 +319,12 @@ export class OrsService {
     feature.setStyle(rutaByClicksStyle);
     layer.getSource()?.addFeature(feature);
     setTimeout(() => {
-      this.fitRouteByClicks(layer, id),
+      this.fitRouteByClicks(layer),
       { duration:1000 }
     }, 500);
   }
 
-  fitRouteByClicks(layer: VectorLayer<VectorSource<Geometry>>, id: string): void {
+  fitRouteByClicks(layer: VectorLayer<VectorSource<Geometry>>): void {
     this.maps.viewer?.getView().fit(layer.getSource()!.getExtent());
     const currentZoom = this.maps.viewer?.getView().getZoom();
     if (currentZoom)

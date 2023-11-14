@@ -185,7 +185,7 @@ export class VisorNavigatorByClicksComponent implements OnInit, OnDestroy {
         .subscribe((res: IOpenRouteServiceRes) => {
           const mediano = this.orsService.findMedian(res.features[0].geometry.coordinates);
           this.infoPopupCoords = transform4326CoordsToMercatorPoint(mediano[0], mediano[1]).getCoordinates();
-          this.orsService.setRutaByClicks(this.routeByClicksLayer, this.routeByClicksLayerId, res.features[0].geometry);
+          this.orsService.setRutaByClicks(this.routeByClicksLayer, res.features[0].geometry);
           this.orsService.setDistance(res.features[0].properties.summary.distance);
           this.orsService.setDuration(res.features[0].properties.summary.duration);
           this.infoPopup.show(this.infoPopupCoords, this.infoPopupHtml);
