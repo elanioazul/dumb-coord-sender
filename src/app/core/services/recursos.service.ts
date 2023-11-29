@@ -81,8 +81,8 @@ export class RecursosService {
     .set('distance', this.getRequestedDistance())
     .set('unit', this.getRequestedUnit())
     .set('selectedSrid', this.getSelectedSrid())
-    .set('resourceSrid', 25831)
-    .set('targetSrid', 4326)
+    // .set('resourceSrid', 25831)
+    // .set('targetSrid', 4326)
     .set('page', page)
     .set('size', size);
 
