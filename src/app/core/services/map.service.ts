@@ -9,7 +9,7 @@ import {
   goToCoordinates,
   createBaseLayersGroupForLayerSwitcher,
   createLayerGroup,
-  createClusterLayer
+  createClusterLayer,
 } from '../utils/ol';
 import { Feature, Map } from 'ol';
 import { Extent, getCenter } from 'ol/extent';
@@ -35,6 +35,7 @@ export class MapService {
     sanitationlayers: null,
     adminLayers: null,
     incidents: null,
+    resources: null,
     incident: null
   });
 
@@ -96,7 +97,7 @@ export class MapService {
         createOSMBaseLayer(), 
         layers.incident!
       ], [createBaseLayersGroupForLayerSwitcher()]),
-      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!]),
+      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!, layers.resources!]),
     };
     this.setMaps(initialMaps);
   }
@@ -105,12 +106,13 @@ export class MapService {
     this.maps.next(maps);
   }
 
-  initLayers(features: Feature[]): void {
+  initLayers(incidentes: Feature[], recursos: Feature[]): void {
     const initialLayers: ILayers = {
       sanitationlayers: createLayerGroup(sanitarialayersParams, 'Sanitàries'),
       adminLayers: createLayerGroup(adminlayersParams, 'Divisions administratives'),
       incident: createVectorLayer([]),
-      incidents: createLayerGroup([], 'Incidents', createClusterLayer(features)),
+      incidents: createLayerGroup([], 'Incidents', createClusterLayer(incidentes, 'Incidents')),
+      resources: createLayerGroup([], 'Resources', createClusterLayer(recursos, 'Resources')),
     };
     this.setLayers(initialLayers);
   }

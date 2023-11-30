@@ -2,13 +2,14 @@ import { Feature, Map, View } from 'ol';
 import { Coordinate } from 'ol/coordinate';
 import { Geometry, Point } from 'ol/geom';
 import Layer from 'ol/layer/Layer';
+import GeoJSON from 'ol/format/GeoJSON';
 import TileLayer from 'ol/layer/Tile';
 import LayerTile from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Cluster from 'ol/source/Cluster';
 import OSM from 'ol/source/OSM';
-import { Circle as CircleStyle, Icon, Text } from 'ol/style';
+import { Circle as CircleStyle, Icon, RegularShape, Text } from 'ol/style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import Style from 'ol/style/Style';
@@ -107,6 +108,48 @@ const baseMaps = new LayerGroup({
   title: 'Base maps',
   layers: [osm, google, bing, toner]
 } as GroupLayerOptions);
+
+//cluster styles
+const incidentsClusterStyleFunction = (feature) => {
+  const size = feature.get('features').length;
+  const style = new Style({
+    image: new CircleStyle({
+      radius: 10,
+      stroke: new Stroke({
+        color: '#fff',
+      }),
+      fill: new Fill({
+        color: '#3399CC',
+      }),
+    }),
+    text: new Text({
+      text: size.toString(),
+      fill: new Fill({
+        color: '#fff',
+      }),
+    }),
+  });
+  return style;
+}
+const resourcesClusterStyleFunction = (feature) => {
+  const size = feature.get('features').length;
+  const style = new Style({
+    image: new RegularShape({
+      fill: new Fill({color: 'red'}),
+      stroke: new Stroke({color: 'black', width: 2}),
+      points: 4,
+      radius: 10,
+      angle: Math.PI / 4,
+    }),
+    text: new Text({
+      text: size.toString(),
+      fill: new Fill({
+        color: '#fff',
+      }),
+    }),
+  });
+  return style;
+}
 
 export const createBaseLayersGroupForLayerSwitcher = (): LayerGroup => {
   return baseMaps;
@@ -258,7 +301,22 @@ export const createVectorLayer = (features: Feature[]): VectorLayer<VectorSource
   return vectorLayer;
 };
 
-export const createClusterLayer = (features: Feature[]): VectorLayer<VectorSource<Geometry>> => {
+// export const createVectorGeoJsonLayer = (geojson: any): VectorLayer<VectorSource<Geometry>> => {
+//   const geoJSONFormat = new GeoJSON();
+//   const features = geoJSONFormat.readFeatures(geojson);
+
+//   const vectorSource = new VectorSource({
+//     features: features,
+//   });
+
+//   const vectorLayer = new VectorLayer({
+//     source: vectorSource,
+//   } as BaseLayerOptions);
+
+//   return vectorLayer;
+// }
+
+export const createClusterLayer = (features: Feature[], id): VectorLayer<VectorSource<Geometry>> => {
 
   const source = new VectorSource({
     features: features,
@@ -272,29 +330,21 @@ export const createClusterLayer = (features: Feature[]): VectorLayer<VectorSourc
 
   const clustersLayer = new VectorLayer({
     source: clusterSource,
-    style: function (feature) {
-      const size = feature.get('features').length;
-      const style = new Style({
-        image: new CircleStyle({
-          radius: 10,
-          stroke: new Stroke({
-            color: '#fff',
-          }),
-          fill: new Fill({
-            color: '#3399CC',
-          }),
-        }),
-        text: new Text({
-          text: size.toString(),
-          fill: new Fill({
-            color: '#fff',
-          }),
-        }),
-      });
-
-      return style;
+    style: (feature) => {
+      switch (id) {
+        case 'Incidents':
+          return incidentsClusterStyleFunction(feature);
+          break;
+        case 'Resources':
+          return resourcesClusterStyleFunction(feature);
+          break;
+        default:
+          console.log('estilo sin definir de cluster pero te pongo uno por defecto, incidentsClusterStyleFunction');
+          return incidentsClusterStyleFunction;
+          break;
+      }
     },
-    title: 'Incidentes'
+    title: id
   } as BaseLayerOptions);
   
   return clustersLayer;
@@ -323,6 +373,32 @@ export const transform4326CoordsToMercatorPoint = (lon: any, lat: any): Point =>
   const {x, y} = proj4.transform(source, dest, [lon, lat]);
   const coords = [x, y];
   return new Point(coords);
+}
+
+export const createResourceFeaturesProjectionTransofmationNeeded = (elems: any[]): Feature[] => {
+  const setPropertiesFromObject = (feature: Feature, propertiesObject: Record<string, any>) => {
+    feature.setProperties(propertiesObject);
+  }
+  
+  let source: any;
+  const dest = new (proj4 as any).Proj('EPSG:3857');
+
+  const features = elems.map((elem) => {
+    //van a venir siempre en 4326
+    source = determineSourceSrid(2)
+    //const {x, y} = elem.geometry.coordinates;
+    const {x, y} = proj4.transform(source, dest, [elem.geometry.coordinates[0], elem.geometry.coordinates[1]]);
+    const coords = [x, y];
+
+    const point = new Point(coords);
+    const feature = new Feature(point);
+    // feature.setProperties(elem);
+    // feature.setId(elem.id);
+    setPropertiesFromObject(feature, elem.properties)
+    return feature;
+  });
+
+  return features;
 }
 
 export const createFeaturesProjectionTransofmationNeeded = (elems: any[]): Feature[] => {
