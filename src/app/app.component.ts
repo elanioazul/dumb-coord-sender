@@ -9,6 +9,7 @@ import {
 import { combineLatest } from 'rxjs';
 import { GeoserverService } from '@core/services/geoserver.service';
 import { CoordinateTransformed } from '@core/classes/coord-transformed';
+import { FeatureCollection } from '@core/interfaces/recurso-geoserver';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
       ([coords, featureCollection]) => {
         const incidentes: CoordinateTransformed[] = coords;
         const indicentesFeatures = createFeaturesProjectionTransofmationNeeded(incidentes);
-        const recursos: any = featureCollection;
+        const recursos: FeatureCollection = featureCollection;
         const recursosFeatures = createResourceFeaturesProjectionTransofmationNeeded(recursos.features);//importante: no sé por qué, pero con 7 que debería ser (recusos vienen con 25831), la proj4 que sale de la funcion determineSourceSrid no transofoma bien
         this.mapService.initLayers(indicentesFeatures, recursosFeatures);
         this.mapService.layers$.subscribe((layers) => {
