@@ -4,7 +4,11 @@ import { CoordinatesService } from './core/services/coordinates.service';
 import {
   transformPointToMercatorFeature,
   createFeaturesProjectionTransofmationNeeded,
+  createResourceFeaturesProjectionTransofmationNeeded,
 } from './core/utils/ol';
+import { combineLatest } from 'rxjs';
+import { GeoserverService } from '@core/services/geoserver.service';
+import { CoordinateTransformed } from '@core/classes/coord-transformed';
 
 @Component({
   selector: 'app-root',
@@ -12,20 +16,26 @@ import {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+
   constructor(
     private mapService: MapService,
-    private coordService: CoordinatesService
-  ) {}
+    private coordService: CoordinatesService,
+    private geoserverService: GeoserverService
+    ) {}
 
   ngOnInit(): void {
-    this.coordService.getTransformedCoordList$.subscribe((data: any) => {
-      //const features = data.map((transformed: any) => transformPointToMercatorFeature(transformed.longitude, transformed.latitude))
-      const features = createFeaturesProjectionTransofmationNeeded(data);
-      this.mapService.initLayers(features);
-    });
-    this.mapService.layers$.subscribe((layers) => {
-      this.mapService.initMaps(layers);
-    });
+    combineLatest([this.coordService.getTransformedCoordList$, this.geoserverService.getRecursosGeoJson$]).subscribe(
+      ([coords, featureCollection]) => {
+        const incidentes: CoordinateTransformed[] = coords;
+        const indicentesFeatures = createFeaturesProjectionTransofmationNeeded(incidentes);
+        const recursos: any = featureCollection;
+        const recursosFeatures = createResourceFeaturesProjectionTransofmationNeeded(recursos.features);//importante: no sé por qué, pero con 7 que debería ser (recusos vienen con 25831), la proj4 que sale de la funcion determineSourceSrid no transofoma bien
+        this.mapService.initLayers(indicentesFeatures, recursosFeatures);
+        this.mapService.layers$.subscribe((layers) => {
+          this.mapService.initMaps(layers);
+        });
+      }
+    )
   }
 
   ngOnDestroy(): void {}
