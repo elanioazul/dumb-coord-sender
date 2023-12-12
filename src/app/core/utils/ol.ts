@@ -27,6 +27,7 @@ import {
  import SourceStamen from 'ol/source/Stamen';
 import LayerGroup from 'ol/layer/Group';
 
+import { TileDebug } from 'ol/source';
 import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import ImageLayer from 'ol/layer/Image';
@@ -34,11 +35,6 @@ import { fromLonLat } from 'ol/proj';
 import { pin } from '@core/enums/pin.marker.enum';
 import { ILayerParams } from '@core/interfaces/layers-params-geoserver.interfaz';
 
-
-
-//geoserver url
-const geoserverUrl = 'http://localhost:8080/geoserver/ows?';
-type geoserverOrigin = 'local' | 'lab' | 'chronos';
 
 //controls
 //const dragZoom = new DragZoom();
@@ -111,6 +107,16 @@ const baseMaps = new LayerGroup({
   layers: [osm, google, bing, toner]
 } as GroupLayerOptions);
 
+//capa debug
+const debugLayer = new LayerTile ({
+  opacity: 1,
+  source: new TileDebug(),
+} as BaseLayerOptions);
+const debugginLayers = new LayerGroup({
+  title: 'Tiles debug layer',
+  layers: [debugLayer]
+} as GroupLayerOptions);
+
 //cluster styles
 const incidentsClusterStyleFunction = (feature) => {
   const size = feature.get('features').length;
@@ -155,6 +161,9 @@ const resourcesClusterStyleFunction = (feature) => {
 
 export const createBaseLayersGroupForLayerSwitcher = (): LayerGroup => {
   return baseMaps;
+}
+export const createDebugTilelayer = () : LayerGroup => {
+  return debugginLayers;
 }
 export const addMouseControlToMap = (target: HTMLElement, map: Map) => {
   const mouse = new MousePosition({

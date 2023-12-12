@@ -8,6 +8,7 @@ import {
   createVectorLayer,
   goToCoordinates,
   createBaseLayersGroupForLayerSwitcher,
+  createDebugTilelayer,
   createLayerGroup,
   createClusterLayer,
 } from '../utils/ol';
@@ -107,6 +108,7 @@ export class MapService {
         'viewer',
         [],
         [
+          createDebugTilelayer(),
           createBaseLayersGroupForLayerSwitcher(),
           layers.incidents!,
           layers.adminLayers!,
