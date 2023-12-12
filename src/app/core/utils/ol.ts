@@ -32,11 +32,13 @@ import ImageWMS from 'ol/source/ImageWMS';
 import ImageLayer from 'ol/layer/Image';
 import { fromLonLat } from 'ol/proj';
 import { pin } from '@core/enums/pin.marker.enum';
+import { ILayerParams } from '@core/interfaces/layers-params-geoserver.interfaz';
 
 
 
 //geoserver url
 const geoserverUrl = 'http://localhost:8080/geoserver/ows?';
+type geoserverOrigin = 'local' | 'lab' | 'chronos';
 
 //controls
 //const dragZoom = new DragZoom();
@@ -239,11 +241,11 @@ export const createLayerGroup = (params: any[], title: string, layer?: any): Lay
   return group;
 }
 
-export const createWMSlayer = (param: any): ImageLayer<ImageWMS> | TileLayer<TileWMS> => {
+export const createWMSlayer = (param: ILayerParams): ImageLayer<ImageWMS> | TileLayer<TileWMS> => {
   let layer: any;
   if (param.TILED == true) {
     const source = new TileWMS({
-      url: geoserverUrl,
+      url: param.ORIGIN_URL,
       params: param,
       serverType: 'geoserver',
     });
@@ -256,7 +258,7 @@ export const createWMSlayer = (param: any): ImageLayer<ImageWMS> | TileLayer<Til
   }
   if (param.TILED == false) {
     const source = new ImageWMS({
-      url: geoserverUrl,
+      url: param.ORIGIN_URL,
       params: param,
       ratio: 1,
       serverType: 'geoserver',

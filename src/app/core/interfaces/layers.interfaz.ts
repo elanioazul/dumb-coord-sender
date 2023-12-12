@@ -1,6 +1,7 @@
 import LayerGroup from 'ol/layer/Group';
 import VectorLayer from 'ol/layer/Vector';
 export interface ILayers {
+    construccions: LayerGroup | null;
     sanitationlayers: LayerGroup | null;
     adminLayers: LayerGroup | null;
     incidents: LayerGroup | null;
