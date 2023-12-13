@@ -18,6 +18,7 @@ import {
   adminlayersParams,
   sanitarialayersParams,
   construccionslayersParams,
+  ortoslayersParams
 } from '@core/consts/geoserver-layers';
 import { IMaps } from '@core/interfaces/maps.interfaz';
 import { ILayers } from '@core/interfaces/layers.interfaz';
@@ -34,6 +35,7 @@ export class MapService {
   public maps$ = this.maps.asObservable();
 
   private layers: BehaviorSubject<ILayers> = new BehaviorSubject<ILayers>({
+    ortos: null,
     construccions: null,
     sanitationlayers: null,
     adminLayers: null,
@@ -114,7 +116,8 @@ export class MapService {
           layers.adminLayers!,
           layers.sanitationlayers!,
           layers.resources!,
-          layers.construccions!
+          layers.construccions!,
+          layers.ortos!
         ]
       ),
     };
@@ -127,24 +130,33 @@ export class MapService {
 
   initLayers(incidentes: Feature[], recursos: Feature[]): void {
     const initialLayers: ILayers = {
-      construccions: createLayerGroup(
-        construccionslayersParams,
-        'Construccions'
+      ortos: createLayerGroup(
+        'laboratory',
+        ortoslayersParams,
+        'Ortos (Gs Lab)'
       ),
-      sanitationlayers: createLayerGroup(sanitarialayersParams, 'Sanitàries'),
+      construccions: createLayerGroup(
+        'laboratory',
+        construccionslayersParams,
+        'Construccions (Gs Lab)'
+      ),
+      sanitationlayers: createLayerGroup('local', sanitarialayersParams, 'Sanitàries (Gs Local)'),
       adminLayers: createLayerGroup(
+        'local',
         adminlayersParams,
-        'Divisions administratives'
+        'Divisions administratives (Gs Local)'
       ),
       incident: createVectorLayer([]),
       incidents: createLayerGroup(
+        'local',
         [],
-        'Incidents',
+        'Incidents (Db Local)',
         createClusterLayer(incidentes, 'Incidents')
       ),
       resources: createLayerGroup(
+        'local',
         [],
-        'Resources',
+        'Resources (Gs Local)',
         createClusterLayer(recursos, 'Resources')
       ),
     };

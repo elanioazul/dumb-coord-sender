@@ -36,6 +36,12 @@ import { pin } from '@core/enums/pin.marker.enum';
 import { ILayerParams } from '@core/interfaces/layers-params-geoserver.interfaz';
 
 
+//geoserver Urls
+const geoserverUrlLab = 'http://10.225.20.55:9090/SEM/wms?';
+const geoserverUrlLocal = 'http://localhost:8080/geoserver/ows?';
+const geoserverUrlChronos = 'https://gsc-gateway.apps.aroas.westeurope.aroapp.io/ows?';
+type geoServerOrigin = 'local' | 'laboratory' | 'chronos';
+
 //controls
 //const dragZoom = new DragZoom();
 const zoom = new Zoom();
@@ -103,7 +109,7 @@ const bing = new TileLayer({
   }),
 } as BaseLayerOptions);
 const baseMaps = new LayerGroup({
-  title: 'Base maps',
+  title: 'Base maps 3rd parties',
   layers: [osm, google, bing, toner]
 } as GroupLayerOptions);
 
@@ -226,18 +232,12 @@ export const createOSMBaseLayer = (): TileLayer<OSM> => {
   return OsmLayer;
 }
 
-export const createLayerGroup = (params: any[], title: string, layer?: any): LayerGroup => {
+export const createLayerGroup = (origin: geoServerOrigin, params: any[], title: string, layer?: any): LayerGroup => {
   let group: LayerGroup;
-  if (params.length > 1) {
+  if (params.length && layer == undefined) {
     group = new LayerGroup({
       title: title,
-      layers: params.map(param => createWMSlayer(param)),
-      fold: 'open'
-    } as GroupLayerOptions)
-  } else if (params.length == 1) {
-    group = new LayerGroup({
-      title: title,
-      layers: params.map(param => createWMSlayer(param)),
+      layers: params.map(param => createWMSlayer(param, origin)),
       fold: 'open'
     } as GroupLayerOptions)
   } else {
@@ -250,31 +250,31 @@ export const createLayerGroup = (params: any[], title: string, layer?: any): Lay
   return group;
 }
 
-export const createWMSlayer = (param: ILayerParams): ImageLayer<ImageWMS> | TileLayer<TileWMS> => {
+export const createWMSlayer = (params: ILayerParams, origin: geoServerOrigin): ImageLayer<ImageWMS> | TileLayer<TileWMS> => {
   let layer: any;
-  if (param.TILED == true) {
+  if (params.TILED == true) {
     const source = new TileWMS({
-      url: param.ORIGIN_URL,
-      params: param,
+      url: origin === 'local' ? geoserverUrlLocal : origin === 'laboratory' ? geoserverUrlLab : geoserverUrlChronos,
+      params: params,
       serverType: 'geoserver',
     });
     layer = new TileLayer({
       source: source,
-      title: `${param.LAYERS}`,
+      title: `${params.LAYERS}`,
       visible: false
 
     } as BaseLayerOptions)
   }
-  if (param.TILED == false) {
+  if (params.TILED == false) {
     const source = new ImageWMS({
-      url: param.ORIGIN_URL,
-      params: param,
+      url: origin === 'local' ? geoserverUrlLocal : origin === 'laboratory' ? geoserverUrlLab : geoserverUrlChronos,
+      params: params,
       ratio: 1,
       serverType: 'geoserver',
     });
     layer = new ImageLayer({
       source: source,
-      title: `${param.LAYERS}`,
+      title: `${params.LAYERS}`,
       visible: false
 
     } as BaseLayerOptions)
