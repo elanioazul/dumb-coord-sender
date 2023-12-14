@@ -8,17 +8,20 @@ import {
   createVectorLayer,
   goToCoordinates,
   createBaseLayersGroupForLayerSwitcher,
+  createDebugTilelayer,
   createLayerGroup,
   createClusterLayer,
 } from '../utils/ol';
 import { Feature, Map } from 'ol';
 import { Extent, getCenter } from 'ol/extent';
-import { adminlayersParams, sanitarialayersParams } from '@core/consts/geoserver-layers'
-import {IMaps} from '@core/interfaces/maps.interfaz';
+import {
+  adminlayersParams,
+  sanitarialayersParams,
+  construccionslayersParams,
+  ortoslayersParams
+} from '@core/consts/geoserver-layers';
+import { IMaps } from '@core/interfaces/maps.interfaz';
 import { ILayers } from '@core/interfaces/layers.interfaz';
-
-
-
 
 @Injectable({
   providedIn: 'root',
@@ -32,11 +35,13 @@ export class MapService {
   public maps$ = this.maps.asObservable();
 
   private layers: BehaviorSubject<ILayers> = new BehaviorSubject<ILayers>({
+    ortos: null,
+    construccions: null,
     sanitationlayers: null,
     adminLayers: null,
     incidents: null,
     resources: null,
-    incident: null
+    incident: null,
   });
 
   public layers$ = this.layers.asObservable();
@@ -76,7 +81,10 @@ export class MapService {
   addFeature(layerId: string, feature: Feature) {
     //const layer = this.getLayerById(layerId);
     if (layerId === 'incidents' && this.layers.value['incidents']) {
-      (this.layers.value['incidents'].getLayers() as any).getArray()[0].getSource().addFeature(feature);
+      (this.layers.value['incidents'].getLayers() as any)
+        .getArray()[0]
+        .getSource()
+        .addFeature(feature);
     }
     if (layerId === 'incident') {
       this.layers.value['incident']?.getSource().clear();
@@ -93,11 +101,25 @@ export class MapService {
 
   initMaps(layers: ILayers): void {
     const initialMaps = {
-      overview: createMap('overview', [
-        createOSMBaseLayer(), 
-        layers.incident!
-      ], [createBaseLayersGroupForLayerSwitcher()]),
-      viewer: createMap('viewer', [],[createBaseLayersGroupForLayerSwitcher(), layers.incidents!, layers.adminLayers!, layers.sanitationlayers!, layers.resources!]),
+      overview: createMap(
+        'overview',
+        [createOSMBaseLayer(), layers.incident!],
+        [createBaseLayersGroupForLayerSwitcher()]
+      ),
+      viewer: createMap(
+        'viewer',
+        [],
+        [
+          createDebugTilelayer(),
+          createBaseLayersGroupForLayerSwitcher(),
+          layers.incidents!,
+          layers.adminLayers!,
+          layers.sanitationlayers!,
+          layers.resources!,
+          layers.construccions!,
+          layers.ortos!
+        ]
+      ),
     };
     this.setMaps(initialMaps);
   }
@@ -108,11 +130,35 @@ export class MapService {
 
   initLayers(incidentes: Feature[], recursos: Feature[]): void {
     const initialLayers: ILayers = {
-      sanitationlayers: createLayerGroup(sanitarialayersParams, 'Sanitàries'),
-      adminLayers: createLayerGroup(adminlayersParams, 'Divisions administratives'),
+      ortos: createLayerGroup(
+        'laboratory',
+        ortoslayersParams,
+        'Ortos (Gs Lab)'
+      ),
+      construccions: createLayerGroup(
+        'laboratory',
+        construccionslayersParams,
+        'Construccions (Gs Lab)'
+      ),
+      sanitationlayers: createLayerGroup('local', sanitarialayersParams, 'Sanitàries (Gs Local)'),
+      adminLayers: createLayerGroup(
+        'local',
+        adminlayersParams,
+        'Divisions administratives (Gs Local)'
+      ),
       incident: createVectorLayer([]),
-      incidents: createLayerGroup([], 'Incidents', createClusterLayer(incidentes, 'Incidents')),
-      resources: createLayerGroup([], 'Resources', createClusterLayer(recursos, 'Resources')),
+      incidents: createLayerGroup(
+        'local',
+        [],
+        'Incidents (Db Local)',
+        createClusterLayer(incidentes, 'Incidents')
+      ),
+      resources: createLayerGroup(
+        'local',
+        [],
+        'Resources (Gs Local)',
+        createClusterLayer(recursos, 'Resources')
+      ),
     };
     this.setLayers(initialLayers);
   }

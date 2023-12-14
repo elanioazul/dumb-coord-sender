@@ -27,16 +27,20 @@ import {
  import SourceStamen from 'ol/source/Stamen';
 import LayerGroup from 'ol/layer/Group';
 
+import { TileDebug } from 'ol/source';
 import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import ImageLayer from 'ol/layer/Image';
 import { fromLonLat } from 'ol/proj';
 import { pin } from '@core/enums/pin.marker.enum';
+import { ILayerParams } from '@core/interfaces/layers-params-geoserver.interfaz';
 
 
-
-//geoserver url
-const geoserverUrl = 'http://localhost:8080/geoserver/ows?';
+//geoserver Urls
+const geoserverUrlLab = 'http://10.225.20.55:9090/SEM/wms?';
+const geoserverUrlLocal = 'http://localhost:8080/geoserver/ows?';
+const geoserverUrlChronos = 'https://gsc-gateway.apps.aroas.westeurope.aroapp.io/ows?';
+type geoServerOrigin = 'local' | 'laboratory' | 'chronos';
 
 //controls
 //const dragZoom = new DragZoom();
@@ -105,8 +109,18 @@ const bing = new TileLayer({
   }),
 } as BaseLayerOptions);
 const baseMaps = new LayerGroup({
-  title: 'Base maps',
+  title: 'Base maps 3rd parties',
   layers: [osm, google, bing, toner]
+} as GroupLayerOptions);
+
+//capa debug
+const debugLayer = new LayerTile ({
+  opacity: 1,
+  source: new TileDebug(),
+} as BaseLayerOptions);
+const debugginLayers = new LayerGroup({
+  title: 'Tiles debug layer',
+  layers: [debugLayer]
 } as GroupLayerOptions);
 
 //cluster styles
@@ -153,6 +167,9 @@ const resourcesClusterStyleFunction = (feature) => {
 
 export const createBaseLayersGroupForLayerSwitcher = (): LayerGroup => {
   return baseMaps;
+}
+export const createDebugTilelayer = () : LayerGroup => {
+  return debugginLayers;
 }
 export const addMouseControlToMap = (target: HTMLElement, map: Map) => {
   const mouse = new MousePosition({
@@ -215,18 +232,12 @@ export const createOSMBaseLayer = (): TileLayer<OSM> => {
   return OsmLayer;
 }
 
-export const createLayerGroup = (params: any[], title: string, layer?: any): LayerGroup => {
+export const createLayerGroup = (origin: geoServerOrigin, params: any[], title: string, layer?: any): LayerGroup => {
   let group: LayerGroup;
-  if (params.length > 1) {
+  if (params.length && layer == undefined) {
     group = new LayerGroup({
       title: title,
-      layers: params.map(param => createWMSlayer(param)),
-      fold: 'open'
-    } as GroupLayerOptions)
-  } else if (params.length == 1) {
-    group = new LayerGroup({
-      title: title,
-      layers: params.map(param => createWMSlayer(param)),
+      layers: params.map(param => createWMSlayer(param, origin)),
       fold: 'open'
     } as GroupLayerOptions)
   } else {
@@ -239,31 +250,31 @@ export const createLayerGroup = (params: any[], title: string, layer?: any): Lay
   return group;
 }
 
-export const createWMSlayer = (param: any): ImageLayer<ImageWMS> | TileLayer<TileWMS> => {
+export const createWMSlayer = (params: ILayerParams, origin: geoServerOrigin): ImageLayer<ImageWMS> | TileLayer<TileWMS> => {
   let layer: any;
-  if (param.TILED == true) {
+  if (params.TILED == true) {
     const source = new TileWMS({
-      url: geoserverUrl,
-      params: param,
+      url: origin === 'local' ? geoserverUrlLocal : origin === 'laboratory' ? geoserverUrlLab : geoserverUrlChronos,
+      params: params,
       serverType: 'geoserver',
     });
     layer = new TileLayer({
       source: source,
-      title: `${param.LAYERS}`,
+      title: `${params.LAYERS}`,
       visible: false
 
     } as BaseLayerOptions)
   }
-  if (param.TILED == false) {
+  if (params.TILED == false) {
     const source = new ImageWMS({
-      url: geoserverUrl,
-      params: param,
+      url: origin === 'local' ? geoserverUrlLocal : origin === 'laboratory' ? geoserverUrlLab : geoserverUrlChronos,
+      params: params,
       ratio: 1,
       serverType: 'geoserver',
     });
     layer = new ImageLayer({
       source: source,
-      title: `${param.LAYERS}`,
+      title: `${params.LAYERS}`,
       visible: false
 
     } as BaseLayerOptions)

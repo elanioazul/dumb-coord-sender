@@ -1,4 +1,6 @@
-export const adminlayersParams = [
+import { ILayerParams } from "@core/interfaces/layers-params-geoserver.interfaz"
+
+export const adminlayersParams: ILayerParams[] = [
     {
         "LAYERS": "chronos-admin-division:NEIGHBOURHOOD_BCN_ETRS89",
         'FORMAT': 'image/png',
@@ -30,10 +32,36 @@ export const adminlayersParams = [
         'TILED': false   
     }
 ]
-export const sanitarialayersParams = [
+export const sanitarialayersParams: ILayerParams[] = [
     {
         "LAYERS": "chronos-abs:ABS_2020_ETRS89",
         'FORMAT': 'image/png',
         'TILED': true
     }
+]
+
+export const construccionslayersParams: ILayerParams[] = [
+    {
+        "LAYERS": "SEM:_25_construccions_l",
+        'FORMAT': 'image/png',
+        'TILED': false
+    },
+    {
+        "LAYERS": "SEM:_60_construccions_p",
+        'FORMAT': 'image/png',
+        'TILED': false
+    },
+    {
+        "LAYERS": "SEM:Construccions",
+        'FORMAT': 'image/png',
+        'TILED': false
+    }
+]
+
+export const ortoslayersParams: ILayerParams[] = [
+    {
+        "LAYERS": "SEM:OrtofotoTif",
+        'FORMAT': 'image/jpeg',
+        'TILED': false,
+    },
 ]
