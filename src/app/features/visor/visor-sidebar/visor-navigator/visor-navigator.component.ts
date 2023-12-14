@@ -92,11 +92,11 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.orsService.getLatestRuteDetails$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([origin, destination]) => {
-        this.destination = destination;
-        if (origin && destination && origin != null && destination != null) {
+      .subscribe(([recurso, incidente]) => {
+        this.destination = incidente;
+        if (recurso && incidente && recurso != null && incidente != null) {
           this.orsService
-            .getOrsInfo(origin, destination)
+            .getOrsInfo(recurso, incidente)
             .subscribe((res: IOpenRouteServiceRes) => {
               const mediano = this.orsService.findMedian(res.features[0].geometry.coordinates);
               this.infoPopupCoords = transform4326CoordsToMercatorPoint(mediano[0], mediano[1]).getCoordinates();
