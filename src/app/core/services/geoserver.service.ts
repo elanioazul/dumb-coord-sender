@@ -6,6 +6,7 @@ import { FeatureCollection } from '@core/interfaces/recurso-geoserver';
 
 //const localGeoServerInstance = 'http://localhost:8080/geoserver/ows?';
 const recursosGeoJsonUri = 'http://localhost:8080/geoserver/chronos-recursos/wms?service=WMS&version=1.1.0&request=GetMap&layers=chronos-recursos%3ARESOURCES&bbox=-18.3201264155889%2C27.637723150776%2C4.34014226940938%2C43.9215181349627&width=768&height=551&srs=EPSG%3A4258&styles=&FORMAT=geojson'
+const recursosGeoJsonShpUri = 'http://10.225.20.55:9090/SEM/wms?service=WMS&version=1.1.0&request=GetMap&layers=SEM:ResourcesQAS&bbox=-18.3201264155889%2C27.637723150776%2C4.34014226940938%2C43.9215181349627&width=768&height=551&srs=EPSG%3A4258&styles=&FORMAT=geojson';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class GeoserverService {
   constructor() { }
 
   getRecursosGeoJson$ = this.http
-  .get<FeatureCollection>(recursosGeoJsonUri)
+  .get<FeatureCollection>(recursosGeoJsonShpUri)
   .pipe(
     catchError(this.handleError)
   )
