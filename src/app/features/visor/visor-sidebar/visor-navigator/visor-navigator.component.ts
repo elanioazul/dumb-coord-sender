@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IRecurso, IResourcesByRadioRes } from '@core/interfaces/reecurso-interfaz';
 import { OrsService } from '@core/services/ors.service';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
-import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
+import { IOpenRouteServiceRes, IRaymondOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 import { RecursosService } from '@core/services/recursos.service';
 import { Resource } from '@core/classes/resource';
 import { RECURSOSCOLUMNS } from '@core/consts/columns-table-recursos';
@@ -96,13 +96,22 @@ export class VisorNavigatorComponent implements OnInit, OnDestroy {
         this.destination = incidente;
         if (recurso && incidente && recurso != null && incidente != null) {
           this.orsService
-            .getOrsInfo(recurso, incidente)
-            .subscribe((res: IOpenRouteServiceRes) => {
-              const mediano = this.orsService.findMedian(res.features[0].geometry.coordinates);
+            //.getOrsInfo(recurso, incidente)
+            // .subscribe((res: IOpenRouteServiceRes) => {
+            //   const mediano = this.orsService.findMedian(res.features[0].geometry.coordinates);
+            //   this.infoPopupCoords = transform4326CoordsToMercatorPoint(mediano[0], mediano[1]).getCoordinates();
+            //   this.orsService.setRuta(this.orsService.resourceRoute, res.features[0].geometry);
+            //   this.orsService.setDistance(res.features[0].properties.summary.distance);
+            //   this.orsService.setDuration(res.features[0].properties.summary.duration);
+            //   this.infoPopup.show(this.infoPopupCoords, this.infoPopupHtml);
+            // });
+            .getOrsInfoRaymond(recurso, incidente, '4326')
+            .subscribe((res: IRaymondOpenRouteServiceRes) => {
+              const mediano = this.orsService.findMedian(res.routePath);
               this.infoPopupCoords = transform4326CoordsToMercatorPoint(mediano[0], mediano[1]).getCoordinates();
-              this.orsService.setRuta(this.orsService.resourceRoute, res.features[0].geometry);
-              this.orsService.setDistance(res.features[0].properties.summary.distance);
-              this.orsService.setDuration(res.features[0].properties.summary.duration);
+              this.orsService.setRuta(this.orsService.resourceRoute, res.routePath);
+              this.orsService.setDistance(res.routeDistance);
+              this.orsService.setDuration(res.routeTime);
               this.infoPopup.show(this.infoPopupCoords, this.infoPopupHtml);
             });
         }
