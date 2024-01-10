@@ -45,7 +45,8 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-data let-resource let-rowData value="es">
-            <tr #rowElement [ngClass]="{'selected-row': shouldSelectRow(rowData)}">
+            <!-- <tr #rowElement [ngClass]="{'selected-row': shouldSelectRow(rowData)}"> -->
+            <tr #rowElement>
                 <td *ngFor="let col of columns">
                     <span *ngIf="col.field !== 'actions'">{{ data[col.field] }}</span>
                     <span *ngIf="col.field === 'actions'">
