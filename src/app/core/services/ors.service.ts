@@ -13,11 +13,12 @@ import { Geometry, Point } from 'ol/geom';
 import { IMaps } from '@core/interfaces/maps.interfaz';
 import { createTextStyle } from '@core/utils/ol';
 import { pin } from '@core/enums/pin.marker.enum';
-import { IOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
+import { IOpenRouteServiceRes, IRaymondOpenRouteServiceRes } from '@core/interfaces/ors.response.interfaz';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 const apiUrlOrs = 'https://ors.apps.aroas.westeurope.aroapp.io/ors/v2/directions/driving-car?';
+const apiUrlOrsRaymond = 'https://qas-chronos-router.apps.aroas.westeurope.aroapp.io/calculateRoute?';
 
 const originStyle = new Style({
   image: new Icon({
@@ -142,6 +143,20 @@ export class OrsService {
     );
   }
 
+  getOrsInfoRaymond(from: Coordinate, to: Coordinate, srid: string): Observable<IRaymondOpenRouteServiceRes> {
+    return this.http.get<IRaymondOpenRouteServiceRes>(apiUrlOrsRaymond + 'latitudeStartId=' + `${from[1]}` + '&longitudeStartId=' + `${from[0]}` + '&latitudeEndId=' + `${to[1]}` + '&longitudeEndId=' + `${to[0]}` + '&selectedSrid=' + `${srid}`)
+    .pipe(
+      map((res: any) => {
+        if (!res.error) {
+          return res
+        }
+      }),
+      catchError((error) => {
+        return throwError(() => error)
+      })
+    );
+  }
+
   // setGeomarker(feature: Feature): void {
   //   let position = feature.getGeometry()?.clone();
   //   let geoMarker = new Feature({
@@ -245,7 +260,7 @@ export class OrsService {
   }
 
   setRuta(layer: VectorLayer<VectorSource<Geometry>>, geometry: any): void {
-    const linestringOriginal = new LineString(geometry.coordinates)
+    const linestringOriginal = new LineString(geometry)
     const transformedLineString = new LineString(
       linestringOriginal.getCoordinates().map(coord => proj4("EPSG:4326", "EPSG:3857", coord))
     );
@@ -313,7 +328,7 @@ export class OrsService {
   };
   
   setRutaByClicks(layer: VectorLayer<VectorSource<Geometry>>, geometry: any): void {
-    const linestringOriginal = new LineString(geometry.coordinates);
+    const linestringOriginal = new LineString(geometry);
     const transformedLineString = new LineString(
       linestringOriginal.getCoordinates().map(coord => proj4("EPSG:4326", "EPSG:3857", coord))
     );

@@ -49,9 +49,10 @@ export class TableComponent {
     return DOMAIN_FILTERS[field]
   }
 
-  shouldSelectRow(rowData: any): boolean {
-    return this.selectedRowElement && this.selectedRowElement.childNodes[0].innerText === rowData.resourceId.toString();
-  }
+  //algunos resources vienen sin resourceId (undefined) y esto jode
+  // shouldSelectRow(rowData: any): boolean {
+  //   return this.selectedRowElement && this.selectedRowElement.childNodes[0].innerText === rowData.resourceId.toString();
+  // }
 
   moreInformation(data: dataRequested, rowElement: any): void {
     if ("resourceId" in data && "tiporecurso" in data) {

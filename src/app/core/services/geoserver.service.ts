@@ -18,7 +18,7 @@ export class GeoserverService {
   constructor() { }
 
   getRecursosGeoJson$ = this.http
-  .get<FeatureCollection>(recursosGeoJsonShpUri)
+  .get<FeatureCollection>(recursosGeoJsonUri)
   .pipe(
     catchError(this.handleError)
   )
